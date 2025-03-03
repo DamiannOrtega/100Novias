@@ -38,7 +38,7 @@
 
         // Variables globales del juego
         var player;      // Jugador
-        var stars;       // Grupo de estrellas para recolectar
+        var peluches;       // Grupo de estrellas para recolectar
         var bombs;       // Grupo de bombas
         var platforms;   // Plataformas del juego
         var cursors;     // Teclas del cursor (flechas)
@@ -53,7 +53,7 @@
         function preload() {
             this.load.image('sky', 'assets/sky.png');       // Fondo del juego
             this.load.image('ground', 'assets/platform.png'); // Plataforma
-            this.load.image('star', 'assets/Flush.png');     // Estrella
+            this.load.image('peluche', 'assets/Flush.png');     // Estrella
             this.load.image('bomb', 'assets/bomb.png');    // Bomba
             this.load.image('player_idle', 'assets/NanoParada.png');
             this.load.image('player_left', 'assets/NanoIzq.png');
@@ -134,14 +134,14 @@
             cursors = this.input.keyboard.createCursorKeys();
 
             // Crea un grupo de estrellas para recolectar
-            stars = this.physics.add.group({
-                key: 'star',
+            peluches = this.physics.add.group({
+                key: 'peluche',    
                 repeat: 11, // 12 estrellas en total
                 setXY: { x: 12, y: 0, stepX: 70 } // Espaciadas 70 píxeles en el eje X
             });
 
             // Configura un rebote aleatorio para cada estrella
-            stars.children.iterate(function (child) {
+            peluches.children.iterate(function (child) {
                 child.setScale(0.07);
                 child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
             });
@@ -154,11 +154,11 @@
 
             // Añade colisiones entre el jugador, las estrellas y las plataformas
             this.physics.add.collider(player, platforms);
-            this.physics.add.collider(stars, platforms);
+            this.physics.add.collider(peluches, platforms);
             this.physics.add.collider(bombs, platforms);
 
             // Detecta si el jugador recoge una estrella
-            this.physics.add.overlap(player, stars, collectStar, null, this);
+            this.physics.add.overlap(player, peluches, collectStar, null, this);
 
             // Detecta si el jugador choca con una bomba
             this.physics.add.collider(player, bombs, hitBomb, null, this);
@@ -192,16 +192,16 @@
 
 
         // Función que se ejecuta cuando el jugador recoge una estrella
-        function collectStar(player, star) {
-            star.disableBody(true, true); // Desactiva la estrella recolectada
+        function collectStar(player, peluche) {
+            peluche.disableBody(true, true); // Desactiva la estrella recolectada
 
             // Aumenta la puntuación y actualiza el texto
             score += 10;
             scoreText.setText('Score: ' + score);
 
             // Si no quedan estrellas activas, genera un nuevo lote de estrellas y una bomba
-            if (stars.countActive(true) === 0) {
-                stars.children.iterate(function (child) {
+            if (peluches.countActive(true) === 0) {
+                peluches.children.iterate(function (child) {
                     child.enableBody(true, child.x, 0, true, true); // Reactiva las estrellas
                 });
 
@@ -220,7 +220,7 @@
             this.physics.pause(); // Pausa la física del juego
 
             player.setTint(0xff0000); // Cambia el color del jugador a rojo
-            player.setTexture('player_dead'); // Reproduce la animación de estar quieto
+            player.setTexture('player_dead'); // Reproduce la animación de epeluche quieto
             player.anims.play('die', true);
             gameOver = true; // Marca el juego como terminado
         }
