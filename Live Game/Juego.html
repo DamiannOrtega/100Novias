@@ -86,17 +86,21 @@
             }
 
             // Crea plataformas adicionales (ledges)
-            platforms.create(600, 400, 'groundsmall');
+            platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1000, 300, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1050, 300, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1200, 300, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1300, 170, 'ground').setScale(0.8).refreshBody();
 
             platforms.create(100, 370, 'ground').setScale(0.8).refreshBody();
             platforms.create(400, 570, 'ground').setScale(0.8).refreshBody();
             platforms.create(340, 250, 'ground').setScale(0.9).refreshBody();
 
-            platforms.create(750, 220, 'ground');
+            platforms.create(750, 280, 'ground');
 
             // Crea al jugador en una posición inicial
             //player = this.physics.add.sprite(100, 450, 'dude');
-            player = this.physics.add.sprite(100, 450, 'player_idle').setScale(0.2);
+            player = this.physics.add.sprite(100, 650, 'player_idle').setScale(0.2);
 
 
             // Configura propiedades físicas del jugador (rebote y límites del mundo)
@@ -146,7 +150,7 @@
             // Crea un grupo de estrellas para recolectar
             peluches = this.physics.add.group({
                 key: 'peluche',    
-                repeat: 23, // 12 estrellas en total
+                repeat: 20, // 12 estrellas en total
                 setXY: { x: 12, y: 0, stepX: 70 } // Espaciadas 70 píxeles en el eje X
             });
 
