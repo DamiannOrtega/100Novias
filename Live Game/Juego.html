@@ -20,8 +20,8 @@
         // Configuración del juego con Phaser
         var config = {
             type: Phaser.AUTO, // Tipo de renderizado (WebGL o Canvas, automático)
-            width: 800,       // Ancho de la pantalla del juego
-            height: 600,      // Alto de la pantalla del juego
+            width: 1500,       // Ancho de la pantalla del juego
+            height: 800,      // Alto de la pantalla del juego
             physics: {
                 default: 'arcade', // Motor de física Arcade (sencillo y ligero)
                 arcade: {
@@ -51,8 +51,10 @@
 
         // Función para cargar los recursos del juego
         function preload() {
-            this.load.image('sky', 'assets/sky.png');       // Fondo del juego
-            this.load.image('ground', 'assets/platform.png'); // Plataforma
+            this.load.image('sky', 'assets/fondo.jpg');       // Fondo del juego
+            this.load.image('groundsmall', 'assets/plataforma.png'); // Plataforma
+            this.load.image('suelo', 'assets/piso.jpg'); // Plataforma
+            this.load.image('ground', 'assets/plataforma2.png'); // Plataforma
             this.load.image('peluche', 'assets/Flush.png');     // Estrella
             this.load.image('bomb', 'assets/bomb.png');    // Bomba
             this.load.image('player_idle', 'assets/NanoParada.png');
@@ -69,17 +71,27 @@
         // Función para crear los objetos del juego
         function create() {
             // Añade el fondo del juego
-            this.add.image(400, 300, 'sky');
-
+            let sky = this.add.image(750, 400, 'sky'); 
+            sky.setDisplaySize(1500, 800); // Ajusta al tamaño de la pantalla
+            // sky.setScale(1.2);    
             // Crea un grupo de plataformas estáticas (no se mueven)
             platforms = this.physics.add.staticGroup();
 
             // Crea el suelo del juego y lo escala para que cubra el ancho de la pantalla
-            platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+            //platforms.create(100, 715, 'suelo').setScale(0.01).refreshBody();
+
+            //Suelo
+            for (let x = 0; x <= 1500; x += 30) {  
+            platforms.create(x, 715, 'suelo').setScale(0.02).refreshBody();
+            }
 
             // Crea plataformas adicionales (ledges)
-            platforms.create(600, 400, 'ground');
-            platforms.create(50, 250, 'ground');
+            platforms.create(600, 400, 'groundsmall');
+
+            platforms.create(100, 370, 'ground').setScale(0.8).refreshBody();
+            platforms.create(400, 570, 'ground').setScale(0.8).refreshBody();
+            platforms.create(340, 250, 'ground').setScale(0.9).refreshBody();
+
             platforms.create(750, 220, 'ground');
 
             // Crea al jugador en una posición inicial
@@ -134,7 +146,7 @@
             // Crea un grupo de estrellas para recolectar
             peluches = this.physics.add.group({
                 key: 'peluche',    
-                repeat: 11, // 12 estrellas en total
+                repeat: 23, // 12 estrellas en total
                 setXY: { x: 12, y: 0, stepX: 70 } // Espaciadas 70 píxeles en el eje X
             });
 
