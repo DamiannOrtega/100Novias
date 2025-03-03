@@ -53,7 +53,7 @@
         function preload() {
             this.load.image('sky', 'assets/sky.png');       // Fondo del juego
             this.load.image('ground', 'assets/platform.png'); // Plataforma
-            this.load.image('star', 'assets/star.png');     // Estrella
+            this.load.image('star', 'assets/Flush.png');     // Estrella
             this.load.image('bomb', 'assets/bomb.png');    // Bomba
             this.load.image('player_idle', 'assets/NanoParada.png');
             this.load.image('player_left', 'assets/NanoIzq.png');
@@ -117,7 +117,7 @@
                 frames: [{ key: 'dude', frame: 4 }],
                 frameRate: 20
             });
-
+    
             this.anims.create({
                 key: 'die',
                 frames: [
@@ -140,9 +140,10 @@
 
             // Configura un rebote aleatorio para cada estrella
             stars.children.iterate(function (child) {
+                child.setScale(0.07);
                 child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
             });
-
+   
             // Crea un grupo de bombas
             bombs = this.physics.add.group();
 
