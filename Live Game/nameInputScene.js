@@ -1,57 +1,58 @@
 class NameInputScene extends Phaser.Scene {
     constructor() {
-        super({ key: "NameInputScene" });
+        super({ key: 'NameInputScene' });
+    }
+
+    preload() {
+        this.load.image('background', 'assets/fondo.jpg');
     }
 
     create() {
-        console.log("Creando escena NameInputScene...");
+        // Agregar fondo
+        this.add.image(750, 400, 'background');
 
-        // Fondo de la escena
-        this.add.image(750, 400, 'assets/fondo.jpg').setDisplaySize(1500, 800);
+        // Texto de instrucciones
+        this.add.text(750, 250, "Ingresa tu nombre:", {
+            fontSize: '32px',
+            fill: '#fff'
+        }).setOrigin(0.5);
 
-        // Texto de instrucción
-        this.add.text(400, 300, 'Ingresa tu nombre:', { fontSize: '32px', fill: '#000' }).setOrigin(0.5);
+        // Crear un contenedor HTML con el input y botón
+        const formHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <input type="text" id="nameInput" placeholder="Tu nombre..." 
+                style="width: 200px; padding: 10px; font-size: 18px; text-align: center;">
+                <br>
+                <button id="confirmButton" 
+                style="margin-top: 10px; padding: 10px; font-size: 18px; background-color: #0f0;">Confirmar</button>
+            </div>
+        `;
 
-        // Crear un campo de entrada de texto (HTML nativo)
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.style.position = 'absolute';
-        input.style.left = '400px';
-        input.style.top = '400px';
-        input.style.width = '300px';
-        input.style.padding = '10px';
-        input.style.fontSize = '24px';
-        document.body.appendChild(input);
+        // Agregar el formulario HTML al juego
+        const domElement = this.add.dom(750, 400).createFromHTML(formHTML);
 
-        // Crear un botón (HTML nativo)
-        const button = document.createElement('button');
-        button.innerText = 'Continuar';
-        button.style.position = 'absolute';
-        button.style.left = '400px';
-        button.style.top = '500px';
-        button.style.padding = '10px 20px';
-        button.style.fontSize = '24px';
-        document.body.appendChild(button);
+        // Obtener los elementos creados
+        const inputElement = document.getElementById('nameInput');
+        const confirmButton = document.getElementById('confirmButton');
 
-        // Evento de clic en el botón
-        button.addEventListener('click', () => {
-            const name = input.value.trim();
-            if (name) {
-                // Guardar el nombre en localStorage
-                localStorage.setItem('playerName', name);
+        // Evento al hacer clic en "Confirmar"
+        confirmButton.addEventListener('click', () => {
+            const playerName = inputElement.value.trim();
+            if (playerName) {
+                let jugador = Jugador.cargar();
 
-                // Crear una instancia de Jugador y guardarla
-                const jugador = new Jugador(name);
+                if (!jugador || jugador.nombre !== playerName) {
+                    jugador = new Jugador(playerName);
+                }
+
+                // Guardar en localStorage
                 jugador.guardar();
 
-                // Eliminar los elementos HTML
-                document.body.removeChild(input);
-                document.body.removeChild(button);
+                // Ocultar input y botón
+                domElement.destroy();
 
-                // Iniciar la escena del menú principal
-                this.scene.start('MainMenu');
-            } else {
-                alert('Por favor, ingresa un nombre válido.');
+                // Pasar a la escena del juego
+                this.scene.start('GameScene', { jugador: jugador });
             }
         });
     }
