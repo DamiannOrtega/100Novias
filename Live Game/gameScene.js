@@ -26,9 +26,10 @@ class GameScene extends Phaser.Scene {
         this.jugador = null;
 
         //Enemigos
-        this.enemigo = null;         
-        this.enemigoVelocidad = 3; 
+        this.enemigo = null;
+        this.enemigoVelocidad = 3;
         this.enemigoDireccion = 1;
+        this.sonidoaAHahari=null;
     }
 
     init() {
@@ -76,7 +77,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('Nano_muerte', 'assets/Nano/NanoMuerte.png');
         this.load.image('Nano_quieta', 'assets/Nano/NanoQuieta1.png');
         this.load.image('Nano_quieta1', 'assets/Nano/NanoQuieta.png');
-        
+
         // MÚSICA Y SONIDOS
         this.load.audio('musica_fondo', 'assets/Nivel1.mp3');
         // SHIZUKA
@@ -96,9 +97,10 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Nano_paradaS3', 'assets/Nano/DialogoNano.mp3');
 
         //Enemigos
-        this.load.image('bomb', 'assets/Enemigos/atacke.png');  
-        this.load.image('HahariR', 'assets/Enemigos/HahariAtaqueD.png');       
-        this.load.image('HahariL', 'assets/Enemigos/HahariAtaqueI.png');      
+        this.load.image('bomb', 'assets/Enemigos/atacke.png');
+        this.load.image('HahariR', 'assets/Enemigos/HahariAtaqueD.png');
+        this.load.image('HahariL', 'assets/Enemigos/HahariAtaqueI.png');
+        this.load.audio('Aparece_enemigo','assets/Enemigos/HahariAparece.mp3');
     }
 
     create() {
@@ -106,7 +108,7 @@ class GameScene extends Phaser.Scene {
         this.musicafondo.play();
         this.idleTimer = 0;
         this.lastUpdateTime = 0;
-
+        this.sonidoaAHahari = this.sound.add('Aparece_enemigo');
         // Añade el fondo del juego
         let sky = this.add.image(750, 400, 'sky');
         sky.setDisplaySize(1500, 800); // Ajusta al tamaño de la pantalla
@@ -121,11 +123,11 @@ class GameScene extends Phaser.Scene {
 
         // Mostrar el nombre del jugador
         this.playerNameText = this.add.text(16, 50, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
-        
-        //Enemigos  
-        const x = Phaser.Math.Between(300,1300);
-        this.enemigo = this.add.sprite(x, 50, 'HahariR').setScale(0.2);
-        // Crea plataformas adicionales (ledges)
+
+        //Enemigos
+        // const x = Phaser.Math.Between(300,1300);
+        //  this.enemigo = this.add.sprite(x, 50, 'HahariR').setScale(0.2);
+        // // Crea plataformas adicionales (ledges)
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
         this.platforms.create(1000, 300, 'groundsmall').setScale(0.8).refreshBody();
         this.platforms.create(1050, 300, 'groundsmall').setScale(0.8).refreshBody();
@@ -285,17 +287,21 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.peluches, this.platforms);
         this.physics.add.collider(this.bombs, this.platforms);
 
+
         // Detecta si el jugador recoge una estrella
         this.physics.add.overlap(this.player, this.peluches, this.collectStar, null, this);
 
         // Detecta si el jugador choca con una bomba
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
+        this.time.delayedCall(10000, this.createEnemy, [], this);
+        
     }
     update(time) {
         if (this.gameOver) {
             return;
         }
-    
+
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
@@ -310,7 +316,7 @@ class GameScene extends Phaser.Scene {
             this.player.setVelocityX(0);
             this.idleTimer += time - (this.lastUpdateTime || time);
             this.lastUpdateTime = time;
-    
+
             // Cambia a la animación "quieto" si han pasado 3 segundos o más de inactividad
             if (this.idleTimer >= 3000) {
                 this.player.anims.play('quieto', true);
@@ -322,18 +328,18 @@ class GameScene extends Phaser.Scene {
                     this.player.setTexture('Shizuka_parada');
                 }
             }
-    
+
             // Verificar si es momento de reproducir un sonido de idle
             if (time > this.cancionrandom + this.delaycancion) {
                 let randomSound = Phaser.Math.RND.pick(this.SonidosQuietas);
                 randomSound.play();
-    
+
                 // Espera 3 segundos después de que termine y luego elige otro
                 this.delaycancion = Phaser.Math.Between(5000, 10000);
                 this.cancionrandom = time + randomSound.duration * 1000 + 3000;
             }
         }
-    
+
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
             this.idleTimer = 0;
@@ -343,7 +349,7 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada2');
             }
         }
-     
+        if(this.enemigo){
         // Enemigo
         this.enemigo.x += this.enemigoVelocidad * this.enemigoDireccion;
 
@@ -353,11 +359,13 @@ class GameScene extends Phaser.Scene {
             // Cambiar la imagen del enemigo (puedes usar diferentes imágenes si lo deseas)
             this.enemigo.setTexture(this.enemigoDireccion === 1 ? 'HahariR' : 'HahariL'); // Cambia a otra textura si tienes más
         }
-    
+
+
+        }
 
 
     }
-    
+
     collectStar(player, peluche) {
         peluche.disableBody(true, true);
         this.pelucheSonido.play();
@@ -386,6 +394,16 @@ class GameScene extends Phaser.Scene {
             bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
             bomb.allowGravity = false;
         }
+    }
+
+    createEnemy() {
+        // Asegúrate de que el enemigo no se cree si ya existe
+                
+        const x = Phaser.Math.Between(0, this.cameras.main.width);
+        this.enemigo = this.add.sprite(x, 50, 'HahariR').setScale(0.2);
+        this.sonidoaAHahari.play();
+        // Configura la colisión del enemigo con el jugador
+        this.physics.add.collider(this.player, this.enemigo, this.hitBomb, null, this);
     }
 
     hitBomb(player, bomb) {
