@@ -294,10 +294,17 @@
             if (cursors.left.isDown) {
                 player.setVelocityX(-160);
                 player.anims.play('walk_left', true); // Ahora coincide con la imagen cargada
+                SonidosQuietas.forEach(function (sonido) {
+                sonido.stop();
+            });
             }
             else if (cursors.right.isDown) {
                 player.setVelocityX(160);
                 player.anims.play('walk_right', true);
+
+                SonidosQuietas.forEach(function (sonido) {
+                sonido.stop();
+            });
             }
             else {
                 player.setVelocityX(0);
@@ -307,14 +314,14 @@
                     player.setTexture('Shizuka_parada');
                 }
                        // Verificar si es momento de reproducir un sonido de idle
-        if (time > cancionrandom + delaycancion) {
-            let randomSound = Phaser.Math.RND.pick(SonidosQuietas);
-            randomSound.play();
+                if (time > cancionrandom + delaycancion) {
+                    let randomSound = Phaser.Math.RND.pick(SonidosQuietas);
+                    randomSound.play();
 
-            // Espera 3 segundos después de que termine y luego elige otro
-            delaycancion = Phaser.Math.Between(5000, 10000);
-            cancionrandom = time + randomSound.duration * 1000 + 3000;
-        }
+                    // Espera 3 segundos después de que termine y luego elige otro
+                    delaycancion = Phaser.Math.Between(5000, 10000);
+                    cancionrandom = time + randomSound.duration * 1000 + 3000;
+                }
 
             }
 
