@@ -27,8 +27,17 @@ class GameScene extends Phaser.Scene {
     }
 
     init() {
+
+        // Obtener el nombre del jugador desde localStorage
+        const playerName = localStorage.getItem('playerName');
+
         // Cargar el jugador desde localStorage
-        this.jugador = Jugador.cargar() || new Jugador(localStorage.getItem('playerName'));
+        this.jugador = Jugador.cargar(playerName);
+
+        if (!this.jugador) {
+            // Si no existe el jugador en localStorage, crear uno nuevo
+            this.jugador = new Jugador(playerName);
+        }
     }
 
     // Carga los recursos del juego
@@ -62,7 +71,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('Nano_muerte', 'assets/Nano/NanoMuerte.png');
         this.load.image('Nano_quieta', 'assets/Nano/NanoQuieta1.png');
         this.load.image('Nano_quieta1', 'assets/Nano/NanoQuieta.png');
-        
+
         //
         // MÚSICA Y SONIDOS
         this.load.audio('musica_fondo', 'assets/Nivel1.mp3');
@@ -100,6 +109,9 @@ class GameScene extends Phaser.Scene {
         for (let x = 0; x <= 1500; x += 30) {
             this.platforms.create(x, 715, 'groundsmall').setScale(0.8).refreshBody();
         }
+
+        // Mostrar el nombre del jugador
+        this.playerNameText = this.add.text(16, 50, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
 
         // Crea plataformas adicionales (ledges)
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
@@ -162,8 +174,8 @@ class GameScene extends Phaser.Scene {
             this.anims.create({
                 key: 'quieto',
                 frames: [
-                    { key:'Nano_quieta1', duration: 3000 }, // Se mantiene 3 segundos
-                    { key:'Nano_quieta' } // Luego cambia y se queda aquí
+                    { key: 'Nano_quieta1', duration: 3000 }, // Se mantiene 3 segundos
+                    { key: 'Nano_quieta' } // Luego cambia y se queda aquí
                 ],
                 frameRate: 1, // Se ejecuta lentamente
                 repeat: -1    // Se mantiene en el último frame
@@ -203,13 +215,13 @@ class GameScene extends Phaser.Scene {
             this.anims.create({
                 key: 'quieto',
                 frames: [
-                    { key:'Shizuka_muerte', duration: 3000 }, // Se mantiene 3 segundos
-                    { key:'Shizuka_quieta' } // Luego cambia y se queda aquí
+                    { key: 'Shizuka_muerte', duration: 3000 }, // Se mantiene 3 segundos
+                    { key: 'Shizuka_quieta' } // Luego cambia y se queda aquí
                 ],
                 frameRate: 1, // Se ejecuta lentamente
                 repeat: -1    // Se mantiene en el último frame
             });
-            
+
 
         }
 
@@ -273,15 +285,17 @@ class GameScene extends Phaser.Scene {
             return;
         }
 
+        this.playerNameText.setText('Jugador: ' + this.jugador.nombre); 
+
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
-            this.idleTimer = 0; 
+            this.idleTimer = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('walk_right', true);
-            this.idleTimer = 0; 
+            this.idleTimer = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else {
             this.player.setVelocityX(0);
@@ -290,7 +304,7 @@ class GameScene extends Phaser.Scene {
 
             if (this.idleTimer >= 3000) {
                 this.player.anims.play('quieto', true);
-            } else{
+            } else {
 
                 if (this.personaje == 1) {
                     this.player.setTexture('Nano_parada');
@@ -298,7 +312,7 @@ class GameScene extends Phaser.Scene {
                     this.player.setTexture('Shizuka_parada');
                 }
             }
-            
+
 
             // Verificar si es momento de reproducir un sonido de idle
             if (time > this.cancionrandom + this.delaycancion) {

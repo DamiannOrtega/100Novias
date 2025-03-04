@@ -1,0 +1,96 @@
+/* styles.css */
+
+body {
+    margin: 0;
+}
+
+#characterSelection {
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border-radius: none;
+    box-shadow: none;
+
+    /* Centramos la ventana */
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.characters {
+    display: flex;
+    gap: 20px;
+}
+
+.character {
+    text-align: center;
+    cursor: pointer;
+}
+
+.character img {
+    width: 100px;
+    height: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+
+.character:nth-child(2) img {
+    width: 160px;
+    /* Ajusta el tamaño del segundo personaje */
+}
+
+/* Estilos para el efecto neón */
+.character:nth-child(1):hover {
+    box-shadow: 0 0 15px 5px rgba(255, 105, 180, 0.8);
+    /* Rosa */
+}
+
+.character:nth-child(2):hover {
+    box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.8);
+    /* Azul */
+}
+
+/* Estilo del contenedor de la pantalla de entrada de nombre */
+#nameInputContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+}
+
+/* Estilo del input de texto */
+#playerName {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+    width: 80%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Estilo del botón "Aceptar" */
+#submitNameButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+#submitNameButton:hover {
+    background-color: #45a049;
+}

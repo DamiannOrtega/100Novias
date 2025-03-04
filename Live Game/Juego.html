@@ -5,64 +5,8 @@
     <meta charset="UTF-8" />
     <title>100 Kanojo, Atrapa a Rentarou</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-    <style type="text/css">
-        body {
-            margin: 0;
-        }
-
-        #characterSelection {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            border-radius: none;
-            box-shadow: none;
-
-            /* Centramos la ventana */
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-
-        .characters {
-            display: flex;
-            gap: 20px;
-        }
-
-        .character {
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .character img {
-            width: 100px;
-            height: auto;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-
-        .character:nth-child(2) img {
-            width: 160px;
-            /* Ajusta el tamaño del segundo personaje */
-        }
-
-        /* Estilos para el efecto neón */
-        .character:nth-child(1):hover {
-            box-shadow: 0 0 15px 5px rgba(255, 105, 180, 0.8);
-            /* Rosa */
-        }
-
-        .character:nth-child(2):hover {
-            box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.8);
-            /* Azul */
-        }
-    </style>
+    <link rel="stylesheet" href="styles/estilos.css">
+    
 </head>
 
 <body>
