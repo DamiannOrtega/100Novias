@@ -6,7 +6,7 @@
     <title>100 Kanojo, Atrapa a Rentarou</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <link rel="stylesheet" href="styles/estilos.css">
-    
+
 </head>
 
 <body>
@@ -14,20 +14,19 @@
     <div id="characterSelection">
         <h2>Selecciona tu personaje</h2>
         <div class="characters">
-            <div class="character" onclick="selectCharacter('player_idle', 'Nano')"
+            <div class="character" onclick="selectCharacter('Nano')"
                 onmouseover="hoverCharacter(this, 'assets/Nano/NanoSeleccionada.png')"
                 onmouseout="hoverCharacter(this, 'assets/Nano/Nano.png')">
                 <img src="assets/Nano/Nano.png" alt="Personaje 1">
                 <p>Personaje 1</p>
             </div>
-            <div class="character" onclick="selectCharacter('player_idle', 'Shizuka')"
+
+            <div class="character" onclick="selectCharacter('Shizuka')"
                 onmouseover="hoverCharacter(this, 'assets/Nano/Shizuka.png')"
                 onmouseout="hoverCharacter(this, 'assets/Shizuka/Smuerte.png')">
                 <img src="assets/Shizuka/Smuerte.png" alt="Personaje 2">
                 <p>Personaje 2</p>
             </div>
-
-
         </div>
     </div>
     <!-- Incluir todos los scripts -->
@@ -37,6 +36,14 @@
     <script src="gameScene.js"></script>
 
     <script type="text/javascript">
+
+        function selectCharacter(character) {
+            let mainMenuScene = game.scene.keys.MainMenu; // Accede a la escena del menú
+
+            if (mainMenuScene) {
+                mainMenuScene.selectCharacter(character); // Llama a la función de selección dentro de Phaser
+            }
+        }
         // Configuración del juego con Phaser
         var config = {
             type: Phaser.AUTO,
