@@ -60,7 +60,7 @@
         var SonidoMuerte;
         var cancionrandom = 0;
         var delaycancion = Phaser.Math.Between(5000, 10000); // Entre 5 y 10 segundos
-
+        
         // Inicializa el juego con la configuración proporcionada
         var game = new Phaser.Game(config);
 
@@ -306,9 +306,7 @@
                 }else if(personaje==2){
                     player.setTexture('Shizuka_parada');
                 }
-            }
-
-        // Verificar si es momento de reproducir un sonido de idle
+                       // Verificar si es momento de reproducir un sonido de idle
         if (time > cancionrandom + delaycancion) {
             let randomSound = Phaser.Math.RND.pick(SonidosQuietas);
             randomSound.play();
@@ -318,6 +316,9 @@
             cancionrandom = time + randomSound.duration * 1000 + 3000;
         }
 
+            }
+
+ 
             if (cursors.up.isDown && player.body.touching.down) {
                 player.setVelocityY(-330);
                 if(personaje==1){
@@ -334,6 +335,11 @@
         function collectStar(player, peluche) {
             peluche.disableBody(true, true); // Desactiva la estrella recolectada
             pelucheSonido.play();
+
+
+            SonidosQuietas.forEach(function (sonido) {
+                sonido.stop();
+            });
             // Aumenta la puntuación y actualiza el texto
             score += 10;
             scoreText.setText('Score: ' + score);
