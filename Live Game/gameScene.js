@@ -387,23 +387,36 @@ class GameScene extends Phaser.Scene {
             });
 
             // Crea una bomba en una posición aleatoria
-            const x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-            const bomb = this.bombs.create(x, 16, 'bomb');
-            bomb.setBounce(1);
-            bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            bomb.allowGravity = false;
+            // const x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+            // const bomb = this.bombs.create(x, 16, 'bomb');
+            // bomb.setBounce(1);
+            // bomb.setCollideWorldBounds(true);
+            // bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            // bomb.allowGravity = false;
+            this.time.addEvent({
+                delay: 15000, // Lanzar cada 2 segundos
+                callback: this.launchBomb,
+                callbackScope: this,
+                loop: true
+            });
         }
     }
 
     createEnemy() {
         // Asegúrate de que el enemigo no se cree si ya existe
+        if (this.enemigo) return;
                 
-        const x = Phaser.Math.Between(0, this.cameras.main.width);
+        const x = Phaser.Math.Between(300, 1100);
         this.enemigo = this.add.sprite(x, 50, 'HahariR').setScale(0.2);
         this.sonidoaAHahari.play();
         // Configura la colisión del enemigo con el jugador
         this.physics.add.collider(this.player, this.enemigo, this.hitBomb, null, this);
+        this.time.addEvent({
+            delay: 2000, // Lanzar cada 2 segundos
+            callback: this.launchBomb,
+            callbackScope: this,
+            loop: true
+        });
     }
 
     hitBomb(player, bomb) {
@@ -422,5 +435,38 @@ class GameScene extends Phaser.Scene {
 
         // Guardar los datos del jugador al finalizar el juego
         this.jugador.guardar();
+    }
+
+
+    launchBomb() {
+        if (!this.enemigo) return; // Asegúrate de que el enemigo exista
+    
+        const bomb = this.bombs.create(this.enemigo.x, this.enemigo.y, 'bomb');
+        bomb.setBounce(1); // Permite que la bomba rebote
+        bomb.setCollideWorldBounds(true); // Colisiona con los límites del mundo
+        //bomb.allowGravity = true; // Permite que la bomba caiga
+        bomb.setScale(0.05); // Cambia el tamaño de la bomba
+        bomb.body.allowGravity = false;
+        // Establecer la dirección de la bomba según la dirección del enemigo
+        const direction = this.enemigoDireccion === 1 ? 250 : -250; // 200 es la velocidad horizontal de la bomba
+        bomb.setVelocityX(direction); // Velocidad horizontal
+    
+        // Establecer una velocidad vertical baja para que baje lentamente
+        bomb.setVelocityY(60); // Ajusta este valor para controlar la velocidad de descenso
+        this.physics.add.collider(bomb, this.platforms, () => {
+            // Invertir la velocidad vertical para que la bomba suba
+            bomb.setVelocityY(-60); // Cambia este valor para controlar la velocidad de subida
+        });
+            // Añadir un evento de actualización para controlar el movimiento de la bomba
+    this.bombs.children.iterate((child) => {
+        if (child.body) {
+            // Si la bomba está por encima de un cierto límite, invertir la velocidad
+            if (child.y < 100) { // Cambia 100 por la altura máxima que deseas
+                child.setVelocityY(60); // Cambia a velocidad de bajada
+            } else if (child.y >= 700) { // Cambia 715 por la altura mínima (suelo)
+                child.setVelocityY(-60); // Cambia a velocidad de subida
+            }
+        }
+    });
     }
 }
