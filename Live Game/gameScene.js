@@ -86,6 +86,8 @@ class GameScene extends Phaser.Scene {
     create() {
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         this.musicafondo.play();
+        this.idleTimer = 0;
+        this.lastUpdateTime = 0;
 
         // Añade el fondo del juego
         let sky = this.add.image(750, 400, 'sky');
@@ -156,16 +158,16 @@ class GameScene extends Phaser.Scene {
                 repeat: 0 // No repetir la animación
             });
 
-            this.anims.create({
-                key:'quieto',
-                frames:[
-                    {key:'Shizuka_muerte'},
-                    {key:'Shizuka_quieta'}
-                ],
-                frameRate:10,
-                repeat:0
-            });
 
+            this.anims.create({
+                key: 'quieto',
+                frames: [
+                    { key:'Nano_quieta1', duration: 3000 }, // Se mantiene 3 segundos
+                    { key:'Nano_quieta' } // Luego cambia y se queda aquí
+                ],
+                frameRate: 1, // Se ejecuta lentamente
+                repeat: -1    // Se mantiene en el último frame
+            });
 
 
         } else if (this.personaje == 2) {
@@ -199,14 +201,15 @@ class GameScene extends Phaser.Scene {
             });
 
             this.anims.create({
-                key:'quieto',
-                frames:[
-                    {key:'Nano_quieta'},
-                    {key:'Nano_quieta1'}
+                key: 'quieto',
+                frames: [
+                    { key:'Shizuka_muerte', duration: 3000 }, // Se mantiene 3 segundos
+                    { key:'Shizuka_quieta' } // Luego cambia y se queda aquí
                 ],
-                frameRate:10,
-                repeat:0
+                frameRate: 1, // Se ejecuta lentamente
+                repeat: -1    // Se mantiene en el último frame
             });
+            
 
         }
 
@@ -273,18 +276,29 @@ class GameScene extends Phaser.Scene {
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
+            this.idleTimer = 0; 
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('walk_right', true);
+            this.idleTimer = 0; 
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else {
             this.player.setVelocityX(0);
-            if (this.personaje == 1) {
-                this.player.setTexture('Nano_parada');
-            } else if (this.personaje == 2) {
-                this.player.setTexture('Shizuka_parada');
+            this.idleTimer += time - (this.lastUpdateTime || time);
+            this.lastUpdateTime = time;
+
+            if (this.idleTimer >= 3000) {
+                this.player.anims.play('quieto', true);
+            } else{
+
+                if (this.personaje == 1) {
+                    this.player.setTexture('Nano_parada');
+                } else if (this.personaje == 2) {
+                    this.player.setTexture('Shizuka_parada');
+                }
             }
+            
 
             // Verificar si es momento de reproducir un sonido de idle
             if (time > this.cancionrandom + this.delaycancion) {
@@ -299,6 +313,7 @@ class GameScene extends Phaser.Scene {
 
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
+            this.idleTimer = 0;
             if (this.personaje == 1) {
                 this.player.setTexture('Nano_brinca');
             } else if (this.personaje == 2) {
