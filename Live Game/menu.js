@@ -1,19 +1,21 @@
 class MainMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'MainMenu' });
+        this.selectedCharacter = null;
     }
 
     preload() {
         this.load.image('menuBackground', 'assets/fondo.jpg');
         this.load.image('playButton', 'assets/play.png');
+
         // Cargar los sonidos
-        this.load.audio('sonidoNano', 'assets/PresentacionNano.mp3');
-        this.load.audio('sonidoShizuka', 'assets/ShizukaPresentación.mp3');
+        this.load.audio('sonidoNano', 'assets/Nano/PresentacionNano.mp3');
+        this.load.audio('sonidoShizuka', 'assets/Shizuka/ShizukaPresentación.mp3');
     }
 
     create() {
         this.add.image(700, 300, 'menuBackground');
-
+        
         // Botón de "Jugar"
         const playButton = this.add.image(700, 400, 'playButton').setInteractive();
         playButton.setScale(0.5);
@@ -24,62 +26,29 @@ class MainMenu extends Phaser.Scene {
 
         // Configurar el evento de clic en el botón "Jugar"
         playButton.on('pointerdown', () => {
-            this.showNameInput(); // Cambiar a la escena del juego
-        });
-    }
-
-    // Método que muestra la pantalla para ingresar el nombre
-    showNameInput() {
-        // Crear un contenedor de HTML dentro del juego (esto solo aparecerá cuando se haga clic en "Jugar")
-        let container = document.createElement('div');
-        container.id = 'nameInputContainer';  // Ya no es necesario aplicar estilos directamente aquí
-
-        container.innerHTML = `
-            <h2>Ingresa tu nombre:</h2>
-            <input type="text" id="playerName" placeholder="Nombre del jugador" />
-            <button id="submitNameButton">Aceptar</button>
-        `;
-        document.body.appendChild(container);
-
-        // Event listener para el botón "Aceptar"
-        let button = document.getElementById('submitNameButton');
-        button.addEventListener('click', () => {
-            let playerName = document.getElementById('playerName').value.trim();
-
-            if (playerName) {
-                // Crear un nuevo jugador y guardarlo
-                let jugador = new Jugador(playerName);
-                jugador.guardar();
-
-                // Eliminar la pantalla de nombre
-                document.body.removeChild(container);
-
-                // Iniciar la escena del juego
-                this.scene.start('GameScene');
+            if (this.selectedCharacter) {
+                this.scene.start('GameScene', { personaje: this.selectedCharacter });
             } else {
-                alert('Por favor ingresa un nombre válido.');
+                console.log("Selecciona un personaje antes de jugar");
             }
         });
     }
 
-    selectCharacter(character, personaje) {
-        selectedCharacter = character;
-        document.getElementById('characterSelection').style.display = 'none';
+    // Método para seleccionar personaje y reproducir sonido
+    selectCharacter(personaje) {
+        this.selectedCharacter = personaje;
 
-        // Obtener la escena actual
-        let scene = this.scene.get('GameScene');
-
-        // Reanudar la física del juego si estaba pausada
-        scene.physics.resume();
-
-        // Reproducir el sonido correspondiente
-        if (personaje === 'Nano' && this.sonidoNano) {
+        // Reproducir sonido según el personaje
+        if (personaje === 'Nano') {
             this.sonidoNano.play();
-        } else if (personaje === 'Shizuka' && this.sonidoShizuka) {
+        } else if (personaje === 'Shizuka') {
             this.sonidoShizuka.play();
         }
+
+        console.log(`Personaje seleccionado: ${this.selectedCharacter}`);
     }
 }
+
 
 function hoverCharacter(element, newSrc) {
     let img = element.querySelector("img");
@@ -93,4 +62,3 @@ function hoverCharacter(element, newSrc) {
         img.style.opacity = "1"; // Restablece la opacidad con la nueva imagen
     }, 150);
 }
-
