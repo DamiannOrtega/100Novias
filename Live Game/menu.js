@@ -22,10 +22,10 @@ class MainMenu extends Phaser.Scene {
         this.sonidoNano = this.sound.add('sonidoNano');
         this.sonidoShizuka = this.sound.add('sonidoShizuka');
 
-        // Evento al presionar "Jugar"
+        // Configurar el evento de clic en el botón "Jugar"
         playButton.on('pointerdown', () => {
             this.scene.start('GameScene'); // Cambiar a la escena del juego
-        });
+        });   
     }
     selectCharacter(character, personaje) {
         selectedCharacter = character;
