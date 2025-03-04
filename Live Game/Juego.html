@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Making your first Phaser 3 Game - Part 10</title>
+    <title>100 Kanojo, Atrapa a Rentarou</title>
     <!-- Incluye la librería Phaser 3 desde un CDN -->
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <style type="text/css">
@@ -18,23 +18,27 @@
     <script type="text/javascript">
 
         // Configuración del juego con Phaser
-        var config = {
-            type: Phaser.AUTO, // Tipo de renderizado (WebGL o Canvas, automático)
-            width: 800,       // Ancho de la pantalla del juego
-            height: 600,      // Alto de la pantalla del juego
-            physics: {
-                default: 'arcade', // Motor de física Arcade (sencillo y ligero)
-                arcade: {
-                    gravity: { y: 300 }, // Gravedad en el eje Y (hacia abajo)
-                    debug: false         // Modo debug desactivado
-                }
-            },
-            scene: {
-                preload: preload, // Función para cargar recursos
-                create: create,   // Función para crear objetos del juego
-                update: update    // Función que se ejecuta en cada fotograma
+            var config = {
+        type: Phaser.AUTO,
+        width: 1500,
+        height: 800,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 300 },
+                debug: false
             }
-        };
+        },
+        audio: {
+            disableWebAudio: false
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
 
         // Variables globales del juego
         var player;      // Jugador
@@ -45,58 +49,127 @@
         var score = 0;   // Puntuación del jugador
         var gameOver = false; // Estado del juego (si ha terminado)
         var scoreText;   // Texto que muestra la puntuación
+        
+        
+        var personaje=2 ;//Seleccion de personaje
+
+        //Musica
+        var musicafondo;
+        var SonidosQuietas = [];
+        var pelucheSonido;
+        var SonidoMuerte;
+        var cancionrandom = 0;
+        var delaycancion = Phaser.Math.Between(5000, 10000); // Entre 5 y 10 segundos
 
         // Inicializa el juego con la configuración proporcionada
         var game = new Phaser.Game(config);
 
         // Función para cargar los recursos del juego
         function preload() {
-            this.load.image('sky', 'assets/sky.png');       // Fondo del juego
-            this.load.image('ground', 'assets/platform.png'); // Plataforma
+
+            //Ambiente
+            this.load.image('sky', 'assets/fondo.jpg');       // Fondo del juego
+            this.load.image('groundsmall', 'assets/plataforma.png'); // Plataforma
+            this.load.image('suelo', 'assets/piso.jpg'); // Plataforma
+            this.load.image('ground', 'assets/plataforma2.png'); // Plataforma
             this.load.image('peluche', 'assets/Flush.png');     // Estrella
             this.load.image('bomb', 'assets/bomb.png');    // Bomba
-            this.load.image('player_idle', 'assets/NanoParada.png');
-            this.load.image('player_left', 'assets/NanoIzq.png');
-            this.load.image('player_left_idle', 'assets/nanoIzqParada.png');
-            this.load.image('player_right_idle', 'assets/nanoDerParada.png');
-            this.load.image('player_right', 'assets/NanoDer.png');
-            this.load.image('player_jump', 'assets/NanoDerParada.png');
-            this.load.image('player_dead', 'assets/NanoMuerte.png');
 
-            //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 }); // Spritesheet del jugador
+            //SHIZUKA
+            this.load.image('Shizuka_parada', 'assets/Shizuka/s1.png');
+            this.load.image('Shizuka_parada2', 'assets/Shizuka/s3.png');
+            this.load.image('Shizuka_izquierda', 'assets/Shizuka/s2.png');
+            this.load.image('Shizuka_izquierda2', 'assets/Shizuka/Shizuka.png');
+            this.load.image('Shizuka_derecha', 'assets/Shizuka/s4.png');
+            this.load.image('Shizuka_derecha2', 'assets/Shizuka/s5.png');
+            this.load.image('Shizuka_muerte', 'assets/Shizuka/Smuerte.png');
+
+            //NANO
+            this.load.image('Nano_parada', 'assets/Nano/NanoParada.png');
+            this.load.image('Nano_izquierda', 'assets/Nano/NanoIzq.png');
+            this.load.image('Nano_izquierda_parada', 'assets/Nano/nanoIzqParada.png');
+            this.load.image('Nano_derecha_parada', 'assets/Nano/nanoDerParada.png');
+            this.load.image('Nano_derecha', 'assets/Nano/NanoDer.png');
+            this.load.image('Nano_brinca', 'assets/Nano/NanoDerParada.png');
+            this.load.image('Nano_muerte', 'assets/Nano/NanoMuerte.png');
+            //MUSICA Y SONIDOS
+            this.load.audio('musica_fondo','assets/Nivel1.mp3');
+            //SHIZUKA
+            this.load.audio('Shizuka_coin','assets/Shizuka/ShizukaFlush.mp3');
+            this.load.audio('Shizuka_muerteS','assets/Shizuka/MuerteShizuka.mp3');
+            this.load.audio('Shizuka_paradaS','assets/Shizuka/DialogoShizuka.mp3');
+            this.load.audio('Shizuka_paradaS2','assets/Shizuka/Dialogo2Shizuka.mp3');
+            this.load.audio('Shizuka_paradaS3','assets/Shizuka/DialogoShizuka3.mp3');
+            this.load.audio('Shizuka_paradaS4','assets/Shizuka/DialogoShizuka4.mp3');
+            this.load.audio('Shizuka_paradaS5','assets/Shizuka/DialogoShizuka5.mp3');
+
+            //NANO
+            this.load.audio('Nano_coin','assets/Nano/RegojerPeluche.mp3');
+            this.load.audio('Nano_muerteS','assets/Nano/muertenano.mp3');
+            this.load.audio('Nano_paradaS','assets/Nano/NanoDialogo2.mp3');
+            this.load.audio('Nano_paradaS2','assets/Nano/NanoDialogo3.mp3');
+            this.load.audio('Nano_paradaS3','assets/Nano/DialogoNano.mp3');
+
+
         }
 
         // Función para crear los objetos del juego
         function create() {
-            // Añade el fondo del juego
-            this.add.image(400, 300, 'sky');
 
+            musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
+            musicafondo.play();
+
+            // Añade el fondo del juego
+            let sky = this.add.image(750, 400, 'sky'); 
+            sky.setDisplaySize(1500, 800); // Ajusta al tamaño de la pantalla
+            // sky.setScale(1.2);    
             // Crea un grupo de plataformas estáticas (no se mueven)
             platforms = this.physics.add.staticGroup();
 
             // Crea el suelo del juego y lo escala para que cubra el ancho de la pantalla
-            platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+            //platforms.create(100, 715, 'suelo').setScale(0.01).refreshBody();
+
+            //Suelo
+            for (let x = 0; x <= 1500; x += 30) {  
+            platforms.create(x, 715, 'groundsmall').setScale(0.8).refreshBody();
+            }
 
             // Crea plataformas adicionales (ledges)
-            platforms.create(600, 400, 'ground');
-            platforms.create(50, 250, 'ground');
-            platforms.create(750, 220, 'ground');
+            platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1000, 300, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1050, 300, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1200, 300, 'groundsmall').setScale(0.8).refreshBody();
+            platforms.create(1300, 170, 'ground').setScale(0.8).refreshBody();
+
+            platforms.create(100, 370, 'ground').setScale(0.8).refreshBody();
+            platforms.create(400, 570, 'ground').setScale(0.8).refreshBody();
+            platforms.create(340, 250, 'ground').setScale(0.9).refreshBody();
+
+            platforms.create(750, 280, 'ground');
 
             // Crea al jugador en una posición inicial
             //player = this.physics.add.sprite(100, 450, 'dude');
-            player = this.physics.add.sprite(100, 450, 'player_idle').setScale(0.2);
+            if(personaje==1){
+                player = this.physics.add.sprite(100, 650, 'Nano_parada').setScale(0.2);
+            }else if(personaje==2){
+                player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
+            }
 
 
             // Configura propiedades físicas del jugador (rebote y límites del mundo)
             player.setBounce(0.2);
             player.setCollideWorldBounds(true);
 
+
+
+            if(personaje==1){
+
             // Crea animaciones para el jugador (izquierda, derecha y quieto)
             this.anims.create({
                 key: 'walk_left',
                 frames: [
-                    { key: 'player_left' },
-                    { key: 'player_left_idle' }
+                    { key: 'Nano_izquierda' },
+                    { key: 'Nano_izquierda_parada' }
                 ],
                 frameRate: 10,
                 repeat: -1
@@ -105,27 +178,77 @@
             this.anims.create({
                 key: 'walk_right',
                 frames: [
-                    { key: 'player_right' },
-                    { key: 'player_right_idle' }
+                    { key: 'Nano_derecha' },
+                    { key: 'Nano_derecha_parada' }
+                ],
+                frameRate: 10,
+                repeat: -1
+            });
+    
+            this.anims.create({
+                key: 'die',
+                frames: [
+                    { key: 'Nano_muerte' }
+                ],
+                frameRate: 10,
+                repeat: 0 // No repetir la animación
+            });
+
+
+            }else if(personaje==2){
+
+                this.anims.create({
+                key: 'walk_left',
+                frames: [
+                    { key: 'Shizuka_izquierda' },
+                    { key: 'Shizuka_izquierda2' }
                 ],
                 frameRate: 10,
                 repeat: -1
             });
 
             this.anims.create({
-                key: 'turn',
-                frames: [{ key: 'dude', frame: 4 }],
-                frameRate: 20
+                key: 'walk_right',
+                frames: [
+                    { key: 'Shizuka_derecha' },
+                    { key: 'Shizuka_derecha2' }
+                ],
+                frameRate: 10,
+                repeat: -1
             });
-    
             this.anims.create({
                 key: 'die',
                 frames: [
-                    { key: 'player_dead' }
+                    { key: 'Shizuka_muerte' }
                 ],
                 frameRate: 10,
-                repeat: 0 // No repetir la animación
+                repeat: 0 
             });
+
+            }
+            //Sonidos
+            if (personaje == 1) {  // Nano
+                SonidosQuietas = [
+                this.sound.add('Nano_paradaS'),
+                this.sound.add('Nano_paradaS2'),
+                this.sound.add('Nano_paradaS3')
+            ];
+            pelucheSonido = this.sound.add('Nano_coin');
+            SonidoMuerte = this.sound.add('Nano_muerteS');
+        } else if (personaje == 2) {  // Shizuka
+            SonidosQuietas = [
+                this.sound.add('Shizuka_paradaS'),
+                this.sound.add('Shizuka_paradaS2'),
+                this.sound.add('Shizuka_paradaS3'),
+                this.sound.add('Shizuka_paradaS4'),
+                this.sound.add('Shizuka_paradaS5')
+
+            ];
+            pelucheSonido = this.sound.add('Shizuka_coin');
+            SonidoMuerte = this.sound.add('Shizuka_muerteS');
+        }
+
+
 
 
             // Configura las teclas del cursor para mover al jugador
@@ -134,7 +257,7 @@
             // Crea un grupo de estrellas para recolectar
             peluches = this.physics.add.group({
                 key: 'peluche',    
-                repeat: 11, // 12 estrellas en total
+                repeat: 20, // 12 estrellas en total
                 setXY: { x: 12, y: 0, stepX: 70 } // Espaciadas 70 píxeles en el eje X
             });
 
@@ -163,7 +286,7 @@
         }
 
         // Función que se ejecuta en cada fotograma del juego
-        function update() {
+        function update(time) {
             if (gameOver) {
                 return;
             }
@@ -178,20 +301,39 @@
             }
             else {
                 player.setVelocityX(0);
-                player.setTexture('player_idle');
+                if(personaje==1){
+                    player.setTexture('Nano_parada');
+                }else if(personaje==2){
+                    player.setTexture('Shizuka_parada');
+                }
             }
+
+        // Verificar si es momento de reproducir un sonido de idle
+        if (time > cancionrandom + delaycancion) {
+            let randomSound = Phaser.Math.RND.pick(SonidosQuietas);
+            randomSound.play();
+
+            // Espera 3 segundos después de que termine y luego elige otro
+            delaycancion = Phaser.Math.Between(5000, 10000);
+            cancionrandom = time + randomSound.duration * 1000 + 3000;
+        }
 
             if (cursors.up.isDown && player.body.touching.down) {
                 player.setVelocityY(-330);
-                player.setTexture('player_jump');
+                if(personaje==1){
+                    player.setTexture('Nano_brinca');
+                }else if(personaje==2){
+                    player.setTexture('Shizuka_parada2');
+                }
             }
+
 
         }
 
         // Función que se ejecuta cuando el jugador recoge una estrella
         function collectStar(player, peluche) {
             peluche.disableBody(true, true); // Desactiva la estrella recolectada
-
+            pelucheSonido.play();
             // Aumenta la puntuación y actualiza el texto
             score += 10;
             scoreText.setText('Score: ' + score);
@@ -215,9 +357,15 @@
         // Función que se ejecuta cuando el jugador choca con una bomba
         function hitBomb(player, bomb) {
             this.physics.pause(); // Pausa la física del juego
-
+            musicafondo.stop();
+            SonidoMuerte.play();
             player.setTint(0xff0000); // Cambia el color del jugador a rojo
-            player.setTexture('player_dead'); // Reproduce la animación de epeluche quieto
+
+            if(personaje==1){
+                player.setTexture('Nano_muerte'); // Reproduce la animación de epeluche quieto
+            }else if(personaje==2){
+                player.setTexture('Shizuka_muerte'); // Reproduce la animación de epeluche quieto
+            }
             player.anims.play('die', true);
             gameOver = true; // Marca el juego como terminado
         }
