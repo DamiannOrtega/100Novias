@@ -10,11 +10,81 @@
         body {
             margin: 0;
         }
+
+        #characterSelection {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+            /* Centramos la ventana */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+
+        .characters {
+            display: flex;
+            gap: 20px;
+        }
+
+        .character {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .character img {
+            width: 100px;
+            height: auto;
+        }
+
+        .character:nth-child(2) img {
+            width: 160px;
+            /* Ajusta el tamaño del segundo personaje */
+        }
+
+        /* Estilos para el efecto neón */
+        .character:nth-child(1):hover {
+            box-shadow: 0 0 15px 5px rgba(255, 105, 180, 0.8);
+            /* Rosa */
+        }
+
+        .character:nth-child(2):hover {
+            box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.8);
+            /* Azul */
+        }
     </style>
 </head>
 
 <body>
     <!-- <img src="/Phaser Example/assets/NanoParada.png" alt=""> -->
+    <div id="characterSelection">
+        <h2>Selecciona tu personaje</h2>
+        <div class="characters">
+            <div class="character" onclick="selectCharacter('player_idle')"
+                onmouseover="hoverCharacter(this, 'assets/NanoSeleccionada.png')"
+                onmouseout="hoverCharacter(this, 'assets/Nano.png')">
+                <img src="assets/Nano.png" alt="Personaje 1">
+                <p>Personaje 1</p>
+            </div>
+            <div class="character" onclick="selectCharacter('player_idle')"
+                onmouseover="hoverCharacter(this, 'assets/Shizuka.png')"
+                onmouseout="hoverCharacter(this, 'assets/Shizuka_.png')">
+                <img src="assets/Shizuka.png" alt="Personaje 2">
+                <p>Personaje 2</p>
+            </div>
+
+        </div>
+    </div>
+
     <script type="text/javascript">
 
         // Configuración del juego con Phaser
@@ -38,7 +108,7 @@
 
         // Variables globales del juego
         var player;      // Jugador
-        var peluches;       // Grupo de estrellas para recolectar
+        var peluches;    // Grupo de estrellas para recolectar
         var bombs;       // Grupo de bombas
         var platforms;   // Plataformas del juego
         var cursors;     // Teclas del cursor (flechas)
@@ -48,6 +118,31 @@
 
         // Inicializa el juego con la configuración proporcionada
         var game = new Phaser.Game(config);
+        var selectedCharacter = 'player_idle'; // Personaje por defecto
+
+        var sonido1 = new Audio('assets/PresentacionNano.mp3');
+        var sonido2 = new Audio('assets/ShizukaPresentación.mp3');
+
+
+        //Funcion para seleccionar el personaje 
+        function selectCharacter(character, sonido) {
+            selectedCharacter = character; // Guarda el personaje elegido
+            document.getElementById('characterSelection').style.display = 'none'; // Oculta la selección
+            game.scene.scenes[0].physics.resume(); // Reanuda la física del juego
+            // Reproduce el sonido correspondiente
+            if (sonido === 'PresentacionNano.mp3') {
+                this.sound.play('sonido1');
+            } else if (sonido === 'ShizukaPresentación.mp3') {
+                this.sound.play('sonido2');
+            }
+        }
+
+        //Funcion que hace la animacion de la seleccion de los personajes
+        function hoverCharacter(element, newImage) {
+            element.querySelector("img").src = newImage;
+        }
+
+
 
         // Función para cargar los recursos del juego
         function preload() {
@@ -84,12 +179,13 @@
 
             // Crea al jugador en una posición inicial
             //player = this.physics.add.sprite(100, 450, 'dude');
-            player = this.physics.add.sprite(100, 450, 'player_idle').setScale(0.2);
+            player = this.physics.add.sprite(100, 450, selectedCharacter).setScale(0.2);
 
 
             // Configura propiedades físicas del jugador (rebote y límites del mundo)
             player.setBounce(0.2);
             player.setCollideWorldBounds(true);
+            this.physics.pause();//Pausar el juego hasta que se seleccione el personaje
 
             // Crea animaciones para el jugador (izquierda, derecha y quieto)
             this.anims.create({
@@ -117,7 +213,7 @@
                 frames: [{ key: 'dude', frame: 4 }],
                 frameRate: 20
             });
-    
+
             this.anims.create({
                 key: 'die',
                 frames: [
@@ -133,7 +229,7 @@
 
             // Crea un grupo de estrellas para recolectar
             peluches = this.physics.add.group({
-                key: 'peluche',    
+                key: 'peluche',
                 repeat: 11, // 12 estrellas en total
                 setXY: { x: 12, y: 0, stepX: 70 } // Espaciadas 70 píxeles en el eje X
             });
@@ -143,7 +239,7 @@
                 child.setScale(0.07);
                 child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
             });
-   
+
             // Crea un grupo de bombas
             bombs = this.physics.add.group();
 
