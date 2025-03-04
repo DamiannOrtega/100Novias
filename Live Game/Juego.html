@@ -69,18 +69,19 @@
     <div id="characterSelection">
         <h2>Selecciona tu personaje</h2>
         <div class="characters">
-            <div class="character" onclick="selectCharacter('player_idle')"
+            <div class="character" onclick="selectCharacter('player_idle', 'Nano')"
                 onmouseover="hoverCharacter(this, 'assets/NanoSeleccionada.png')"
                 onmouseout="hoverCharacter(this, 'assets/Nano.png')">
                 <img src="assets/Nano.png" alt="Personaje 1">
                 <p>Personaje 1</p>
             </div>
-            <div class="character" onclick="selectCharacter('player_idle')"
+            <div class="character" onclick="selectCharacter('player_idle', 'Shizuka')"
                 onmouseover="hoverCharacter(this, 'assets/Shizuka.png')"
                 onmouseout="hoverCharacter(this, 'assets/Shizuka_.png')">
                 <img src="assets/Shizuka.png" alt="Personaje 2">
                 <p>Personaje 2</p>
             </div>
+
 
         </div>
     </div>
@@ -120,22 +121,22 @@
         var game = new Phaser.Game(config);
         var selectedCharacter = 'player_idle'; // Personaje por defecto
 
-        var sonido1 = new Audio('assets/PresentacionNano.mp3');
-        var sonido2 = new Audio('assets/ShizukaPresentación.mp3');
-
-
         //Funcion para seleccionar el personaje 
-        function selectCharacter(character, sonido) {
-            selectedCharacter = character; // Guarda el personaje elegido
-            document.getElementById('characterSelection').style.display = 'none'; // Oculta la selección
-            game.scene.scenes[0].physics.resume(); // Reanuda la física del juego
-            // Reproduce el sonido correspondiente
-            if (sonido === 'PresentacionNano.mp3') {
-                this.sound.play('sonido1');
-            } else if (sonido === 'ShizukaPresentación.mp3') {
-                this.sound.play('sonido2');
+        function selectCharacter(character, personaje) {
+            selectedCharacter = character;
+            document.getElementById('characterSelection').style.display = 'none';
+            let scene = game.scene.scenes[0]; // Obtener la escena actual
+            scene.physics.resume(); // Reanudar la física del juego
+
+            // Reproducir el sonido correspondiente asegurándonos de que ya está cargado
+            if (personaje === 'Nano' && scene.sonidoNano) {
+                scene.sonidoNano.play();
+            } else if (personaje === 'Shizuka' && scene.sonidoShizuka) {
+                scene.sonidoShizuka.play();
             }
         }
+
+
 
         //Funcion que hace la animacion de la seleccion de los personajes
         function hoverCharacter(element, newImage) {
@@ -157,6 +158,10 @@
             this.load.image('player_right', 'assets/NanoDer.png');
             this.load.image('player_jump', 'assets/NanoDerParada.png');
             this.load.image('player_dead', 'assets/NanoMuerte.png');
+
+            // Cargar los sonidos
+            this.load.audio('sonidoNano', 'assets/PresentacionNano.mp3');
+            this.load.audio('sonidoShizuka', 'assets/ShizukaPresentación.mp3');
 
             //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 }); // Spritesheet del jugador
         }
@@ -180,6 +185,10 @@
             // Crea al jugador en una posición inicial
             //player = this.physics.add.sprite(100, 450, 'dude');
             player = this.physics.add.sprite(100, 450, selectedCharacter).setScale(0.2);
+
+            // Cargar sonidos en la escena
+            this.sonidoNano = this.sound.add('sonidoNano');
+            this.sonidoShizuka = this.sound.add('sonidoShizuka');
 
 
             // Configura propiedades físicas del jugador (rebote y límites del mundo)
