@@ -39,6 +39,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('suelo', 'assets/piso.jpg'); // Plataforma
         this.load.image('ground', 'assets/plataforma2.png'); // Plataforma
         this.load.image('peluche', 'assets/Flush.png');     // Estrella
+        this.load.image('vacio', 'assets/vacio.png');
         this.load.image('bomb', 'assets/bomb.png');    // Bomba
 
         // SHIZUKA
@@ -104,6 +105,8 @@ class GameScene extends Phaser.Scene {
         this.platforms.create(1050, 300, 'groundsmall').setScale(0.8).refreshBody();
         this.platforms.create(1200, 300, 'groundsmall').setScale(0.8).refreshBody();
         this.platforms.create(1300, 170, 'ground').setScale(0.8).refreshBody();
+        this.platforms.create(1150, 530, 'vacio').setScale(0.4).refreshBody();;
+        this.platforms.create(1200, 530, 'vacio').setScale(0.4).refreshBody();;
 
         this.platforms.create(100, 370, 'ground').setScale(0.8).refreshBody();
         this.platforms.create(400, 570, 'ground').setScale(0.8).refreshBody();
