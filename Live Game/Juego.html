@@ -9,10 +9,83 @@
         body {
             margin: 0;
         }
+
+        #characterSelection {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: none;
+            box-shadow: none;
+
+            /* Centramos la ventana */
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+
+        .characters {
+            display: flex;
+            gap: 20px;
+        }
+
+        .character {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .character img {
+            width: 100px;
+            height: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+
+        .character:nth-child(2) img {
+            width: 160px;
+            /* Ajusta el tamaño del segundo personaje */
+        }
+
+        /* Estilos para el efecto neón */
+        .character:nth-child(1):hover {
+            box-shadow: 0 0 15px 5px rgba(255, 105, 180, 0.8);
+            /* Rosa */
+        }
+
+        .character:nth-child(2):hover {
+            box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.8);
+            /* Azul */
+        }
     </style>
 </head>
 
 <body>
+
+    <div id="characterSelection">
+        <h2>Selecciona tu personaje</h2>
+        <div class="characters">
+            <div class="character" onclick="selectCharacter('player_idle', 'Nano')"
+                onmouseover="hoverCharacter(this, 'assets/Nano/NanoSeleccionada.png')"
+                onmouseout="hoverCharacter(this, 'assets/Nano/Nano.png')">
+                <img src="assets/Nano/Nano.png" alt="Personaje 1">
+                <p>Personaje 1</p>
+            </div>
+            <div class="character" onclick="selectCharacter('player_idle', 'Shizuka')"
+                onmouseover="hoverCharacter(this, 'assets/Nano/Shizuka.png')"
+                onmouseout="hoverCharacter(this, 'assets/Shizuka/Shizuka.png')">
+                <img src="assets/Shizuka/Shizuka.png" alt="Personaje 2">
+                <p>Personaje 2</p>
+            </div>
+
+
+        </div>
+    </div>
     <!-- Incluir todos los scripts -->
     <script src="menu.js"></script>
     <script src="nameInputScene.js"></script>
