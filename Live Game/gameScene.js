@@ -34,6 +34,10 @@ class GameScene extends Phaser.Scene {
         // Cargar el jugador desde localStorage
         this.jugador = Jugador.cargar(playerName);
 
+        // Verificar que el jugador se carga correctamente
+        console.log("Jugador cargado:", this.jugador);
+        console.log("Puntos del jugador:", this.jugador ? this.jugador.puntos : 'No encontrado');
+
         if (!this.jugador) {
             // Si no existe el jugador en localStorage, crear uno nuevo
             this.jugador = new Jugador(playerName);
@@ -49,7 +53,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('ground', 'assets/plataforma2.png'); // Plataforma
         this.load.image('peluche', 'assets/Flush.png');     // Estrella
         this.load.image('vacio', 'assets/vacio.png');
-       // this.load.image('bomb', 'assets/bomb.png');    // Bomba
+        // this.load.image('bomb', 'assets/bomb.png');    // Bomba
 
         // SHIZUKA
         this.load.image('Shizuka_parada', 'assets/Shizuka/s1.png');
@@ -71,7 +75,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('Nano_muerte', 'assets/Nano/NanoMuerte.png');
         this.load.image('Nano_quieta', 'assets/Nano/NanoQuieta1.png');
         this.load.image('Nano_quieta1', 'assets/Nano/NanoQuieta.png');
-        
+
         // MÚSICA Y SONIDOS
         this.load.audio('musica_fondo', 'assets/Nivel1.mp3');
         // SHIZUKA
@@ -91,7 +95,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Nano_paradaS3', 'assets/Nano/DialogoNano.mp3');
 
         //Enemigos
-        this.load.image('bomb', 'assets/Enemigos/atacke.png');       
+        this.load.image('bomb', 'assets/Enemigos/atacke.png');
     }
 
     create() {
@@ -285,7 +289,7 @@ class GameScene extends Phaser.Scene {
         if (this.gameOver) {
             return;
         }
-    
+
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
@@ -300,7 +304,7 @@ class GameScene extends Phaser.Scene {
             this.player.setVelocityX(0);
             this.idleTimer += time - (this.lastUpdateTime || time);
             this.lastUpdateTime = time;
-    
+
             // Cambia a la animación "quieto" si han pasado 3 segundos o más de inactividad
             if (this.idleTimer >= 3000) {
                 this.player.anims.play('quieto', true);
@@ -312,18 +316,18 @@ class GameScene extends Phaser.Scene {
                     this.player.setTexture('Shizuka_parada');
                 }
             }
-    
+
             // Verificar si es momento de reproducir un sonido de idle
             if (time > this.cancionrandom + this.delaycancion) {
                 let randomSound = Phaser.Math.RND.pick(this.SonidosQuietas);
                 randomSound.play();
-    
+
                 // Espera 3 segundos después de que termine y luego elige otro
                 this.delaycancion = Phaser.Math.Between(5000, 10000);
                 this.cancionrandom = time + randomSound.duration * 1000 + 3000;
             }
         }
-    
+
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
             this.idleTimer = 0;
@@ -334,7 +338,7 @@ class GameScene extends Phaser.Scene {
             }
         }
     }
-    
+
     collectStar(player, peluche) {
         peluche.disableBody(true, true);
         this.pelucheSonido.play();

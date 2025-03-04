@@ -47,6 +47,9 @@ class MainMenu extends Phaser.Scene {
             let playerName = document.getElementById('playerName').value.trim();
 
             if (playerName) {
+
+                localStorage.setItem('playerName', playerName);
+                
                 // Crear un nuevo jugador y guardarlo
                 let jugador = new Jugador(playerName);
                 jugador.guardar();
