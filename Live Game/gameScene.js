@@ -27,7 +27,7 @@ class GameScene extends Phaser.Scene {
 
         //Enemigos
         this.enemigo = null;         
-        this.enemigoVelocidad = 100; 
+        this.enemigoVelocidad = 3; 
         this.enemigoDireccion = 1;
     }
 
@@ -122,9 +122,8 @@ class GameScene extends Phaser.Scene {
         // Mostrar el nombre del jugador
         this.playerNameText = this.add.text(16, 50, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
         
-        //Enemigos
-        
-        const x = Phaser.Math.Between(0, this.cameras.main.width);
+        //Enemigos  
+        const x = Phaser.Math.Between(300,1300);
         this.enemigo = this.add.sprite(x, 50, 'HahariR').setScale(0.2);
         // Crea plataformas adicionales (ledges)
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
