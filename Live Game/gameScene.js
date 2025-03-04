@@ -12,7 +12,7 @@ class GameScene extends Phaser.Scene {
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
 
-        this.personaje = 2;          // Selección de personaje
+        this.personaje = 1;          // Selección de personaje
 
         // Música y sonidos
         this.musicafondo = null;     // Música de fondo
@@ -49,6 +49,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('Shizuka_derecha', 'assets/Shizuka/s4.png');
         this.load.image('Shizuka_derecha2', 'assets/Shizuka/s5.png');
         this.load.image('Shizuka_muerte', 'assets/Shizuka/Smuerte.png');
+        this.load.image('Shizuka_quieta', 'assets/Shizuka/ShizukaQuieta.png');
 
         // NANO
         this.load.image('Nano_parada', 'assets/Nano/NanoParada.png');
@@ -58,7 +59,10 @@ class GameScene extends Phaser.Scene {
         this.load.image('Nano_derecha', 'assets/Nano/NanoDer.png');
         this.load.image('Nano_brinca', 'assets/Nano/NanoDerParada.png');
         this.load.image('Nano_muerte', 'assets/Nano/NanoMuerte.png');
-
+        this.load.image('Nano_quieta', 'assets/Nano/NanoQuieta1.png');
+        this.load.image('Nano_quieta1', 'assets/Nano/NanoQuieta.png');
+        
+        //
         // MÚSICA Y SONIDOS
         this.load.audio('musica_fondo', 'assets/Nivel1.mp3');
         // SHIZUKA
@@ -148,6 +152,19 @@ class GameScene extends Phaser.Scene {
                 frameRate: 10,
                 repeat: 0 // No repetir la animación
             });
+
+            this.anims.create({
+                key:'quieto',
+                frames:[
+                    {key:'Shizuka_muerte'},
+                    {key:'Shizuka_quieta'}
+                ],
+                frameRate:10,
+                repeat:0
+            });
+
+
+
         } else if (this.personaje == 2) {
             this.anims.create({
                 key: 'walk_left',
@@ -177,6 +194,17 @@ class GameScene extends Phaser.Scene {
                 frameRate: 10,
                 repeat: 0
             });
+
+            this.anims.create({
+                key:'quieto',
+                frames:[
+                    {key:'Nano_quieta'},
+                    {key:'Nano_quieta1'}
+                ],
+                frameRate:10,
+                repeat:0
+            });
+
         }
 
         // Sonidos
