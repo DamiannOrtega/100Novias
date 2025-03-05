@@ -30,6 +30,8 @@ class GameScene extends Phaser.Scene {
         this.enemigoVelocidad = 3;
         this.enemigoDireccion = 1;
         this.sonidoaAHahari = null;
+        //Objeto especial
+        this.rentaro=null;
     }
 
     init() {
@@ -101,6 +103,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('HahariR', 'assets/Enemigos/HahariAtaqueD.png');
         this.load.image('HahariL', 'assets/Enemigos/HahariAtaqueI.png');
         this.load.audio('Aparece_enemigo', 'assets/Enemigos/HahariAparece.mp3');
+        //objeto especial
+        this.load.image('Rentaro','assets/objetos/RentaroCaballo.png');
+
     }
 
     create() {
@@ -125,9 +130,6 @@ class GameScene extends Phaser.Scene {
         this.playerNameText = this.add.text(16, 50, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
 
         //Enemigos
-        // const x = Phaser.Math.Between(300,1300);
-        //  this.enemigo = this.add.sprite(x, 50, 'HahariR').setScale(0.2);
-        // // Crea plataformas adicionales (ledges)
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
         this.platforms.create(1000, 300, 'groundsmall').setScale(0.8).refreshBody();
         this.platforms.create(1050, 300, 'groundsmall').setScale(0.8).refreshBody();
@@ -297,6 +299,9 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(10000, this.createEnemy, [], this);
 
     }
+
+
+    
     update(time) {
         if (this.gameOver) {
             return;
@@ -306,11 +311,13 @@ class GameScene extends Phaser.Scene {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
             this.idleTimer = 0; // Resetear el temporizador de inactividad
+            this.lastUpdateTime=0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('walk_right', true);
             this.idleTimer = 0; // Resetear el temporizador de inactividad
+            this.lastUpdateTime=0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else {
             this.player.setVelocityX(0);
@@ -359,9 +366,10 @@ class GameScene extends Phaser.Scene {
                 // Cambiar la imagen del enemigo (puedes usar diferentes imágenes si lo deseas)
                 this.enemigo.setTexture(this.enemigoDireccion === 1 ? 'HahariR' : 'HahariL'); // Cambia a otra textura si tienes más
             }
-
-
         }
+
+        //Objeto especial
+
 
 
     }
