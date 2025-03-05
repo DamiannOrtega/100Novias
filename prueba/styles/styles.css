@@ -9,6 +9,7 @@ body {
 
 .contenedor {
     display: flex;
+    margin-top: -40px;
     flex-direction: column; /* Organiza los botones en columnas */
     align-items: flex-start; /* Alinea los botones a la izquierda */
     gap: 20px; /* Espacio entre los botones */
@@ -49,7 +50,6 @@ button {
     letter-spacing: 1px;
     font-weight: 600;
     font-size: 17px;
-    background: linear-gradient(135deg, #cb1155, #fc25a2);
     border-radius: 50px;
     position: relative;
     overflow: hidden;
@@ -57,9 +57,31 @@ button {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.btnJugar{
+    background: linear-gradient(135deg, #f82371, #fc25a2);
+
+}
+
+.btnTutorial{
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+
+.btnPuntuaciones{
+    background: linear-gradient(135deg, #f09819, #edde5d);
+}
+
+.btnAjustes{
+    background: linear-gradient(135deg, #ff1c68, #cc3e51);
+}
+
+.btnCreditos{
+    background: linear-gradient(135deg, #7619f0, #b35ded);
+}
+    
+
 button:active {
     transform: scale(0.9);
-    transition: all 100ms ease;
+    transition: all 50ms ease;
 }
 
 .icon {
@@ -71,27 +93,37 @@ button:active {
 
 .play {
     transition: all 0.5s ease;
-    transition-delay: 300ms;
+    transition-delay: 200ms;
 }
 
 button:hover .icon {
-    transform: scale(3) translate(50%);
+    transform: scale(3) translate(40%);
 }
 
-.now {
-    position: absolute;
-    left: 0;
-    transform: translateX(-100%);
-    transition: all 0.5s ease;
-    z-index: 2;
-}
-
-button:hover .now {
-    transform: translateX(10px);
-    transition-delay: 300ms;
-}
 
 button:hover .play {
-    transform: translateX(200%);
+    transform: translateX(100%);
     transition-delay: 300ms;
 }
+
+.btnTutorial:hover .play{
+    transform: translateX(70%);
+}
+
+.btnTutorial:hover .icon{
+    transform: scale(3) translate(60%);
+
+}
+
+.btnPuntuaciones:hover .play{
+    transform: translateX(30%);
+}
+
+.btnAjustes:hover .play{
+    transform: translateX(60%);
+}
+
+.btnCreditos:hover .play{
+    transform: translateX(60%);
+}
+
