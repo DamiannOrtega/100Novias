@@ -31,7 +31,7 @@ class GameScene extends Phaser.Scene {
         this.enemigoDireccion = 1;
         this.sonidoaAHahari = null;
         //Objeto especial
-        this.rentaro=null;
+        this.rentaro = null;
     }
 
     init() {
@@ -104,11 +104,13 @@ class GameScene extends Phaser.Scene {
         this.load.image('HahariL', 'assets/Enemigos/HahariAtaqueI.png');
         this.load.audio('Aparece_enemigo', 'assets/Enemigos/HahariAparece.mp3');
         //objeto especial
-        this.load.image('Rentaro','assets/objetos/RentaroCaballo.png');
+        this.load.image('Rentaro', 'assets/objetos/RentaroCaballo.png');
 
     }
 
     create() {
+        // Ocultar la selección de personajes cuando empieza el juego
+        document.getElementById("characterSelection").style.display = "none";
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         this.musicafondo.play();
         this.idleTimer = 0;
@@ -301,7 +303,7 @@ class GameScene extends Phaser.Scene {
     }
 
 
-    
+
     update(time) {
         if (this.gameOver) {
             return;
@@ -311,13 +313,13 @@ class GameScene extends Phaser.Scene {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
             this.idleTimer = 0; // Resetear el temporizador de inactividad
-            this.lastUpdateTime=0;
+            this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('walk_right', true);
             this.idleTimer = 0; // Resetear el temporizador de inactividad
-            this.lastUpdateTime=0;
+            this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
         } else {
             this.player.setVelocityX(0);
