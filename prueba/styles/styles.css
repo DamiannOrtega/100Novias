@@ -24,11 +24,29 @@ body {
     padding: 20px; /* Espacio interno del contenedor */
 }
 
+.titulo{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    margin-left: 1rem;
+
+}
+.titulo img{
+    width: 150px;
+    align-items: center;
+    height: 100px;
+    margin-left: 10rem;
+
+}
+
 .botones {
     display: flex;
     flex-direction: column; /* Organiza los botones en columnas */
     justify-content: center;
-    margin-top: 10rem;
+    margin-top: 1rem;
+
     margin-left: 5rem;
     gap: 20px; /* Espacio entre los botones */
     padding: 20px; /* Espacio interno del contenedor */
