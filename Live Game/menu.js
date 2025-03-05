@@ -5,7 +5,7 @@ class MainMenu extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('menuBackground', 'assets/fondo.jpg');
+        this.load.image('menuBackground', 'assets/Background/menu.jpg');
         this.load.image('playButton', 'assets/play.png');
 
         // Cargar los sonidos
@@ -14,7 +14,7 @@ class MainMenu extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(700, 300, 'menuBackground');
+        this.add.image(650, 500, 'menuBackground');
 
         // Botón de "Jugar"
         this.playButton = this.add.image(700, 400, 'playButton').setInteractive();
