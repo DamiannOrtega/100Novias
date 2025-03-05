@@ -59,6 +59,12 @@ class GameScene extends Phaser.Scene {
         this.load.image('vacio', 'assets/vacio.png');
         // this.load.image('bomb', 'assets/bomb.png');    // Bomba
 
+        //Interfaz
+        this.load.image('corazon', 'assets/objetos/Corazones.png');
+        this.load.image('iconoNano', 'assets/objetos/iconoNano.png');
+        this.load.image('iconoShizuka', 'assets/objetos/iconoShizuka.png');
+
+
         // SHIZUKA
         this.load.image('Shizuka_parada', 'assets/Shizuka/s1.png');
         this.load.image('Shizuka_parada2', 'assets/Shizuka/s3.png');
@@ -105,6 +111,8 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Aparece_enemigo', 'assets/Enemigos/HahariAparece.mp3');
         //objeto especial
         this.load.image('Rentaro', 'assets/objetos/RentaroCaballo.png');
+
+    
 
     }
 
@@ -302,8 +310,6 @@ class GameScene extends Phaser.Scene {
 
     }
 
-
-
     update(time) {
         if (this.gameOver) {
             return;
@@ -372,8 +378,6 @@ class GameScene extends Phaser.Scene {
 
         //Objeto especial
 
-
-
     }
 
     collectStar(player, peluche) {
@@ -396,13 +400,6 @@ class GameScene extends Phaser.Scene {
                 child.enableBody(true, child.x, 0, true, true);
             });
 
-            // Crea una bomba en una posición aleatoria
-            // const x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-            // const bomb = this.bombs.create(x, 16, 'bomb');
-            // bomb.setBounce(1);
-            // bomb.setCollideWorldBounds(true);
-            // bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            // bomb.allowGravity = false;
             this.time.addEvent({
                 delay: 5000, // Lanzar cada 5 segundos
                 callback: this.launchBomb,
@@ -446,7 +443,6 @@ class GameScene extends Phaser.Scene {
         // Guardar los datos del jugador al finalizar el juego
         this.jugador.guardar();
     }
-
 
     launchBomb() {
 
