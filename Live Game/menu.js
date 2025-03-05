@@ -89,3 +89,16 @@ class MainMenu extends Phaser.Scene {
         this.showNameInput();
     }
 }
+//Funcion para la animacion de la selccion de personajes
+function hoverCharacter(element, newSrc) {
+    let img = element.querySelector("img");
+
+    // Aplica la animación de desvanecimiento
+    img.style.opacity = "0";
+
+    // Espera 150ms antes de cambiar la imagen
+    setTimeout(() => {
+        img.src = newSrc;
+        img.style.opacity = "1"; // Restablece la opacidad con la nueva imagen
+    }, 150);
+}
