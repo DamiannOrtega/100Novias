@@ -29,7 +29,7 @@ class GameScene extends Phaser.Scene {
         this.enemigo = null;
         this.enemigoVelocidad = 3;
         this.enemigoDireccion = 1;
-        this.sonidoaAHahari=null;
+        this.sonidoaAHahari = null;
     }
 
     init() {
@@ -55,7 +55,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('ground', 'assets/plataforma2.png'); // Plataforma
         this.load.image('peluche', 'assets/Flush.png');     // Estrella
         this.load.image('vacio', 'assets/vacio.png');
-       // this.load.image('bomb', 'assets/bomb.png');    // Bomba
+        // this.load.image('bomb', 'assets/bomb.png');    // Bomba
 
         // SHIZUKA
         this.load.image('Shizuka_parada', 'assets/Shizuka/s1.png');
@@ -100,7 +100,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('bomb', 'assets/Enemigos/atacke.png');
         this.load.image('HahariR', 'assets/Enemigos/HahariAtaqueD.png');
         this.load.image('HahariL', 'assets/Enemigos/HahariAtaqueI.png');
-        this.load.audio('Aparece_enemigo','assets/Enemigos/HahariAparece.mp3');
+        this.load.audio('Aparece_enemigo', 'assets/Enemigos/HahariAparece.mp3');
     }
 
     create() {
@@ -295,7 +295,7 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 
         this.time.delayedCall(10000, this.createEnemy, [], this);
-        
+
     }
     update(time) {
         if (this.gameOver) {
@@ -349,16 +349,16 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada2');
             }
         }
-        if(this.enemigo){
-        // Enemigo
-        this.enemigo.x += this.enemigoVelocidad * this.enemigoDireccion;
+        if (this.enemigo) {
+            // Enemigo
+            this.enemigo.x += this.enemigoVelocidad * this.enemigoDireccion;
 
-        // Cambiar dirección si el enemigo alcanza el borde
-        if (this.enemigo.x >= this.cameras.main.width - this.enemigo.width / 2 || this.enemigo.x <= this.enemigo.width / 2) {
-            this.enemigoDireccion *= -1; // Cambiar dirección
-            // Cambiar la imagen del enemigo (puedes usar diferentes imágenes si lo deseas)
-            this.enemigo.setTexture(this.enemigoDireccion === 1 ? 'HahariR' : 'HahariL'); // Cambia a otra textura si tienes más
-        }
+            // Cambiar dirección si el enemigo alcanza el borde
+            if (this.enemigo.x >= this.cameras.main.width - this.enemigo.width / 2 || this.enemigo.x <= this.enemigo.width / 2) {
+                this.enemigoDireccion *= -1; // Cambiar dirección
+                // Cambiar la imagen del enemigo (puedes usar diferentes imágenes si lo deseas)
+                this.enemigo.setTexture(this.enemigoDireccion === 1 ? 'HahariR' : 'HahariL'); // Cambia a otra textura si tienes más
+            }
 
 
         }
@@ -394,7 +394,7 @@ class GameScene extends Phaser.Scene {
             // bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
             // bomb.allowGravity = false;
             this.time.addEvent({
-                delay: 15000, // Lanzar cada 2 segundos
+                delay: 5000, // Lanzar cada 5 segundos
                 callback: this.launchBomb,
                 callbackScope: this,
                 loop: true
@@ -405,7 +405,7 @@ class GameScene extends Phaser.Scene {
     createEnemy() {
         // Asegúrate de que el enemigo no se cree si ya existe
         if (this.enemigo) return;
-                
+
         const x = Phaser.Math.Between(300, 1100);
         this.enemigo = this.add.sprite(x, 50, 'HahariR').setScale(0.2);
         this.sonidoaAHahari.play();
@@ -439,34 +439,51 @@ class GameScene extends Phaser.Scene {
 
 
     launchBomb() {
+
+        // MAXIMA CANTIDAD DE BOMBAS EN PANTALLA
+        // Verificar si hay demasiadas bombas en pantalla
+        if (this.bombs.getLength() >= 5) { // Máximo 5 bombas
+            return; // No crear más bombas
+        }
         if (!this.enemigo) return; // Asegúrate de que el enemigo exista
-    
+
         const bomb = this.bombs.create(this.enemigo.x, this.enemigo.y, 'bomb');
         bomb.setBounce(1); // Permite que la bomba rebote
         bomb.setCollideWorldBounds(true); // Colisiona con los límites del mundo
+
         //bomb.allowGravity = true; // Permite que la bomba caiga
+
         bomb.setScale(0.05); // Cambia el tamaño de la bomba
         bomb.body.allowGravity = false;
+
         // Establecer la dirección de la bomba según la dirección del enemigo
         const direction = this.enemigoDireccion === 1 ? 250 : -250; // 200 es la velocidad horizontal de la bomba
         bomb.setVelocityX(direction); // Velocidad horizontal
-    
+
         // Establecer una velocidad vertical baja para que baje lentamente
         bomb.setVelocityY(60); // Ajusta este valor para controlar la velocidad de descenso
         this.physics.add.collider(bomb, this.platforms, () => {
             // Invertir la velocidad vertical para que la bomba suba
             bomb.setVelocityY(-60); // Cambia este valor para controlar la velocidad de subida
         });
-            // Añadir un evento de actualización para controlar el movimiento de la bomba
-    this.bombs.children.iterate((child) => {
-        if (child.body) {
-            // Si la bomba está por encima de un cierto límite, invertir la velocidad
-            if (child.y < 100) { // Cambia 100 por la altura máxima que deseas
-                child.setVelocityY(60); // Cambia a velocidad de bajada
-            } else if (child.y >= 700) { // Cambia 715 por la altura mínima (suelo)
-                child.setVelocityY(-60); // Cambia a velocidad de subida
+
+        // Eliminar la bomba después de 10 segundos
+        this.time.delayedCall(10000, () => {
+            if (bomb.active) {
+                bomb.destroy();
             }
-        }
-    });
+        });
+
+        // Añadir un evento de actualización para controlar el movimiento de la bomba
+        this.bombs.children.iterate((child) => {
+            if (child.body) {
+                // Si la bomba está por encima de un cierto límite, invertir la velocidad
+                if (child.y < 100) { // Cambia 100 por la altura máxima que deseas
+                    child.setVelocityY(60); // Cambia a velocidad de bajada
+                } else if (child.y >= 700) { // Cambia 715 por la altura mínima (suelo)
+                    child.setVelocityY(-60); // Cambia a velocidad de subida
+                }
+            }
+        });
     }
 }
