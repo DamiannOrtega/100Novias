@@ -14,7 +14,7 @@ body {
     gap: 20px; /* Espacio entre los botones */
     width: 90vw; /* Ancho del contenedor */
     height: 90vh; /* Altura del contenedor */
-    background-image: url('/menu.jpg'); /* Cambia esto a la ruta correcta */
+    background-image: url('../menu.jpg'); /* Cambia esto a la ruta correcta */
     background-size: cover; /* Hace que la imagen cubra todo el contenedor */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
