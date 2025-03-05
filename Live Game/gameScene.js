@@ -135,11 +135,6 @@ class GameScene extends Phaser.Scene {
         this.idleTimer = 0;
         this.lastUpdateTime = 0;
         this.sonidoaAHahari = this.sound.add('Aparece_enemigo');
-        this.add.dom(750, 400).createFromHTML(`
-            <div id="ui-container">
-                <button id="myButton">Haz click</button>
-            </div>
-        `);
         // Añade el fondo del juego
         let sky = this.add.image(750, 400, 'sky');
         sky.setDisplaySize(1500, 800); // Ajusta al tamaño de la pantalla
