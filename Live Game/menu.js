@@ -79,11 +79,16 @@ class MainMenu extends Phaser.Scene {
         // Reproducir sonido según el personaje
         if (personaje === 'Nano') {
             this.sonidoNano.play();
+            this.personaje = 1; //Personaje Nano
         } else if (personaje === 'Shizuka') {
             this.sonidoShizuka.play();
+            this.personaje = 2; //Personaje Shizuka
         }
 
-        console.log(`Personaje seleccionado: ${this.selectedCharacter}`);
+        console.log("Personaje seleccionado: ", this.personaje);
+        console.log("Este es el this.personaje: ", this.personaje);
+        // Almacenar la selección en localStorage
+        localStorage.setItem('selectedCharacter', this.personaje);
 
         // Mostrar la pantalla para ingresar el nombre
         this.showNameInput();

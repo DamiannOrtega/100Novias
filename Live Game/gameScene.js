@@ -24,7 +24,6 @@ class GameScene extends Phaser.Scene {
 
         // Instancia de la clase Jugador
         this.jugador = null;
-
         //Enemigos
         this.enemigo = null;
         this.enemigoVelocidad = 3;
@@ -32,6 +31,7 @@ class GameScene extends Phaser.Scene {
         this.sonidoaAHahari = null;
         //Objeto especial
         this.rentaro = null;
+
     }
 
     init() {
@@ -58,12 +58,6 @@ class GameScene extends Phaser.Scene {
         this.load.image('peluche', 'assets/Flush.png');     // Estrella
         this.load.image('vacio', 'assets/vacio.png');
         // this.load.image('bomb', 'assets/bomb.png');    // Bomba
-
-        //Interfaz
-        this.load.image('corazon', 'assets/objetos/Corazones.png');
-        this.load.image('iconoNano', 'assets/objetos/iconoNano.png');
-        this.load.image('iconoShizuka', 'assets/objetos/iconoShizuka.png');
-
 
         // SHIZUKA
         this.load.image('Shizuka_parada', 'assets/Shizuka/s1.png');
@@ -112,13 +106,30 @@ class GameScene extends Phaser.Scene {
         //objeto especial
         this.load.image('Rentaro', 'assets/objetos/RentaroCaballo.png');
 
-    
-
     }
 
     create() {
         // Ocultar la selección de personajes cuando empieza el juego
         document.getElementById("characterSelection").style.display = "none";
+
+        // Recuperar el personaje seleccionado desde localStorage
+        const personajeSeleccionado = localStorage.getItem('selectedCharacter');
+        if (personajeSeleccionado) {
+            this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
+        }
+        console.log("Personaje recuperado: ", this.personaje); // Verificar en la consola
+
+        // Selección de personaje
+        if (this.personaje === 1) {
+            this.player = this.physics.add.sprite(100, 650, 'Nano_parada').setScale(0.2);
+            console.log("Personaje seleccionado: Nano");
+        } else if (this.personaje === 2) {
+            this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
+            console.log("Personaje seleccionado: Shizuka");
+        } else {
+            console.log("No se ha seleccionado un personaje válido");
+        }
+
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         this.musicafondo.play();
         this.idleTimer = 0;
@@ -315,6 +326,8 @@ class GameScene extends Phaser.Scene {
 
     }
 
+
+
     update(time) {
         if (this.gameOver) {
             return;
@@ -383,6 +396,8 @@ class GameScene extends Phaser.Scene {
 
         //Objeto especial
 
+
+
     }
 
     collectStar(player, peluche) {
@@ -405,6 +420,13 @@ class GameScene extends Phaser.Scene {
                 child.enableBody(true, child.x, 0, true, true);
             });
 
+            // Crea una bomba en una posición aleatoria
+            // const x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+            // const bomb = this.bombs.create(x, 16, 'bomb');
+            // bomb.setBounce(1);
+            // bomb.setCollideWorldBounds(true);
+            // bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            // bomb.allowGravity = false;
             this.time.addEvent({
                 delay: 5000, // Lanzar cada 5 segundos
                 callback: this.launchBomb,
@@ -448,6 +470,7 @@ class GameScene extends Phaser.Scene {
         // Guardar los datos del jugador al finalizar el juego
         this.jugador.guardar();
     }
+
 
     launchBomb() {
 
