@@ -1,6 +1,8 @@
  // Configuración básica del juego con Phaser
  const config = {
-    type: Phaser.NO_GAME, // No renderiza nada (sin canvas, sin pantalla)
+    type: Phaser.AUTO,
+    width: window.innerWidth,
+    height: window.innerHeight,
     scene: {
         preload: preload,
         create: create

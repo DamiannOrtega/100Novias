@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <link rel="stylesheet" href="styles/a.css">
+    <title>Juego</title>
+</head>
+<body>
+    
+    <script src="script/jugador.js"></script>
+    <script src="script/gameScene.js"></script>
+
+
+    <script type="text/javascript">
+            var config = {
+                type: Phaser.AUTO,
+                width: 1500,
+                height: 800,
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        gravity: { y: 300 },
+                        debug: false
+                    }
+                },
+                audio: {
+                    disableWebAudio: false
+                },
+                plugins: {
+                    scene: [
+                        {
+                            key: 'DOMElementPlugin',
+                            plugin: Phaser.DOMElement,
+                            mapping: 'dom'
+                        }
+                    ]
+                },
+                scene: [GameScene] // Solo mantiene la escena principal del juego
+            };
+
+            var game = new Phaser.Game(config);
+    </script>
+</body>
+</html>
