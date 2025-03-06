@@ -7,7 +7,7 @@ body {
     margin: 0;
 }
 
-.contenedor {
+.contenedor,.contenedorEscojer,.contenedorC,.contenedorA,.contenedorT,.contenedorP {
     display: flex;
     margin-top: -40px;
     flex-direction: column; /* Organiza los botones en columnas */
@@ -15,13 +15,34 @@ body {
     gap: 20px; /* Espacio entre los botones */
     width: 90vw; /* Ancho del contenedor */
     height: 90vh; /* Altura del contenedor */
-    background-image: url('../menu.jpg'); /* Cambia esto a la ruta correcta */
+   
     background-size: cover; /* Hace que la imagen cubra todo el contenedor */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px; /* Espacio interno del contenedor */
+}
+.contenedor{
+    background-image: url('../assets/background/menu.jpg'); 
+}
+.contenedorEscojer{
+
+    background-image: url('../assets/background/kusuri.jpg');
+
+}
+.contenedorC{
+    background-image: url(../assets/background/ShizukaBackground.jpg);
+}
+.contenedorA{
+    background-image: url(../assets/background/NanoBackground.jpg);
+}
+.contenedorT{
+
+    background-image: url(../assets/background/karane.jpg); 
+}
+.contenedorP{
+    background-image: url(../assets/background/fondo.jpg);
 }
 
 .titulo{
@@ -145,3 +166,10 @@ button:hover .play {
     transform: translateX(60%);
 }
 
+a{
+    text-decoration: none;
+}
+
+canvas {
+    display: none; 
+}

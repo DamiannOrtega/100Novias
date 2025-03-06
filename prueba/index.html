@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Botón Estilizado</title>
+    <title>Menú principal (100 Novias)</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 
@@ -12,34 +13,54 @@
 
     <div class="contenedor">
         <div class="titulo">
-            <img src="titulo.png" alt="titulo">
+            <img src="assets/background/titulo.png" alt="titulo">
             <p>Titulo</p>
         </div>
 
         <div class="botones">
-            
-            <button class="btnJugar">
-                <img src="3.png" alt="icono" class="icon" />
-                <span class="play">Jugar</span>
-            </button>
-            <button class="btnTutorial">
-                <img src="NanoSeleccionada.png" alt="icono" class="icon" />
-                <span class="play">Tutorial</span>
-            </button>
-            <button class="btnPuntuaciones">
-                <img src="4.png" alt="icono" class="icon" />
-                <span class="play">Puntuaciones</span>
-            </button>
-            <button class="btnAjustes">
-                <img src="7.png" alt="icono" class="icon" />
-                <span class="play">Ajustes</span>
-            </button>
-            <button class="btnCreditos">
-                <img src="1.png" alt="icono" class="icon" />
-                <span class="play">Créditos</span>
-            </button>
+            <a href="menuJuego.html">
+
+                <button class="btnJugar">
+                    <img src="assets/background/3.png" alt="icono" class="icon" />
+                    <span class="play">Jugar</span>
+                </button>
+            </a>
+
+            <a href="menuTutorial.html">
+
+                <button class="btnTutorial">
+                    <img src="assets/background/NanoSeleccionada.png" alt="icono" class="icon" />
+                    <span class="play">Tutorial</span>
+                </button>
+            </a>
+
+            <a href="menuPuntuacion.html">
+
+                <button class="btnPuntuaciones">
+                    <img src="assets/background/4.png" alt="icono" class="icon" />
+                    <span class="play">Puntuaciones</span>
+                </button>
+            </a>
+            <a href="menuAjustes.html">
+
+                <button class="btnAjustes">
+                    <img src="assets/background/7.png" alt="icono" class="icon" />
+                    <span class="play">Ajustes</span>
+                </button>
+            </a>
+
+                <a href="menuCreditos.html">
+
+                    <button class="btnCreditos">
+                        <img src="assets/background/1.png" alt="icono" class="icon" />
+                        <span class="play">Créditos</span>
+                    </button>
+                </a>
+                
         </div>
     </div>
+
+    <script src="script/musica.js"></script>
 </body>
 
 </html>
