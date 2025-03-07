@@ -2,47 +2,26 @@ let selectedCharacter = null;
 
 // Función para seleccionar personaje
 function selectCharacter(personaje) {
-    selectedCharacter = personaje;
-    console.log(`Personaje seleccionado: ${selectedCharacter}`);
-
-    // Reproducir sonido dependiendo del personaje
     if (personaje === 'Nano') {
+        selectedCharacter = 1;
         new Audio('assets/Nano/PresentacionNano.mp3').play();
     } else if (personaje === 'Shizuka') {
+        selectedCharacter = 2;
         new Audio('assets/Shizuka/ShizukaPresentación.mp3').play();
     }
 
+    console.log(`Personaje seleccionado: ${selectedCharacter}`);
+
     // Almacenar la selección en localStorage
-    localStorage.setItem('selectedCharacter', personaje);
+    localStorage.setItem('selectedCharacter', selectedCharacter);
 
     // Mostrar la pantalla de ingreso de nombre
     document.getElementById('nameInputContainer').style.display = 'block';
 }
 
-// Función para iniciar el juego
 // Función para iniciar el juego y redirigir a otro HTML
 function startGame() {
-    // Redirigir a la página de juego (puedes cambiar 'game.html' por el archivo adecuado)
-    window.location.href = "juego.html";  // Esto redirige al archivo game.html
-}
-
-// Función para seleccionar personaje
-function selectCharacter(personaje) {
-    selectedCharacter = personaje;
-    console.log(`Personaje seleccionado: ${selectedCharacter}`);
-
-    // Reproducir sonido dependiendo del personaje
-    if (personaje === 'Nano') {
-        new Audio('assets/Nano/PresentacionNano.mp3').play();
-    } else if (personaje === 'Shizuka') {
-        new Audio('assets/Shizuka/ShizukaPresentación.mp3').play();
-    }
-
-    // Almacenar la selección en localStorage
-    localStorage.setItem('selectedCharacter', personaje);
-
-    // Mostrar la pantalla de ingreso de nombre
-    document.getElementById('nameInputContainer').style.display = 'block';
+    window.location.href = "juego.html";  
 }
 
 // Función para procesar el ingreso del nombre y mostrar el botón "Jugar"
