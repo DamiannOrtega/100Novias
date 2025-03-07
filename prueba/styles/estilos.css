@@ -44,12 +44,13 @@
 
 /* Estilos para el efecto neón */
 .character:nth-child(1):hover {
-    box-shadow: 0 0 15px 5px rgba(255, 105, 180, 0.8);
+    /* box-shadow: 0 0 15px 5px rgba(255, 105, 180, 0.8); */
+    filter: drop-shadow(20px 20px 10px rgba(255, 105, 180, 0.8));
     /* Rosa */
 }
 
 .character:nth-child(2):hover {
-    box-shadow: 0 0 15px 5px rgba(0, 191, 255, 0.8);
+    filter: drop-shadow(10px 10px 10px rgba(0, 191, 255, 0.8));
     /* Azul */
 }
 
