@@ -11,7 +11,7 @@ class GameScene extends Phaser.Scene {
         this.score = 0;              // Puntuación del jugador
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
-        this.icono=null;
+        this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
 
@@ -32,7 +32,7 @@ class GameScene extends Phaser.Scene {
         this.enemigoDireccion = 1;
         this.sonidoaAHahari = null;
         this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
-        this.ImagenVida=[];
+        this.ImagenVida = [];
 
 
         //Objeto especial
@@ -99,7 +99,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Shizuka_paradaS3', 'assets/Shizuka/DialogoShizuka3.mp3');
         this.load.audio('Shizuka_paradaS4', 'assets/Shizuka/DialogoShizuka4.mp3');
         this.load.audio('Shizuka_paradaS5', 'assets/Shizuka/DialogoShizuka5.mp3');
-        
+
 
         // NANO
         this.load.audio('Nano_coin', 'assets/Nano/RegojerPeluche.mp3');
@@ -116,34 +116,37 @@ class GameScene extends Phaser.Scene {
         //objeto especial
         this.load.image('Rentaro', 'assets/objetos/RentaroCaballo.png');
         this.load.image('vidas', 'assets/objetos/Corazones.png');
-        
+
 
     }
 
     create() {
+        const pauseButton = document.getElementById('pauseButton');
 
-        
-    const pauseButton = document.getElementById('pauseButton');
+        pauseButton.addEventListener('click', function () {
+            this.togglePause();
+        }.bind(this)); // Asegúrate de que 'this' se refiera al contexto de tu juego Phaser
 
-    pauseButton.addEventListener('click', function() {
-        this.togglePause();
-    }.bind(this)); // Asegúrate de que 'this' se refiera al contexto de tu juego Phaser
-    // Recuperar el personaje seleccionado desde localStorage
-    const personajeSeleccionado = localStorage.getItem('selectedCharacter'); 
+        // Agregar evento de clic al botón de reanudar
+        document.getElementById('resumeButton').addEventListener('click', () => {
+            this.togglePause(); // Llama a la función de pausa para reanudar
+        });
+        // Recuperar el personaje seleccionado desde localStorage
+        const personajeSeleccionado = localStorage.getItem('selectedCharacter');
 
-    if (personajeSeleccionado) {
-        this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
-    }
+        if (personajeSeleccionado) {
+            this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
+        }
 
 
         // Selección de personaje
         if (this.personaje === 1) {
             this.player = this.physics.add.sprite(100, 650, 'Nano_parada').setScale(0.2);
-            
+
         } else if (this.personaje === 2) {
             this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
-            
-        } 
+
+        }
 
         this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
@@ -155,18 +158,17 @@ class GameScene extends Phaser.Scene {
         // Añade el fondo del juego
         let sky = this.add.image(750, 400, 'sky');
         sky.setDisplaySize(1500, 800); // Ajusta al tamaño de la pantalla
-        
-        
+
         // Crea un grupo de plataformas estáticas (no se mueven)
         this.platforms = this.physics.add.staticGroup();
-        
+
         // Crea el suelo del juego y lo escala para que cubra el ancho de la pantalla
         for (let x = 0; x <= 1500; x += 30) {
             this.platforms.create(x, 715, 'groundsmall').setScale(0.8).refreshBody();
         }
-        
+
         this.playerNameText = this.add.text(16, 100, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
-      
+
 
         //Enemigos
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
@@ -324,14 +326,14 @@ class GameScene extends Phaser.Scene {
 
 
         if (this.personaje == 1) {
-            this.icono = this.add.image(160, 50, 'Icono_Nano').setScale(0.5); 
+            this.icono = this.add.image(160, 50, 'Icono_Nano').setScale(0.5);
 
         } else if (this.personaje == 2) {
             this.icono = this.add.image(160, 50, 'Icono_Shizuka').setScale(0.5);
 
         }
         for (let i = 0; i < this.lives; i++) {
-            const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2); 
+            const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2);
             this.ImagenVida.push(vidaImage);
         }
 
@@ -367,16 +369,16 @@ class GameScene extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
             this.togglePause();
         }
-         if (this.isPaused) {
-                    // Si el juego está en pausa, detener la animación y establecer la textura de "parado"
-        if (this.personaje == 1) {
-            this.player.setTexture('Nano_parada');
-        } else if (this.personaje == 2) {
-            this.player.setTexture('Shizuka_parada');
-        }
-        this.player.setVelocityX(0); // Asegúrate de que el jugador no se mueva
-      
-             return; // Si el juego está en pausa, no actualices nada
+        if (this.isPaused) {
+            // Si el juego está en pausa, detener la animación y establecer la textura de "parado"
+            if (this.personaje == 1) {
+                this.player.setTexture('Nano_parada');
+            } else if (this.personaje == 2) {
+                this.player.setTexture('Shizuka_parada');
+            }
+            this.player.setVelocityX(0); // Asegúrate de que el jugador no se mueva
+
+            return; // Si el juego está en pausa, no actualices nada
         }
 
         if (this.cursors.left.isDown) {
@@ -494,7 +496,7 @@ class GameScene extends Phaser.Scene {
 
     hitBomb(player, bomb) {
         if (this.isInvincible) return;  // Si el jugador es inmune, no hace nada
-    
+
         bomb.disableBody(true, true);  // Desaparece la bomba
         this.lives--;  // Restar una vida
         // Actualizar las imágenes de las vidas
@@ -502,12 +504,12 @@ class GameScene extends Phaser.Scene {
             const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
             vidaImage.destroy(); // Destruir la imagen de vida
         }
-    
+
         // Si aún tiene vidas, hacer que el jugador parpadee y sea inmune por 3 segundos
         if (this.lives > 0) {
             this.isInvincible = true; // Activar inmunidad
             this.player.setTint(0xff0000); // Efecto visual de daño
-    
+
             // Parpadeo: Cambiar la opacidad del jugador
             this.tweens.add({
                 targets: this.player,
@@ -519,7 +521,7 @@ class GameScene extends Phaser.Scene {
                     this.player.clearTint(); // Limpiar el tinte del jugador al terminar
                 }
             });
-    
+
             // Después de 3 segundos, desactivar la inmunidad
             this.time.delayedCall(3000, () => {
                 this.isInvincible = false;
@@ -538,7 +540,7 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    
+
 
 
 
@@ -593,16 +595,21 @@ class GameScene extends Phaser.Scene {
 
     togglePause() {
         this.isPaused = !this.isPaused; // Cambiar el estado de pausa
-    
+        const canvas = document.querySelector('canvas');
+        const pauseButton = document.getElementById('pauseButton');
+        const resumeButton = document.getElementById('resumeButton');
         if (this.isPaused) {
             this.physics.pause(); // Pausar la física
             this.musicafondo.pause(); // Pausar la música de fondo
+            canvas.classList.add('blur'); // Agregar la clase de desenfoque al canvas
+            pauseButton.style.display = 'none'; // Ocultar el botón de pausa
+            resumeButton.style.display = 'flex'; // Mostrar el botón de reanudar
             this.SonidosQuietas.forEach((sonido) => {
                 if (sonido.isPlaying) {
                     sonido.pause();
                 }
             });
-    
+
             // Pausar el sonido del enemigo si está reproduciéndose
             if (this.sonidoaAHahari.isPlaying) {
                 this.sonidoaAHahari.pause();
@@ -611,12 +618,15 @@ class GameScene extends Phaser.Scene {
         } else {
             this.physics.resume(); // Reanudar la física
             this.musicafondo.resume(); // Reanudar la música de fondo
+            canvas.classList.remove('blur'); // Agregar la clase de desenfoque al canvas
+            pauseButton.style.display = 'flex'; // Mostrar el botón de pausa
+            resumeButton.style.display = 'none'; // Ocultar el botón de reanudar
             this.SonidosQuietas.forEach((sonido) => {
                 if (sonido.isPaused) {
                     sonido.resume();
                 }
             });
-    
+
             // Reanudar el sonido del enemigo si estaba pausado
             if (this.sonidoaAHahari.isPaused) {
                 this.sonidoaAHahari.resume();
@@ -625,5 +635,5 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    
+
 }

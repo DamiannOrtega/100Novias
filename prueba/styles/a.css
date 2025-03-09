@@ -25,6 +25,11 @@ canvas {
     transform-origin: center;
 }
 
+.blur {
+    filter: blur(5px); /* Ajusta el valor para el nivel de desenfoque que desees */
+    transition: filter 0.3s ease; /* Transición suave para el desenfoque */
+}
+
 .round-button {
     background-color: #4CAF50; /* Color de fondo */
     border: none;
@@ -39,7 +44,7 @@ canvas {
     position: absolute; /* Posicionamiento absoluto */
     top: 60px; /* Distancia desde la parte superior */
     right: 180px; /* Distancia desde la derecha */
-    z-index: 100; /*Para que se vaya hacia adelante*/
+    z-index: 100; /* Para que se vaya hacia adelante */
 }
 
 .round-button:hover {
@@ -48,4 +53,12 @@ canvas {
 
 .round-button svg {
     fill: white; /* Color del SVG */
+}
+
+#resumeButton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centrar el botón */
+    display: none; /* Inicialmente no visible */
 }
