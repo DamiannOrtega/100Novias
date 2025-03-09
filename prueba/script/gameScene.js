@@ -13,6 +13,7 @@ class GameScene extends Phaser.Scene {
         this.scoreText = null;       // Texto que muestra la puntuación
         this.icono=null;
         this.personaje = 1;          // Selección de personaje
+        this.isPaused = false; // Estado de pausa
 
 
         // Música y sonidos
@@ -138,6 +139,7 @@ class GameScene extends Phaser.Scene {
             
         } 
 
+        this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         this.musicafondo.play();
@@ -316,14 +318,14 @@ class GameScene extends Phaser.Scene {
 
 
         if (this.personaje == 1) {
-            this.icono = this.add.image(160, 50, 'Icono_Nano').setScale(0.5); // Ajusta la escala según sea necesario
+            this.icono = this.add.image(160, 50, 'Icono_Nano').setScale(0.5); 
 
         } else if (this.personaje == 2) {
-            this.icono = this.add.image(160, 50, 'Icono_Shizuka').setScale(0.5); // Ajusta la escala según sea necesario
+            this.icono = this.add.image(160, 50, 'Icono_Shizuka').setScale(0.5);
 
         }
         for (let i = 0; i < this.lives; i++) {
-            const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2); // Ajusta la escala según sea necesario
+            const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2); 
             this.ImagenVida.push(vidaImage);
         }
 
@@ -356,6 +358,12 @@ class GameScene extends Phaser.Scene {
         if (this.gameOver) {
             return;
         }
+        if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
+            this.togglePause();
+        }
+        // if (this.isPaused) {
+        //     return; // Si el juego está en pausa, no actualices nada
+        // }
 
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
@@ -567,5 +575,19 @@ class GameScene extends Phaser.Scene {
                 }
             }
         });
+    }
+
+    togglePause() {
+        this.isPaused = !this.isPaused; // Cambiar el estado de pausa
+    
+        if (this.isPaused) {
+            this.physics.pause(); // Pausar la física
+            this.musicafondo.pause(); // Pausar la música de fondo
+            // Aquí puedes pausar otros sonidos si es necesario
+        } else {
+            this.physics.resume(); // Reanudar la física
+            this.musicafondo.resume(); // Reanudar la música de fondo
+            // Aquí puedes reanudar otros sonidos si es necesario
+        }
     }
 }
