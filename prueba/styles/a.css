@@ -3,7 +3,7 @@ body{
 }
 
 body {
-    background-color: #f0f0f0; /* Color de fondo opcional */
+    background-color:black; /* Color de fondo opcional */
     height: 100vh;
     display: flex;
     justify-content: center;
