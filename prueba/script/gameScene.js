@@ -37,7 +37,8 @@ class GameScene extends Phaser.Scene {
 
         //Objeto especial
         this.rentaro = null;
-
+        this.rentaroTimer = null; // Temporizador para el parpadeo
+        this.rentaroBlinking = false; // Estado de parpadeo
     }
 
     init() {
@@ -430,6 +431,8 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada2');
             }
         }
+
+
         if (this.enemigo) {
             // Enemigo
             this.enemigo.x += this.enemigoVelocidad * this.enemigoDireccion;
@@ -461,6 +464,14 @@ class GameScene extends Phaser.Scene {
         // Actualizar los puntos del jugador
         this.jugador.puntos = this.score;
         this.jugador.guardar();
+        // Genera un número aleatorio múltiplo de 10 hasta 100
+        const numrand = Math.floor(Math.random() * 10 + 1) * 10;
+
+        // Usando ese número en tu condicional
+        if (this.score === numrand && !this.rentaro) {
+            this.createRentaro();
+        }
+
 
         // Si no quedan estrellas activas, genera un nuevo lote de estrellas y una bomba
         if (this.peluches.countActive(true) === 0) {
@@ -614,6 +625,7 @@ class GameScene extends Phaser.Scene {
             if (this.sonidoaAHahari.isPlaying) {
                 this.sonidoaAHahari.pause();
             }
+
             // Aquí puedes pausar otros sonidos si es necesario
         } else {
             this.physics.resume(); // Reanudar la física
@@ -631,9 +643,92 @@ class GameScene extends Phaser.Scene {
             if (this.sonidoaAHahari.isPaused) {
                 this.sonidoaAHahari.resume();
             }
+
             // Aquí puedes reanudar otros sonidos si es necesario
         }
     }
 
+    createRentaro() {
+        const x = Phaser.Math.Between(100, 1400);
+        const y = 0; // Aparece en la parte superior de la pantalla
+        this.rentaro = this.physics.add.sprite(x, y, 'Rentaro').setScale(0.08);
+        this.rentaro.setCollideWorldBounds(true);
+        this.rentaro.setBounce(1); // Permitir que rebote
+        this.rentaro.setGravityY(300); // Establecer gravedad para que caiga
+
+        // Hacer que Rentaro parpadee
+        this.rentaroBlinking = true;
+        this.rentaroTimer = this.time.addEvent({
+            delay: 100, // Cambiar cada 100 ms
+            callback: this.blinkRentaro,
+            callbackScope: this,
+            loop: true
+        });
+
+        // Detectar si el jugador recoge a Rentaro
+        this.physics.add.collider(this.rentaro, this.platforms);
+        this.physics.add.overlap(this.player, this.rentaro, this.collectRentaro, null, this);
+
+        // Desactivar el parpadeo después de 10 segundos
+        this.time.delayedCall(10000, () => {
+            this.rentaroBlinking = false;
+            this.rentaro.setTint(0xffffff); // Restablecer color
+            this.rentaroTimer.remove(); // Detener el parpadeo
+        });
+
+        // Iniciar el movimiento de Rentaro
+        this.moveRentaro();
+    }
+
+
+    moveRentaro() {
+        if (!this.rentaro) return;
+
+        // Movimiento horizontal de Rentaro
+        const direction = Phaser.Math.Between(-1, 1); // Movimiento a la izquierda (-1) o a la derecha (1)
+        const speedX = 200; // Velocidad de movimiento horizontal
+
+        // Establecer velocidad horizontal
+        this.rentaro.setVelocityX(direction * speedX); // Velocidad horizontal
+
+        // Configurar colisión con los límites del mundo y rebote
+        this.rentaro.setCollideWorldBounds(true);
+        this.rentaro.setBounce(1); // Permitir rebote en los límites del mundo
+
+        // Hacer que Rentaro parpadee mientras se mueve
+        this.rentaroBlinking = true;
+        this.rentaroTimer = this.time.addEvent({
+            delay: 100, // Cambiar cada 100 ms
+            callback: this.blinkRentaro,
+            callbackScope: this,
+            loop: true
+        });
+
+        // Desactivar el parpadeo después de 10 segundos
+        this.time.delayedCall(10000, () => {
+            this.rentaroBlinking = false;
+            this.rentaro.setTint(0xffffff); // Restablecer color
+            if (this.rentaroTimer) {
+                this.rentaroTimer.remove(); // Detener el parpadeo
+            }
+        });
+    }
+
+    blinkRentaro() {
+        if (this.rentaroBlinking) {
+            const randomColor = Phaser.Display.Color.RandomRGB();
+            this.rentaro.setTint(randomColor.color);
+        }
+    }
+
+    collectRentaro(player, rentaro) {
+        rentaro.disableBody(true, true);
+        this.score += 50; // Rentaro vale 50 puntos
+        this.scoreText.setText('Score: ' + this.score);
+        this.jugador.puntos = this.score;
+        this.jugador.guardar();
+        this.rentaro.destroy();
+
+    }
 
 }

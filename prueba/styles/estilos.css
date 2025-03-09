@@ -12,11 +12,21 @@
     z-index: 10;
     border-radius: none;
     box-shadow: none;
-
     /* Centramos la ventana */
     top: 20%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+#characterSelection h2 {
+    color: white;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    background: #ec307f;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 
@@ -34,6 +44,29 @@
     width: 100px;
     height: auto;
     transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.character p{
+    color : white;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 1rem; 
+}
+
+.Nano{
+    background: #b582f8;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.Shizuka{
+    background: #5d8fed;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 
@@ -80,7 +113,7 @@
 /* Estilo del botón "Aceptar" */
 #submitNameButton {
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background: linear-gradient(135deg, #7619f0, #b35ded);
     border: none;
     color: white;
     cursor: pointer;

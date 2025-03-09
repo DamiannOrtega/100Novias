@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aclonica&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/estilos.css">
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
 
     <title>Menú principal (100 Novias)</title>
 </head>
+
 <body>
     <div class="contenedorEscojer">
+        <div class="contenedorPersonajes">
+            <div id="characterSelection">
+                <h2>Selecciona tu personaje</h2>
+                <div class="characters">
+                    <div class="character" onclick="selectCharacter('Nano')"
+                        onmouseover="hoverCharacter(this, 'assets/Nano/NanoSeleccionada.png')"
+                        onmouseout="hoverCharacter(this, 'assets/Nano/Nano.png')">
+                        <img src="assets/Nano/Nano.png" alt="Personaje 1">
+                        <p class="Nano">Nano</p>
+                    </div>
 
-        <div id="characterSelection">
-            <h2>Selecciona tu personaje</h2>
-            <div class="characters">
-                <div class="character" onclick="selectCharacter('Nano')"
-                    onmouseover="hoverCharacter(this, 'assets/Nano/NanoSeleccionada.png')"
-                    onmouseout="hoverCharacter(this, 'assets/Nano/Nano.png')">
-                    <img src="assets/Nano/Nano.png" alt="Personaje 1">
-                    <p>Nano</p>
-                </div>
-    
-                <div class="character" onclick="selectCharacter('Shizuka')"
-                    onmouseover="hoverCharacter(this, 'assets/Shizuka/ShizukaSeleccionada.png')"
-                    onmouseout="hoverCharacter(this, 'assets/Shizuka/Smuerte.png')">
-                    <img src="assets/Shizuka/Smuerte.png" alt="Personaje 2">
-                    <p>Shizuka</p>
+                    <div class="character" onclick="selectCharacter('Shizuka')"
+                        onmouseover="hoverCharacter(this, 'assets/Shizuka/ShizukaSeleccionada.png')"
+                        onmouseout="hoverCharacter(this, 'assets/Shizuka/Smuerte.png')">
+                        <img src="assets/Shizuka/Smuerte.png" alt="Personaje 2">
+                        <p class="Shizuka">Shizuka</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        
 
         <div id="nameInputContainer" style="display: none;">
             <h2>Ingresa tu nombre:</h2>
@@ -50,10 +55,11 @@
 
         <button id="playButton" style="display: none;" onclick="startGame()">Jugar</button>
     </div>
- 
+
     <!-- <script src="script/musica.js"></script> -->
     <!-- <script src="script/config.js"></script> -->
     <script src="script/menu.js"></script>
 
 </body>
+
 </html>

@@ -2,11 +2,38 @@ body {
     background-color: #f0f0f0;
     /* Color de fondo opcional */
     height: 100vh;
+    font-family: 'Aclonica', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0;
 }
+
+input{
+    font-family: inherit;
+}
+
+input::placeholder{
+    font-family: 'Aclonica', sans-serif;
+
+}
+
+h2.text-center {
+    font-family: 'Aclonica', sans-serif; /* O la fuente que prefieras */
+    font-size: 3rem; /* Ajusta el tamaño si es necesario */
+    font-weight: bold; /* Opcional: Cambia el grosor */
+    text-align: center; /* Alinea el texto al centro */
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.3); /* Sombra del texto */
+    color: white /* Cambia el color si lo deseas */
+}
+
+
+.aclonica-regular {
+    font-family: "Aclonica", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
 
 a{
     text-decoration: none;
@@ -93,6 +120,14 @@ a{
     background-image: url(../assets/background/karane.jpg);
 }
 
+.ajuste{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    /* Espacio interno del contenedor */
+}
 .titulo {
     display: flex;
     flex-direction: column;
@@ -214,7 +249,7 @@ button {
 }
 
 .btnRegresar {
-    background: linear-gradient(135deg, #6ff019, #5dede6);
+    background: linear-gradient(135deg, #ff1da1, #db9dbc);
 }
 
 
@@ -277,3 +312,9 @@ a {
 canvas {
     display: none;
 }
+
+.divRegresar a {
+    text-decoration: none; 
+    
+}
+

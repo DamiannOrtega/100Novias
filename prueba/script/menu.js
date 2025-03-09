@@ -42,6 +42,15 @@ document.getElementById('submitNameButton').addEventListener('click', function (
     }
 });
 
+// Eventos para mostrar y ocultar el placeholder del input de nombre
+const input = document.getElementById("playerName");
+input.addEventListener("focus", function () {
+    this.placeholder = "";
+});
+input.addEventListener("blur", function () {
+    this.placeholder = "Nombre del jugador";
+});
+
 // Función para cambiar la imagen cuando el usuario pasa el ratón por encima
 function hoverCharacter(element, newSrc) {
     let img = element.querySelector("img");
