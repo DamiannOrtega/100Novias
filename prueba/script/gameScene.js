@@ -29,6 +29,9 @@ class GameScene extends Phaser.Scene {
         this.enemigoVelocidad = 3;
         this.enemigoDireccion = 1;
         this.sonidoaAHahari = null;
+        this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
+        this.livesText = null;  // Texto para mostrar las vidas
+
         //Objeto especial
         this.rentaro = null;
 
@@ -136,17 +139,19 @@ class GameScene extends Phaser.Scene {
         // Añade el fondo del juego
         let sky = this.add.image(750, 400, 'sky');
         sky.setDisplaySize(1500, 800); // Ajusta al tamaño de la pantalla
-
+        
+        
         // Crea un grupo de plataformas estáticas (no se mueven)
         this.platforms = this.physics.add.staticGroup();
-
+        
         // Crea el suelo del juego y lo escala para que cubra el ancho de la pantalla
         for (let x = 0; x <= 1500; x += 30) {
             this.platforms.create(x, 715, 'groundsmall').setScale(0.8).refreshBody();
         }
-
+        
         // Mostrar el nombre del jugador
         this.playerNameText = this.add.text(16, 50, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
+        this.livesText = this.add.text(16, 80, 'Vidas: ' + this.lives, { fontSize: '32px', fill: '#000' });
 
         //Enemigos
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
@@ -413,13 +418,6 @@ class GameScene extends Phaser.Scene {
                 child.enableBody(true, child.x, 0, true, true);
             });
 
-            // Crea una bomba en una posición aleatoria
-            // const x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-            // const bomb = this.bombs.create(x, 16, 'bomb');
-            // bomb.setBounce(1);
-            // bomb.setCollideWorldBounds(true);
-            // bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            // bomb.allowGravity = false;
             this.time.addEvent({
                 delay: 5000, // Lanzar cada 5 segundos
                 callback: this.launchBomb,
@@ -447,22 +445,47 @@ class GameScene extends Phaser.Scene {
     }
 
     hitBomb(player, bomb) {
-        this.physics.pause();
-        this.musicafondo.stop();
-        this.SonidoMuerte.play();
-        player.setTint(0xff0000);
+        if (this.isInvincible) return;  // Si el jugador es inmune, no hace nada
+    
+        bomb.disableBody(true, true);  // Desaparece la bomba
+        this.lives--;  // Restar una vida
+        this.livesText.setText('Vidas: ' + this.lives);  // Actualizar el texto
+    
+        // Si aún tiene vidas, hacer que el jugador parpadee y sea inmune por 3 segundos
+        if (this.lives > 0) {
+            this.isInvincible = true; // Activar inmunidad
+            this.player.setTint(0xff0000); // Efecto visual de daño
+    
+            // Parpadeo: Cambiar la opacidad del jugador
+            this.tweens.add({
+                targets: this.player,
+                alpha: 0, // El jugador desaparecerá
+                duration: 200, // 200ms de fade out
+                yoyo: true,  // Volverá a la opacidad normal
+                repeat: 5,  // El parpadeo se repite 5 veces
+                onComplete: () => {
+                    this.player.clearTint(); // Limpiar el tinte del jugador al terminar
+                }
+            });
+    
+            // Después de 3 segundos, desactivar la inmunidad
+            this.time.delayedCall(3000, () => {
+                this.isInvincible = false;
+                this.player.clearTint(); // Eliminar el tinte del jugador
+            });
 
-        if (this.personaje == 1) {
-            player.setTexture('Nano_muerte');
-        } else if (this.personaje == 2) {
-            player.setTexture('Shizuka_muerte');
+        } else {
+            // Si las vidas llegan a 0, terminar el juego
+            this.player.setTint(0xff0000);
+            this.player.anims.play('die'); // Animación de muerte
+            this.physics.pause();
+            this.gameOver = true;
+            this.scoreText.setText('¡GAME OVER!');
         }
-        player.anims.play('die', true);
-        this.gameOver = true;
-
-        // Guardar los datos del jugador al finalizar el juego
-        this.jugador.guardar();
     }
+
+    
+
 
 
     launchBomb() {
