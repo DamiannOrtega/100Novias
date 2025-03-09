@@ -1,9 +1,12 @@
 body{
     margin: 0;
 }
-
 body {
-    background-color:black; /* Color de fondo opcional */
+    background: url(../assets/background/Shizuka.png) no-repeat center center;
+    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.656); /* Capa de oscurecimiento */
+    background-blend-mode: multiply; /* Mezcla el color con la imagen */
+    
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -11,6 +14,7 @@ body {
     margin: 0;
     overflow: hidden;
 }
+
 
 #game-container {
     display: flex;
