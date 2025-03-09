@@ -362,6 +362,14 @@ class GameScene extends Phaser.Scene {
             this.togglePause();
         }
          if (this.isPaused) {
+                    // Si el juego está en pausa, detener la animación y establecer la textura de "parado"
+        if (this.personaje == 1) {
+            this.player.setTexture('Nano_parada');
+        } else if (this.personaje == 2) {
+            this.player.setTexture('Shizuka_parada');
+        }
+        this.player.setVelocityX(0); // Asegúrate de que el jugador no se mueva
+      
              return; // Si el juego está en pausa, no actualices nada
         }
 
