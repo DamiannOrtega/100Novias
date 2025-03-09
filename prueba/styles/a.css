@@ -19,3 +19,8 @@ body {
     width: 100vw;
     height: 100vh;
 }
+
+canvas {
+    transform: scale(0.80);
+    transform-origin: center;
+}
