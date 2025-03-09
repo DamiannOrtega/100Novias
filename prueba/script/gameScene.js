@@ -122,6 +122,12 @@ class GameScene extends Phaser.Scene {
 
     create() {
 
+        
+    const pauseButton = document.getElementById('pauseButton');
+
+    pauseButton.addEventListener('click', function() {
+        this.togglePause();
+    }.bind(this)); // Asegúrate de que 'this' se refiera al contexto de tu juego Phaser
     // Recuperar el personaje seleccionado desde localStorage
     const personajeSeleccionado = localStorage.getItem('selectedCharacter'); 
 
@@ -618,4 +624,6 @@ class GameScene extends Phaser.Scene {
             // Aquí puedes reanudar otros sonidos si es necesario
         }
     }
+
+    
 }

@@ -1,20 +1,15 @@
-body{
-    margin: 0;
-}
 body {
+    margin: 0;
     background: url(../assets/background/Shizuka.png) no-repeat center center;
     background-size: cover;
     background-color: rgba(0, 0, 0, 0.656); /* Capa de oscurecimiento */
     background-blend-mode: multiply; /* Mezcla el color con la imagen */
-    
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0;
     overflow: hidden;
 }
-
 
 #game-container {
     display: flex;
@@ -22,9 +17,34 @@ body {
     align-items: center;
     width: 100vw;
     height: 100vh;
+    position: relative; /* Asegúrate de que el contenedor tenga posición relativa */
 }
 
 canvas {
     transform: scale(0.80);
     transform-origin: center;
+}
+
+.round-button {
+    background-color: #4CAF50; /* Color de fondo */
+    border: none;
+    border-radius: 50%; /* Hace que el botón sea redondo */
+    width: 60px; /* Ancho del botón */
+    height: 60px; /* Alto del botón */
+    display: flex; /* Usar flexbox para centrar el SVG */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    cursor: pointer; /* Cambiar el cursor al pasar el ratón */
+    transition: background-color 0.3s; /* Transición suave para el color de fondo */
+    position: absolute; /* Posicionamiento absoluto */
+    top: 20px; /* Distancia desde la parte superior */
+    right: 20px; /* Distancia desde la derecha */
+}
+
+.round-button:hover {
+    background-color: #1a7898; /* Color de fondo al pasar el ratón */
+}
+
+.round-button svg {
+    fill: white; /* Color del SVG */
 }
