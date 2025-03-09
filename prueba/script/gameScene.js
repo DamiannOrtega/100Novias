@@ -11,8 +11,9 @@ class GameScene extends Phaser.Scene {
         this.score = 0;              // Puntuación del jugador
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
-
+        this.icono=null;
         this.personaje = 1;          // Selección de personaje
+
 
         // Música y sonidos
         this.musicafondo = null;     // Música de fondo
@@ -30,7 +31,8 @@ class GameScene extends Phaser.Scene {
         this.enemigoDireccion = 1;
         this.sonidoaAHahari = null;
         this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
-        this.livesText = null;  // Texto para mostrar las vidas
+        this.ImagenVida=[];
+
 
         //Objeto especial
         this.rentaro = null;
@@ -70,6 +72,8 @@ class GameScene extends Phaser.Scene {
         this.load.image('Shizuka_derecha2', 'assets/Shizuka/s5.png');
         this.load.image('Shizuka_muerte', 'assets/Shizuka/Smuerte.png');
         this.load.image('Shizuka_quieta', 'assets/Shizuka/ShizukaQuieta.png');
+        this.load.image('Icono_Shizuka', 'assets/Shizuka/iconoShizuka.png');
+
 
         // NANO
         this.load.image('Nano_parada', 'assets/Nano/NanoParada.png');
@@ -81,6 +85,8 @@ class GameScene extends Phaser.Scene {
         this.load.image('Nano_muerte', 'assets/Nano/NanoMuerte.png');
         this.load.image('Nano_quieta', 'assets/Nano/NanoQuieta1.png');
         this.load.image('Nano_quieta1', 'assets/Nano/NanoQuieta.png');
+        this.load.image('Icono_Nano', 'assets/Nano/iconoNano.png');
+
 
         // MÚSICA Y SONIDOS
         this.load.audio('musica_fondo', 'assets/Nivel1.mp3');
@@ -92,6 +98,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Shizuka_paradaS3', 'assets/Shizuka/DialogoShizuka3.mp3');
         this.load.audio('Shizuka_paradaS4', 'assets/Shizuka/DialogoShizuka4.mp3');
         this.load.audio('Shizuka_paradaS5', 'assets/Shizuka/DialogoShizuka5.mp3');
+        
 
         // NANO
         this.load.audio('Nano_coin', 'assets/Nano/RegojerPeluche.mp3');
@@ -107,6 +114,8 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Aparece_enemigo', 'assets/Enemigos/HahariAparece.mp3');
         //objeto especial
         this.load.image('Rentaro', 'assets/objetos/RentaroCaballo.png');
+        this.load.image('vidas', 'assets/objetos/Corazones.png');
+        
 
     }
 
@@ -119,17 +128,16 @@ class GameScene extends Phaser.Scene {
         this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
     }
 
-        console.log("Personaje recuperado: ", this.personaje); // Verificar en la consola
+
         // Selección de personaje
         if (this.personaje === 1) {
             this.player = this.physics.add.sprite(100, 650, 'Nano_parada').setScale(0.2);
-            console.log("Personaje seleccionado: Nano");
+            
         } else if (this.personaje === 2) {
             this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
-            console.log("Personaje seleccionado: Shizuka");
-        } else {
-            console.log("No se ha seleccionado un personaje válido");
-        }
+            
+        } 
+
 
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         this.musicafondo.play();
@@ -149,9 +157,8 @@ class GameScene extends Phaser.Scene {
             this.platforms.create(x, 715, 'groundsmall').setScale(0.8).refreshBody();
         }
         
-        // Mostrar el nombre del jugador
-        this.playerNameText = this.add.text(16, 50, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
-        this.livesText = this.add.text(16, 80, 'Vidas: ' + this.lives, { fontSize: '32px', fill: '#000' });
+        this.playerNameText = this.add.text(16, 100, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
+      
 
         //Enemigos
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
@@ -171,9 +178,14 @@ class GameScene extends Phaser.Scene {
         // Crea al jugador en una posición inicial
         if (this.personaje == 1) {
             this.player = this.physics.add.sprite(100, 650, 'Nano_parada').setScale(0.2);
+
         } else if (this.personaje == 2) {
             this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
+
         }
+
+
+
 
         // Configura propiedades físicas del jugador (rebote y límites del mundo)
         this.player.setBounce(0.2);
@@ -302,11 +314,25 @@ class GameScene extends Phaser.Scene {
             child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
 
+
+        if (this.personaje == 1) {
+            this.icono = this.add.image(160, 50, 'Icono_Nano').setScale(0.5); // Ajusta la escala según sea necesario
+
+        } else if (this.personaje == 2) {
+            this.icono = this.add.image(160, 50, 'Icono_Shizuka').setScale(0.5); // Ajusta la escala según sea necesario
+
+        }
+        for (let i = 0; i < this.lives; i++) {
+            const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2); // Ajusta la escala según sea necesario
+            this.ImagenVida.push(vidaImage);
+        }
+
+
         // Crea un grupo de bombas
         this.bombs = this.physics.add.group();
 
         // Añade el texto de la puntuación en la esquina superior izquierda
-        this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+        this.scoreText = this.add.text(16, 130, 'score: 0', { fontSize: '32px', fill: '#000' });
 
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
@@ -449,7 +475,11 @@ class GameScene extends Phaser.Scene {
     
         bomb.disableBody(true, true);  // Desaparece la bomba
         this.lives--;  // Restar una vida
-        this.livesText.setText('Vidas: ' + this.lives);  // Actualizar el texto
+        // Actualizar las imágenes de las vidas
+        if (this.ImagenVida.length > 0) {
+            const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
+            vidaImage.destroy(); // Destruir la imagen de vida
+        }
     
         // Si aún tiene vidas, hacer que el jugador parpadee y sea inmune por 3 segundos
         if (this.lives > 0) {
@@ -479,6 +509,8 @@ class GameScene extends Phaser.Scene {
             this.player.setTint(0xff0000);
             this.player.anims.play('die'); // Animación de muerte
             this.physics.pause();
+            this.musicafondo.stop();
+            this.SonidoMuerte.play();
             this.gameOver = true;
             this.scoreText.setText('¡GAME OVER!');
         }
