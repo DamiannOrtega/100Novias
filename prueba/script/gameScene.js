@@ -23,7 +23,9 @@ class GameScene extends Phaser.Scene {
         this.SonidoMuerte = null;    // Sonido al morir
         this.cancionrandom = 0;      // Tiempo para reproducir sonidos de idle
         this.delaycancion = Phaser.Math.Between(5000, 10000); // Delay entre sonidos de idle
-
+        this.sonidoDano=null;
+        this.volumenOriginal = 3; // Volumen normal
+        this.volumenAumentado = null; // Volumen aumentado
         // Instancia de la clase Jugador
         this.jugador = null;
         //Enemigos
@@ -118,7 +120,8 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Shizuka_paradaS3', 'assets/Shizuka/DialogoShizuka3.mp3');
         this.load.audio('Shizuka_paradaS4', 'assets/Shizuka/DialogoShizuka4.mp3');
         this.load.audio('Shizuka_paradaS5', 'assets/Shizuka/DialogoShizuka5.mp3');
-
+        this.load.audio('Shizuka_Dano', 'assets/Shizuka/ShizukaDano.mp3');
+        
 
         // NANO
         this.load.audio('Nano_coin', 'assets/Nano/RegojerPeluche.mp3');
@@ -126,6 +129,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Nano_paradaS', 'assets/Nano/NanoDialogo2.mp3');
         this.load.audio('Nano_paradaS2', 'assets/Nano/NanoDialogo3.mp3');
         this.load.audio('Nano_paradaS3', 'assets/Nano/DialogoNano.mp3');
+        this.load.audio('Nano_Dano', 'assets/Nano/NanoGolpe.mp3');
 
         //Enemigos
         this.load.image('bomb', 'assets/Enemigos/atacke.png');
@@ -136,6 +140,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('Rentaro', 'assets/objetos/RentaroCaballo.png');
         this.load.image('vidas', 'assets/objetos/Corazones.png');
         this.load.image('RentaroR', 'assets/objetos/RentaroCaballo2.png');
+        this.load.audio('Objeto_Especial', 'assets/objetos/ObjetoEspecial/Rentaro.mp3');
 
 
     }
@@ -320,6 +325,10 @@ class GameScene extends Phaser.Scene {
             ];
             this.pelucheSonido = this.sound.add('Nano_coin');
             this.SonidoMuerte = this.sound.add('Nano_muerteS');
+            this.sonidoDano=this.sound.add('Nano_Dano')
+
+
+
         } else if (this.personaje == 2) {  // Shizuka
             this.SonidosQuietas = [
                 this.sound.add('Shizuka_paradaS'),
@@ -330,6 +339,8 @@ class GameScene extends Phaser.Scene {
             ];
             this.pelucheSonido = this.sound.add('Shizuka_coin');
             this.SonidoMuerte = this.sound.add('Shizuka_muerteS');
+            this.sonidoDano=this.sound.add('Shizuka_Dano')
+
         }
 
         // Configura las teclas del cursor para mover al jugador
@@ -540,6 +551,7 @@ class GameScene extends Phaser.Scene {
 
         bomb.disableBody(true, true);  // Desaparece la bomba
         this.lives--;  // Restar una vida
+
         // Actualizar las imágenes de las vidas
         if (this.ImagenVida.length > 0) {
             const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
@@ -549,6 +561,16 @@ class GameScene extends Phaser.Scene {
         // Si aún tiene vidas, hacer que el jugador parpadee y sea inmune por 3 segundos
         if (this.lives > 0) {
             this.isInvincible = true; // Activar inmunidad
+            // Definir el volumen original
+            if (this.personaje == 1){
+                this.sonidoDano = this.sound.add('Nano_Dano', { volume: 5 });
+        } else if (this.personaje == 2) {  // Shizuka
+            this.sonidoDano = this.sound.add('Shizuka_Dano', { volume: 5 });
+
+        }
+        // Reproducir el sonido
+        this.sonidoDano.play();
+
             this.player.setTint(0xff0000); // Efecto visual de daño
 
             // Parpadeo: Cambiar la opacidad del jugador
@@ -574,6 +596,7 @@ class GameScene extends Phaser.Scene {
             this.player.setTint(0xff0000);
             this.player.anims.play('die'); // Animación de muerte
             this.physics.pause();
+            this.sonidoDano.stop();
             this.musicafondo.stop();
             this.SonidoMuerte.play();
             this.gameOver = true;
@@ -714,6 +737,7 @@ class GameScene extends Phaser.Scene {
         this.rentaroTimeLeft = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
         this.rentaroValue = 50;
+        this.sound.add('Objeto_Especial').play();
         const y = 0; // Aparece en la parte superior de la pantalla
         this.rentaro = this.physics.add.sprite(x, y, 'RentaroR').setScale(0.1);
         this.rentaro.setCollideWorldBounds(true);
@@ -858,7 +882,8 @@ moveRentaro() {
         // Asegúrate de que el segundo Rentaro no se cree si ya existe
         if (this.rentaro2) return;
         this.rentaroValue2 = 50;
-
+        this.sound.add('Objeto_Especial',{volume:10});
+        this.sound.add('Objeto_Especial').play();
         this.rentaroTimeLeft2 = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
         const y = 0; // Aparece en la parte superior de la pantalla
