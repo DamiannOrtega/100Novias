@@ -33,12 +33,16 @@ class GameScene extends Phaser.Scene {
         this.sonidoaAHahari = null;
         this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
         this.ImagenVida = [];
+        this.numrand= null;
 
 
         //Objeto especial
         this.rentaro = null;
         this.rentaroTimer = null; // Temporizador para el parpadeo
         this.rentaroBlinking = false; // Estado de parpadeo
+        this.rentaroTimerText = null; // Texto del contador de tiempo
+        this.rentaroTimeLeft = 0; // Tiempo inicial para la bonificación (en segundos)
+        this.numrand=null;
     }
 
     init() {
@@ -48,6 +52,7 @@ class GameScene extends Phaser.Scene {
 
         // Cargar el jugador desde localStorage
         this.jugador = Jugador.cargar(playerName);
+        this.generarAleatorio();
 
         if (!this.jugador) {
             // Si no existe el jugador en localStorage, crear uno nuevo
@@ -197,7 +202,8 @@ class GameScene extends Phaser.Scene {
 
 
 
-
+        this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', { fontSize: '32px', fill: '#000' });
+        this.rentaroTimerText.setVisible(false);
         // Configura propiedades físicas del jugador (rebote y límites del mundo)
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
@@ -363,6 +369,7 @@ class GameScene extends Phaser.Scene {
 
 
 
+
     update(time) {
         if (this.gameOver) {
             return;
@@ -447,8 +454,6 @@ class GameScene extends Phaser.Scene {
 
         //Objeto especial
 
-
-
     }
 
     collectStar(player, peluche) {
@@ -465,13 +470,12 @@ class GameScene extends Phaser.Scene {
         this.jugador.puntos = this.score;
         this.jugador.guardar();
         // Genera un número aleatorio múltiplo de 10 hasta 100
-        const numrand = Math.floor(Math.random() * 10 + 1) * 10;
-
         // Usando ese número en tu condicional
-        if (this.score === numrand && !this.rentaro) {
-            this.createRentaro();
+        
+        // Verificar si el puntaje coincide con el número aleatorio generado
+        if (this.score === this.numrand) {
+            this.createRentaro(); // Crear el objeto especial
         }
-
 
         // Si no quedan estrellas activas, genera un nuevo lote de estrellas y una bomba
         if (this.peluches.countActive(true) === 0) {
@@ -649,13 +653,13 @@ class GameScene extends Phaser.Scene {
     }
 
     createRentaro() {
+        this.rentaroTimeLeft = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
         const y = 0; // Aparece en la parte superior de la pantalla
         this.rentaro = this.physics.add.sprite(x, y, 'Rentaro').setScale(0.08);
         this.rentaro.setCollideWorldBounds(true);
         this.rentaro.setBounce(1); // Permitir que rebote
         this.rentaro.setGravityY(300); // Establecer gravedad para que caiga
-
         // Hacer que Rentaro parpadee
         this.rentaroBlinking = true;
         this.rentaroTimer = this.time.addEvent({
@@ -664,7 +668,27 @@ class GameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+        
+        this.rentaroTimerText.setVisible(true);
+        this.rentaroTimerText.setText('Tiempo: ' + this.rentaroTimeLeft); // Actualiza el texto
 
+        this.rentaroTimerEvent = this.time.addEvent({
+            delay: 1000, // 1 segundo
+            callback: () => {
+                this.rentaroTimeLeft--;
+                this.rentaroTimerText.setText('Tiempo: ' + this.rentaroTimeLeft); // Actualiza el texto
+    
+                // Si el tiempo llega a 0, destruye Rentaro
+                if (this.rentaroTimeLeft <= 0) {
+                    this.rentaro.destroy();
+                    this.rentaroTimerText.setVisible(false);
+                    
+                    this.rentaroTimerEvent.remove(); // Detener el temporizador
+                }
+            },
+            callbackScope: this,
+            loop: true // Repetir el evento
+        });
         // Detectar si el jugador recoge a Rentaro
         this.physics.add.collider(this.rentaro, this.platforms);
         this.physics.add.overlap(this.player, this.rentaro, this.collectRentaro, null, this);
@@ -728,7 +752,17 @@ class GameScene extends Phaser.Scene {
         this.jugador.puntos = this.score;
         this.jugador.guardar();
         this.rentaro.destroy();
+    
+        // Reiniciar el contador
+        this.rentaroTimeLeft = 10; // Reinicia el tiempo
+        this.rentaroTimerText.setVisible(true); // Asegúrate de que el texto sea visible
+    }
 
+    generarAleatorio() {
+        // Generar un número aleatorio entre 1 y 10
+        const randomNum = Math.floor(Math.random() * 10) + 1; // Esto genera un número entre 1 y 10
+        this.numrand = randomNum * 10; // Multiplicar por 10 para obtener un múltiplo de 10 entre 10 y 100
+        console.log('Número aleatorio generado: ' + this.numrand); // Mostrar en consola
     }
 
 }
