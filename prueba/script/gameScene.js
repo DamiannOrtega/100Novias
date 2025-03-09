@@ -591,10 +591,30 @@ class GameScene extends Phaser.Scene {
         if (this.isPaused) {
             this.physics.pause(); // Pausar la física
             this.musicafondo.pause(); // Pausar la música de fondo
+            this.SonidosQuietas.forEach((sonido) => {
+                if (sonido.isPlaying) {
+                    sonido.pause();
+                }
+            });
+    
+            // Pausar el sonido del enemigo si está reproduciéndose
+            if (this.sonidoaAHahari.isPlaying) {
+                this.sonidoaAHahari.pause();
+            }
             // Aquí puedes pausar otros sonidos si es necesario
         } else {
             this.physics.resume(); // Reanudar la física
             this.musicafondo.resume(); // Reanudar la música de fondo
+            this.SonidosQuietas.forEach((sonido) => {
+                if (sonido.isPaused) {
+                    sonido.resume();
+                }
+            });
+    
+            // Reanudar el sonido del enemigo si estaba pausado
+            if (this.sonidoaAHahari.isPaused) {
+                this.sonidoaAHahari.resume();
+            }
             // Aquí puedes reanudar otros sonidos si es necesario
         }
     }
