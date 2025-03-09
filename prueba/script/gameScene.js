@@ -109,12 +109,12 @@ class GameScene extends Phaser.Scene {
 
     create() {
 
-// Recuperar el personaje seleccionado desde localStorage
-const personajeSeleccionado = localStorage.getItem('selectedCharacter'); 
+    // Recuperar el personaje seleccionado desde localStorage
+    const personajeSeleccionado = localStorage.getItem('selectedCharacter'); 
 
-if (personajeSeleccionado) {
-    this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
-}
+    if (personajeSeleccionado) {
+        this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
+    }
 
         console.log("Personaje recuperado: ", this.personaje); // Verificar en la consola
         // Selección de personaje

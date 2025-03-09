@@ -7,7 +7,7 @@
     <title>Juego</title>
 </head>
 <body>
-    
+    <div id="game-container"></div>
     <script src="script/jugador.js"></script>
     <script src="script/gameScene.js"></script>
 
@@ -17,14 +17,14 @@
                 type: Phaser.AUTO,
                 width: 1500,
                 height: 800,
-                
+                parent: 'game-container',
                 physics: {
                     default: 'arcade',
                     arcade: {
                         gravity: { y: 300 },
                         debug: false
                     }
-                },
+                },  
                 audio: {
                     disableWebAudio: false
                 },
@@ -37,6 +37,7 @@
                         }
                     ]
                 },
+                
                 scene: [GameScene] // Solo mantiene la escena principal del juego
             };
 
