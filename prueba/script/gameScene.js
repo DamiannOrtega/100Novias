@@ -704,21 +704,20 @@ class GameScene extends Phaser.Scene {
         this.moveRentaro();
     }
 
-
     moveRentaro() {
         if (!this.rentaro) return;
-
+    
         // Movimiento horizontal de Rentaro
         const direction = Phaser.Math.Between(-1, 1); // Movimiento a la izquierda (-1) o a la derecha (1)
         const speedX = 200; // Velocidad de movimiento horizontal
-
+    
         // Establecer velocidad horizontal
         this.rentaro.setVelocityX(direction * speedX); // Velocidad horizontal
-
+    
         // Configurar colisión con los límites del mundo y rebote
         this.rentaro.setCollideWorldBounds(true);
         this.rentaro.setBounce(1); // Permitir rebote en los límites del mundo
-
+    
         // Hacer que Rentaro parpadee mientras se mueve
         this.rentaroBlinking = true;
         this.rentaroTimer = this.time.addEvent({
@@ -727,7 +726,7 @@ class GameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-
+    
         // Desactivar el parpadeo después de 10 segundos
         this.time.delayedCall(10000, () => {
             this.rentaroBlinking = false;
@@ -736,27 +735,30 @@ class GameScene extends Phaser.Scene {
                 this.rentaroTimer.remove(); // Detener el parpadeo
             }
         });
-            // Añadir un evento de actualización para verificar la posición de Rentaro
-            this.time.addEvent({
-                delay: 100, // Comprobar cada 100 ms
-                callback: () => {
+    
+        // Añadir un evento de actualización para verificar la posición de Rentaro
+        this.time.addEvent({
+            delay: 100, // Comprobar cada 100 ms
+            callback: () => {
+                if (this.rentaro && this.rentaro.body) { // Verifica que rentaro esté definido
                     // Cambiar la textura según la dirección de movimiento
                     if (this.rentaro.body.velocity.x < 0) {
                         this.rentaro.setTexture('Rentaro'); // Cambiar a la imagen de Rentaro si se mueve a la izquierda
                     } else if (this.rentaro.body.velocity.x > 0) {
                         this.rentaro.setTexture('RentaroR'); // Cambiar a la imagen de RentaroR si se mueve a la derecha
                     }
-        
+    
                     // Verificar límites de la pantalla
                     if (this.rentaro.x >= 1420) {
                         this.rentaro.setVelocityX(-speedX); // Cambiar dirección
                     } else if (this.rentaro.x <= 80) {
                         this.rentaro.setVelocityX(speedX); // Cambiar dirección
                     }
-                },
-                callbackScope: this,
-                loop: true // Repetir el evento
-            });
+                }
+            },
+            callbackScope: this,
+            loop: true // Repetir el evento
+        });
     }
 
     blinkRentaro() {
