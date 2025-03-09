@@ -37,8 +37,9 @@ canvas {
     cursor: pointer; /* Cambiar el cursor al pasar el ratón */
     transition: background-color 0.3s; /* Transición suave para el color de fondo */
     position: absolute; /* Posicionamiento absoluto */
-    top: 20px; /* Distancia desde la parte superior */
-    right: 20px; /* Distancia desde la derecha */
+    top: 60px; /* Distancia desde la parte superior */
+    right: 180px; /* Distancia desde la derecha */
+    z-index: 100; /*Para que se vaya hacia adelante*/
 }
 
 .round-button:hover {
