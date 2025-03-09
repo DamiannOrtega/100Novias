@@ -122,6 +122,7 @@ class GameScene extends Phaser.Scene {
         //objeto especial
         this.load.image('Rentaro', 'assets/objetos/RentaroCaballo.png');
         this.load.image('vidas', 'assets/objetos/Corazones.png');
+        this.load.image('RentaroR', 'assets/objetos/RentaroCaballo2.png');
 
 
     }
@@ -656,7 +657,7 @@ class GameScene extends Phaser.Scene {
         this.rentaroTimeLeft = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
         const y = 0; // Aparece en la parte superior de la pantalla
-        this.rentaro = this.physics.add.sprite(x, y, 'Rentaro').setScale(0.08);
+        this.rentaro = this.physics.add.sprite(x, y, 'RentaroR').setScale(0.1);
         this.rentaro.setCollideWorldBounds(true);
         this.rentaro.setBounce(1); // Permitir que rebote
         this.rentaro.setGravityY(300); // Establecer gravedad para que caiga
@@ -680,7 +681,6 @@ class GameScene extends Phaser.Scene {
     
                 // Si el tiempo llega a 0, destruye Rentaro
                 if (this.rentaroTimeLeft <= 0) {
-                    this.rentaro.destroy();
                     this.rentaroTimerText.setVisible(false);
                     
                     this.rentaroTimerEvent.remove(); // Detener el temporizador
@@ -736,6 +736,27 @@ class GameScene extends Phaser.Scene {
                 this.rentaroTimer.remove(); // Detener el parpadeo
             }
         });
+            // Añadir un evento de actualización para verificar la posición de Rentaro
+            this.time.addEvent({
+                delay: 100, // Comprobar cada 100 ms
+                callback: () => {
+                    // Cambiar la textura según la dirección de movimiento
+                    if (this.rentaro.body.velocity.x < 0) {
+                        this.rentaro.setTexture('Rentaro'); // Cambiar a la imagen de Rentaro si se mueve a la izquierda
+                    } else if (this.rentaro.body.velocity.x > 0) {
+                        this.rentaro.setTexture('RentaroR'); // Cambiar a la imagen de RentaroR si se mueve a la derecha
+                    }
+        
+                    // Verificar límites de la pantalla
+                    if (this.rentaro.x >= 1420) {
+                        this.rentaro.setVelocityX(-speedX); // Cambiar dirección
+                    } else if (this.rentaro.x <= 80) {
+                        this.rentaro.setVelocityX(speedX); // Cambiar dirección
+                    }
+                },
+                callbackScope: this,
+                loop: true // Repetir el evento
+            });
     }
 
     blinkRentaro() {
@@ -748,14 +769,16 @@ class GameScene extends Phaser.Scene {
     collectRentaro(player, rentaro) {
         rentaro.disableBody(true, true);
         this.score += 50; // Rentaro vale 50 puntos
-        this.scoreText.setText('Score: ' + this.score);
         this.jugador.puntos = this.score;
+        this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
         this.rentaro.destroy();
-    
-        // Reiniciar el contador
-        this.rentaroTimeLeft = 10; // Reinicia el tiempo
-        this.rentaroTimerText.setVisible(true); // Asegúrate de que el texto sea visible
+
+       // Detener el temporizador y ocultar el texto
+    if (this.rentaroTimerEvent) {
+        this.rentaroTimerEvent.remove(); // Detener el temporizador
+    }
+    this.rentaroTimerText.setVisible(false); // Ocultar el texto del temporizador
     }
 
     generarAleatorio() {
