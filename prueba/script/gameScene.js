@@ -34,6 +34,7 @@ class GameScene extends Phaser.Scene {
         this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
         this.ImagenVida = [];
         this.numrand= null;
+        this.hahaiEnojada=null;
 
 
         //Objeto especial
@@ -48,6 +49,8 @@ class GameScene extends Phaser.Scene {
         this.rentaro2 = null;
         this.rentaroTimer2 = null; // Temporizador para el parpadeo
         this.numrand2=null;
+        this.rentarovalue=null;
+        this.rentarovalue2=null;
         this.rentaroBlinking2 = false; // Estado de parpadeo
         this.rentaroTimeLeft2 = 0; // Tiempo inicial para la bonificación (en segundos)
         this.rentaroTimerText2 = null; // Texto del contador de tiempo
@@ -466,7 +469,11 @@ class GameScene extends Phaser.Scene {
             }
         }
 
-        //Objeto especial
+                // Verificar si la puntuación ha alcanzado los 400 puntos
+                if (this.score >= 400 && !this.hahaiEnojada) {
+                    this.lanzarBombasAdicionales(); // Llama a la función para lanzar bombas adicionales
+                    this.hahaiEnojada = true; // Marca que ya se lanzaron las bombas adicionales
+                }
 
     }
 
@@ -626,7 +633,39 @@ class GameScene extends Phaser.Scene {
             }
         });
     }
-
+    
+    lanzarBombasAdicionales() {
+        // Lanza 10 bombas adicionales
+        for (let i = 0; i < 10; i++) {
+            this.time.delayedCall(i * 1000, () => {
+                // Lanza una bomba adicional sin la limitación de 5
+                const bomb = this.bombs.create(this.enemigo.x, this.enemigo.y, 'bomb');
+                bomb.setBounce(1); // Permite que la bomba rebote
+                bomb.setCollideWorldBounds(true); // Colisiona con los límites del mundo
+    
+                bomb.setScale(0.05); // Cambia el tamaño de la bomba
+                bomb.body.allowGravity = false;
+    
+                // Establecer la dirección de la bomba según la dirección del enemigo
+                const direction = this.enemigoDireccion === 1 ? 250 : -250; // 200 es la velocidad horizontal de la bomba
+                bomb.setVelocityX(direction); // Velocidad horizontal
+    
+                // Establecer una velocidad vertical baja para que baje lentamente
+                bomb.setVelocityY(60); // Ajusta este valor para controlar la velocidad de descenso
+                this.physics.add.collider(bomb, this.platforms, () => {
+                    // Invertir la velocidad vertical para que la bomba suba
+                    bomb.setVelocityY(-60); // Cambia este valor para controlar la velocidad de subida
+                });
+    
+                // Eliminar la bomba después de 10 segundos
+                this.time.delayedCall(10000, () => {
+                    if (bomb.active) {
+                        bomb.destroy();
+                    }
+                });
+            }, [], this);
+        }
+    }
     togglePause() {
         this.isPaused = !this.isPaused; // Cambiar el estado de pausa
         const canvas = document.querySelector('canvas');
@@ -674,6 +713,7 @@ class GameScene extends Phaser.Scene {
     createRentaro() {
         this.rentaroTimeLeft = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
+        this.rentaroValue = 50;
         const y = 0; // Aparece en la parte superior de la pantalla
         this.rentaro = this.physics.add.sprite(x, y, 'RentaroR').setScale(0.1);
         this.rentaro.setCollideWorldBounds(true);
@@ -700,7 +740,7 @@ class GameScene extends Phaser.Scene {
                 // Si el tiempo llega a 0, destruye Rentaro
                 if (this.rentaroTimeLeft <= 0) {
                     this.rentaroTimerText.setVisible(false);
-                    
+                    this.rentaroValue = 10;
                     this.rentaroTimerEvent.remove(); // Detener el temporizador
                 }
             },
@@ -788,7 +828,7 @@ moveRentaro() {
 
     collectRentaro(player, rentaro) {
         rentaro.disableBody(true, true);
-        this.score += 50; // Rentaro vale 50 puntos
+        this.score += this.rentaroValue; ; // Rentaro vale 50 puntos
         this.jugador.puntos = this.score;
         this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
@@ -817,6 +857,7 @@ moveRentaro() {
     createSecondRentaro() {
         // Asegúrate de que el segundo Rentaro no se cree si ya existe
         if (this.rentaro2) return;
+        this.rentaroValue2 = 50;
 
         this.rentaroTimeLeft2 = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
@@ -846,15 +887,21 @@ moveRentaro() {
         
                 // Si el tiempo llega a 0, destruye Rentaro
                 if (this.rentaroTimeLeft2 <= 0) {
+                    this.rentarovalue2=10;
                     this.rentaroTimerText2.setVisible(false);
-                    this.rentaro2.destroy();
-                    this.rentaro2 = null; // Limpiar la referencia
                     this.rentaroTimerEvent2.remove(); // Detener el temporizador
                 }
             },
             callbackScope: this,
             loop: true // Repetir el evento
         });
+                // Desactivar el parpadeo después de 10 segundos
+                this.time.delayedCall(10000, () => {
+                    this.rentaroBlinking2 = false;
+                    this.rentaro2.setTint(0xffffff); // Restablecer color
+                    this.rentaroTimer2.remove(); // Detener el parpadeo
+                });
+        
 
         // Detectar si el jugador recoge a Rentaro
         this.physics.add.collider(this.rentaro2, this.platforms);
@@ -885,6 +932,15 @@ moveRentaro() {
             callback: this.blinkRentaro2,
             callbackScope: this,
             loop: true
+        });
+
+            // Desactivar el parpadeo después de 10 segundos
+        this.time.delayedCall(10000, () => {
+            this.rentaroBlinking2 = false;
+            this.rentaro2.setTint(0xffffff); // Restablecer color
+            if (this.rentaroTimer2) {
+                this.rentaroTimer2.remove(); // Detener el parpadeo
+            }
         });
 
         // Añadir un evento de actualización para verificar la posición de Rentaro
@@ -921,7 +977,7 @@ moveRentaro() {
 
     collectRentaro2(player, rentaro) {
         rentaro.disableBody(true, true);
-        this.score += 50; // Rentaro vale 50 puntos
+        this.score += this.rentaroValue2; ; // Rentaro vale 50 puntos
         this.jugador.puntos = this.score;
         this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
