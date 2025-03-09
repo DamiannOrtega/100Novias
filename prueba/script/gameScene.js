@@ -43,6 +43,16 @@ class GameScene extends Phaser.Scene {
         this.rentaroTimerText = null; // Texto del contador de tiempo
         this.rentaroTimeLeft = 0; // Tiempo inicial para la bonificación (en segundos)
         this.numrand=null;
+
+        //Objeto especial
+        this.rentaro2 = null;
+        this.rentaroTimer2 = null; // Temporizador para el parpadeo
+        this.numrand2=null;
+        this.rentaroBlinking2 = false; // Estado de parpadeo
+        this.rentaroTimeLeft2 = 0; // Tiempo inicial para la bonificación (en segundos)
+        this.rentaroTimerText2 = null; // Texto del contador de tiempo
+
+        
     }
 
     init() {
@@ -53,7 +63,7 @@ class GameScene extends Phaser.Scene {
         // Cargar el jugador desde localStorage
         this.jugador = Jugador.cargar(playerName);
         this.generarAleatorio();
-
+        this.generarAleatorio2();
         if (!this.jugador) {
             // Si no existe el jugador en localStorage, crear uno nuevo
             this.jugador = new Jugador(playerName);
@@ -205,6 +215,9 @@ class GameScene extends Phaser.Scene {
 
         this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', { fontSize: '32px', fill: '#000' });
         this.rentaroTimerText.setVisible(false);
+        
+        this.rentaroTimerText2 = this.add.text(16, 190, 'Tiempo: 0', { fontSize: '32px', fill: '#000' });
+        this.rentaroTimerText2.setVisible(false);
         // Configura propiedades físicas del jugador (rebote y límites del mundo)
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
@@ -477,7 +490,12 @@ class GameScene extends Phaser.Scene {
         if (this.score === this.numrand) {
             this.createRentaro(); // Crear el objeto especial
         }
-
+        if (this.score === this.numrand2) {
+            this.createSecondRentaro(); // Crear el objeto especial
+        }
+        if (this.score >= 500) {
+            this.completeLevel(); // Llamar a la función para completar el nivel
+        }
         // Si no quedan estrellas activas, genera un nuevo lote de estrellas y una bomba
         if (this.peluches.countActive(true) === 0) {
             this.peluches.children.iterate((child) => {
@@ -704,62 +722,62 @@ class GameScene extends Phaser.Scene {
         this.moveRentaro();
     }
 
-    moveRentaro() {
-        if (!this.rentaro) return;
-    
-        // Movimiento horizontal de Rentaro
-        const direction = Phaser.Math.Between(-1, 1); // Movimiento a la izquierda (-1) o a la derecha (1)
-        const speedX = 200; // Velocidad de movimiento horizontal
-    
-        // Establecer velocidad horizontal
-        this.rentaro.setVelocityX(direction * speedX); // Velocidad horizontal
-    
-        // Configurar colisión con los límites del mundo y rebote
-        this.rentaro.setCollideWorldBounds(true);
-        this.rentaro.setBounce(1); // Permitir rebote en los límites del mundo
-    
-        // Hacer que Rentaro parpadee mientras se mueve
-        this.rentaroBlinking = true;
-        this.rentaroTimer = this.time.addEvent({
-            delay: 100, // Cambiar cada 100 ms
-            callback: this.blinkRentaro,
-            callbackScope: this,
-            loop: true
-        });
-    
-        // Desactivar el parpadeo después de 10 segundos
-        this.time.delayedCall(10000, () => {
-            this.rentaroBlinking = false;
-            this.rentaro.setTint(0xffffff); // Restablecer color
-            if (this.rentaroTimer) {
-                this.rentaroTimer.remove(); // Detener el parpadeo
-            }
-        });
-    
-        // Añadir un evento de actualización para verificar la posición de Rentaro
-        this.time.addEvent({
-            delay: 100, // Comprobar cada 100 ms
-            callback: () => {
-                if (this.rentaro && this.rentaro.body) { // Verifica que rentaro esté definido
-                    // Cambiar la textura según la dirección de movimiento
-                    if (this.rentaro.body.velocity.x < 0) {
-                        this.rentaro.setTexture('Rentaro'); // Cambiar a la imagen de Rentaro si se mueve a la izquierda
-                    } else if (this.rentaro.body.velocity.x > 0) {
-                        this.rentaro.setTexture('RentaroR'); // Cambiar a la imagen de RentaroR si se mueve a la derecha
-                    }
-    
-                    // Verificar límites de la pantalla
-                    if (this.rentaro.x >= 1420) {
-                        this.rentaro.setVelocityX(-speedX); // Cambiar dirección
-                    } else if (this.rentaro.x <= 80) {
-                        this.rentaro.setVelocityX(speedX); // Cambiar dirección
-                    }
+moveRentaro() {
+    if (!this.rentaro) return;
+
+    // Movimiento horizontal de Rentaro
+    const direction = Phaser.Math.Between(-1, 1); // Movimiento a la izquierda (-1) o a la derecha (1)
+    const speedX = 200; // Velocidad de movimiento horizontal
+
+    // Establecer velocidad horizontal
+    this.rentaro.setVelocityX(direction * speedX); // Velocidad horizontal
+
+    // Configurar colisión con los límites del mundo y rebote
+    this.rentaro.setCollideWorldBounds(true);
+    this.rentaro.setBounce(1); // Permitir rebote en los límites del mundo
+
+    // Hacer que Rentaro parpadee mientras se mueve
+    this.rentaroBlinking = true;
+    this.rentaroTimer = this.time.addEvent({
+        delay: 100, // Cambiar cada 100 ms
+        callback: this.blinkRentaro,
+        callbackScope: this,
+        loop: true
+    });
+
+    // Desactivar el parpadeo después de 10 segundos
+    this.time.delayedCall(10000, () => {
+        this.rentaroBlinking = false;
+        this.rentaro.setTint(0xffffff); // Restablecer color
+        if (this.rentaroTimer) {
+            this.rentaroTimer.remove(); // Detener el parpadeo
+        }
+    });
+
+    // Añadir un evento de actualización para verificar la posición de Rentaro
+    this.time.addEvent({
+        delay: 100, // Comprobar cada 100 ms
+        callback: () => {
+            if (this.rentaro && this.rentaro.body) { // Verifica que rentaro esté definido
+                // Cambiar la textura según la dirección de movimiento
+                if (this.rentaro.body.velocity.x < 0) {
+                    this.rentaro.setTexture('Rentaro'); // Cambiar a la imagen de Rentaro si se mueve a la izquierda
+                } else if (this.rentaro.body.velocity.x > 0) {
+                    this.rentaro.setTexture('RentaroR'); // Cambiar a la imagen de RentaroR si se mueve a la derecha
                 }
-            },
-            callbackScope: this,
-            loop: true // Repetir el evento
-        });
-    }
+
+                // Verificar límites de la pantalla
+                if (this.rentaro.x >= 1420) {
+                    this.rentaro.setVelocityX(-speedX); // Cambiar dirección
+                } else if (this.rentaro.x <= 80) {
+                    this.rentaro.setVelocityX(speedX); // Cambiar dirección
+                }
+            }
+        },
+        callbackScope: this,
+        loop: true // Repetir el evento
+    });
+}
 
     blinkRentaro() {
         if (this.rentaroBlinking) {
@@ -776,7 +794,7 @@ class GameScene extends Phaser.Scene {
         this.jugador.guardar();
         this.rentaro.destroy();
 
-       // Detener el temporizador y ocultar el texto
+    // Detener el temporizador y ocultar el texto
     if (this.rentaroTimerEvent) {
         this.rentaroTimerEvent.remove(); // Detener el temporizador
     }
@@ -789,5 +807,160 @@ class GameScene extends Phaser.Scene {
         this.numrand = randomNum * 10; // Multiplicar por 10 para obtener un múltiplo de 10 entre 10 y 100
         console.log('Número aleatorio generado: ' + this.numrand); // Mostrar en consola
     }
+    generarAleatorio2() {
+        // Generar un múltiplo de 10 entre 200 y 350
+        this.numrand2 = Math.floor(Math.random() * ((350 - 200) / 10 + 1)) * 10 + 200;
+        console.log('Número 2 aleatorio generado: ' + this.numrand2);
+    }
+    
+    
+    createSecondRentaro() {
+        // Asegúrate de que el segundo Rentaro no se cree si ya existe
+        if (this.rentaro2) return;
 
+        this.rentaroTimeLeft2 = 10; // Reinicia el tiempo
+        const x = Phaser.Math.Between(100, 1400);
+        const y = 0; // Aparece en la parte superior de la pantalla
+        this.rentaro2 = this.physics.add.sprite(x, y, 'RentaroR').setScale(0.1);
+        this.rentaro2.setCollideWorldBounds(true);
+        this.rentaro2.setBounce(1); // Permitir que rebote
+        this.rentaro2.setGravityY(300); // Establecer gravedad para que caiga
+
+        // Hacer que Rentaro parpadee
+        this.rentaroBlinking2 = true;
+        this.rentaroTimer2 = this.time.addEvent({
+            delay: 100, // Cambiar cada 100 ms
+            callback: this.blinkRentaro2,
+            callbackScope: this,
+            loop: true
+        });
+        
+        this.rentaroTimerText2.setVisible(true);
+        this.rentaroTimerText2.setText('Tiempo: ' + this.rentaroTimeLeft2); // Actualiza el texto
+
+        this.rentaroTimerEvent2 = this.time.addEvent({
+            delay: 1000, // 1 segundo
+            callback: () => {
+                this.rentaroTimeLeft2--;
+                this.rentaroTimerText2.setText('Tiempo: ' + this.rentaroTimeLeft2); // Actualiza el texto
+        
+                // Si el tiempo llega a 0, destruye Rentaro
+                if (this.rentaroTimeLeft2 <= 0) {
+                    this.rentaroTimerText2.setVisible(false);
+                    this.rentaro2.destroy();
+                    this.rentaro2 = null; // Limpiar la referencia
+                    this.rentaroTimerEvent2.remove(); // Detener el temporizador
+                }
+            },
+            callbackScope: this,
+            loop: true // Repetir el evento
+        });
+
+        // Detectar si el jugador recoge a Rentaro
+        this.physics.add.collider(this.rentaro2, this.platforms);
+        this.physics.add.overlap(this.player, this.rentaro2, this.collectRentaro2, null, this);
+
+        // Iniciar el movimiento de Rentaro
+        this.moveRentaro2();
+    }
+
+    moveRentaro2() {
+        if (!this.rentaro2) return;
+
+        // Movimiento horizontal de Rentaro
+        const direction = Phaser.Math.Between(-1, 1); // Movimiento a la izquierda (-1) o a la derecha (1)
+        const speedX = 200; // Velocidad de movimiento horizontal
+
+        // Establecer velocidad horizontal
+        this.rentaro2.setVelocityX(direction * speedX); // Velocidad horizontal
+
+        // Configurar colisión con los límites del mundo y rebote
+        this.rentaro2.setCollideWorldBounds(true);
+        this.rentaro2.setBounce(1); // Permitir rebote en los límites del mundo
+
+        // Hacer que Rentaro parpadee mientras se mueve
+        this.rentaroBlinking = true;
+        this.rentaroTimer2 = this.time.addEvent({
+            delay: 100, // Cambiar cada 100 ms
+            callback: this.blinkRentaro2,
+            callbackScope: this,
+            loop: true
+        });
+
+        // Añadir un evento de actualización para verificar la posición de Rentaro
+        this.time.addEvent({
+            delay: 100, // Comprobar cada 100 ms
+            callback: () => {
+                if (this.rentaro2 && this.rentaro2.body) { // Verifica que rentaro esté definido
+                    // Cambiar la textura según la dirección de movimiento
+                    if (this.rentaro2.body.velocity.x < 0) {
+                        this.rentaro2.setTexture('Rentaro'); // Cambiar a la imagen de Rentaro si se mueve a la izquierda
+                    } else if (this.rentaro2.body.velocity.x > 0) {
+                        this.rentaro2.setTexture('RentaroR'); // Cambiar a la imagen de RentaroR si se mueve a la derecha
+                    }
+
+                    // Verificar límites de la pantalla
+                    if (this.rentaro2.x >= 1420) {
+                        this.rentaro2.setVelocityX(-speedX); // Cambiar dirección
+                    } else if (this.rentaro2.x <= 80) {
+                        this.rentaro2.setVelocityX(speedX); // Cambiar dirección
+                    }
+                }
+            },
+            callbackScope: this,
+            loop: true // Repetir el evento
+        });
+    }
+
+    blinkRentaro2() {
+        if (this.rentaroBlinking2 && this.rentaro2) { // Verificar si rentaro2 existe
+            const randomColor = Phaser.Display.Color.RandomRGB();
+            this.rentaro2.setTint(randomColor.color);
+        }
+    }
+
+    collectRentaro2(player, rentaro) {
+        rentaro.disableBody(true, true);
+        this.score += 50; // Rentaro vale 50 puntos
+        this.jugador.puntos = this.score;
+        this.scoreText.setText('Score: ' + this.score);
+        this.jugador.guardar();
+        this.rentaro2.destroy();
+        this.rentaro2 = null; // Limpiar la referencia
+
+        // Detener el temporizador y ocultar el texto
+        if (this.rentaroTimerEvent2) {
+            this.rentaroTimerEvent2.remove(); // Detener el temporizador
+        }
+        this.rentaroTimerText2.setVisible(false); // Ocultar el texto del temporizador
+    }
+
+completeLevel() {
+    // Detener música y sonidos
+    pauseButton.style.display = 'none';
+    this.musicafondo.stop();
+    this.SonidoMuerte.stop();
+    this.sonidoaAHahari.stop();
+    this.SonidosQuietas.forEach((sonido) => sonido.stop());
+    this.sonidoaAHahari.stop();
+    this.pelucheSonido.stop();
+    
+    // Cambiar el color de fondo a negro
+    this.cameras.main.setBackgroundColor('#000000'); // Establecer el fondo de la cámara a negro
+    this.physics.pause(); // Pausar la física
+
+    // Eliminar todos los elementos del juego
+    this.children.removeAll(); // Eliminar todos los objetos hijos del juego
+
+    // Mostrar el mensaje "Nivel 1 Completo"
+    const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Nivel 1 Completo', {
+        fontSize: '64px',
+        fill: '#ffffff'
+    }).setOrigin(0.5); // Centrar el texto
+
+    // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
+    this.time.delayedCall(2000, () => {
+        window.location.href = 'nivel2.html'; 
+    });
+}
 }
