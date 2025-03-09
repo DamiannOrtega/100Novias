@@ -361,9 +361,9 @@ class GameScene extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
             this.togglePause();
         }
-        // if (this.isPaused) {
-        //     return; // Si el juego está en pausa, no actualices nada
-        // }
+         if (this.isPaused) {
+             return; // Si el juego está en pausa, no actualices nada
+        }
 
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
