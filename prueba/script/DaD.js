@@ -2,7 +2,6 @@ const piezas = document.querySelectorAll('.piece');
 const zonas = document.querySelectorAll('.dropzone');
 let colocadas = 0;
 let tiempo = 30; // Tiempo inicial
-let score = parseInt(localStorage.getItem('score')) || 10; // Obtener la puntuación del localStorage o establecer 10 si no existe
 
 // Función para mezclar las piezas aleatoriamente
 function mezclarPiezas() {
@@ -39,26 +38,45 @@ zonas.forEach(zona => {
             colocadas++;
         }
 
-        if (colocadas === 9) {
-            document.getElementById('mensaje').textContent = '¡Rompecabezas completado!';
-            clearInterval(contadorInterval); // Detener el contador
+// Al completar el rompecabezas
+if (colocadas === 9) {
+    document.getElementById('mensaje').textContent = '¡Rompecabezas completado!';
+    clearInterval(contadorInterval); // Detener el contador
 
-            // Calcular la bonificación de puntos según el tiempo restante
-            let multiplicador = 1;
-            if (tiempo > 20) {
-                multiplicador = 10;
-            } else if (tiempo > 10) {
-                multiplicador = 5;
-            } else {
-                multiplicador = 2;
-            }
+    // Calcular la bonificación de puntos según el tiempo restante
+    let multiplicador = 1;
+    if (tiempo > 20) {
+        multiplicador = 10;
+    } else if (tiempo > 10) {
+        multiplicador = 5;
+    } else {
+        multiplicador = 2;
+    }
 
-            // Aplicar multiplicador al score guardado en localStorage
-            score *= multiplicador;
-            localStorage.setItem('score', score); // Guardar la nueva puntuación en el localStorage
-            // Mostrar la puntuación total en la interfaz
-            document.getElementById('puntuacionTotal').textContent += ` Puntuación total: ${score}`;
-        }
+    // Obtener el nombre del jugador desde localStorage
+    const nombreJugador = localStorage.getItem('playerName'); // Obtener el nombre del jugador
+
+    // Obtener los jugadores del localStorage
+    let jugadores = JSON.parse(localStorage.getItem("jugadores")) || {};
+
+    // Si el jugador ya existe, actualizar su puntuación
+    if (jugadores[nombreJugador]) {
+        jugadores[nombreJugador].puntos *= multiplicador; // Multiplicar los puntos
+    } else {
+        // Si el jugador no existe, crear uno nuevo
+        jugadores[nombreJugador] = {
+            nombre: nombreJugador,
+            puntos: score * multiplicador // Asignar puntos iniciales
+        };
+    }
+
+    // Guardar el objeto actualizado en localStorage
+    localStorage.setItem('jugadores', JSON.stringify(jugadores));
+
+    // Mostrar la puntuación total en la interfaz
+    score *= multiplicador; // Actualizar la puntuación total
+    document.getElementById('puntuacionTotal').textContent += ` Puntuación total: ${score}`;
+}
     });
 });
 
