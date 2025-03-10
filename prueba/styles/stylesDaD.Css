@@ -68,40 +68,53 @@ img {
     height: 100px; /* Cambiar a 100px */
 }
 #mensaje {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: 'Aclonica', sans-serif;
     font-size: 30px;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     position: absolute; /* Para centrar el mensaje */
     top: 50px; /* Ajustar la posición */
     left: 50%;
     transform: translateX(-50%);
 }
 #contador {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: 'Aclonica', sans-serif;
     font-size: 30px;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     position: absolute; /* Para centrar el contador */
-    top: 50px; /* Ajustar la posición */
+    top: 70px; /* Ajustar la posición */
     left: 50%;
     transform: translateX(-50%);
 }
+
+
 #mensajeTiempo {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: 'Aclonica', sans-serif;
     font-size: 30px;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     position: absolute; /* Para centrar el mensaje de tiempo */
-    top: 100px; /* Ajustar la posición */
+    top: 120px; /* Ajustar la posición */
     left: 50%;
     transform: translateX(-50%);
 }
 #mensajeBonificacion {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: 'Aclonica', sans-serif;
     font-size: 20px;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     position: absolute; /* Para centrar el mensaje de bonificación */
-    top: 35px; /* Ajustar la posición para que esté justo encima del contador */
+    top: 50px; /* Ajustar la posición para que esté justo encima del contador */
     left: 50%;
     transform: translateX(-50%);
     text-align: center; /* Centrar el texto */
     width: 80%; /* Ancho del mensaje */
+}
+
+#puntuacionTotal{
+    font-family: 'Aclonica', sans-serif;
+    font-size: 30px;
+    color: rgb(255, 255, 255);
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.7);
+    position: absolute; /* Para centrar el contador */
+    bottom: 250px; /* Ajustar la posición */
+    left: 50%;
+    transform: translateX(-50%);
 }
