@@ -978,7 +978,9 @@ class GameScene extends Phaser.Scene {
         // Desactivar el parpadeo después de 10 segundos
         this.time.delayedCall(10000, () => {
             this.rentaroBlinking2 = false;
-            this.rentaro2.setTint(0xffffff); // Restablecer color
+            if(this.rentaro2){
+                this.rentaro2.setTint(0xffffff); // Restablecer color
+            }
             this.rentaroTimer2.remove(); // Detener el parpadeo
             this.rentaroValue2 = 10;
         });
@@ -1013,7 +1015,9 @@ class GameScene extends Phaser.Scene {
         // Desactivar el parpadeo después de 10 segundos
         this.time.delayedCall(10000, () => {
             this.rentaroBlinking2 = false;
-            this.rentaro2.setTint(0xffffff); // Restablecer color
+            if(this.rentaro2){
+                this.rentaro2.setTint(0xffffff); // Restablecer color
+            }
             if (this.rentaroTimer2) {
                 this.rentaroTimer2.remove(); // Detener el parpadeo
             }
