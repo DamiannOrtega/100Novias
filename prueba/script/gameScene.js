@@ -24,6 +24,7 @@ class GameScene extends Phaser.Scene {
         this.cancionrandom = 0;      // Tiempo para reproducir sonidos de idle
         this.delaycancion = Phaser.Math.Between(5000, 10000); // Delay entre sonidos de idle
         this.sonidoDano = null;
+        this.sonidoSO=null;
         this.volumenOriginal = 3; // Volumen normal
         this.volumenAumentado = null; // Volumen aumentado
         // Instancia de la clase Jugador
@@ -121,6 +122,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Shizuka_paradaS4', 'assets/Shizuka/DialogoShizuka4.mp3');
         this.load.audio('Shizuka_paradaS5', 'assets/Shizuka/DialogoShizuka5.mp3');
         this.load.audio('Shizuka_Dano', 'assets/Shizuka/ShizukaDano.mp3');
+        this.load.audio('Shizuka_SO', 'assets/Shizuka/ShizukaSO.mp3');
 
 
         // NANO
@@ -130,6 +132,8 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Nano_paradaS2', 'assets/Nano/NanoDialogo3.mp3');
         this.load.audio('Nano_paradaS3', 'assets/Nano/DialogoNano.mp3');
         this.load.audio('Nano_Dano', 'assets/Nano/NanoGolpe.mp3');
+        this.load.audio('Nano_SO', 'assets/Nano/NanoSO.mp3');
+
 
         //Enemigos
         this.load.image('bomb', 'assets/Enemigos/atacke.png');
@@ -345,6 +349,8 @@ class GameScene extends Phaser.Scene {
             this.pelucheSonido = this.sound.add('Nano_coin');
             this.SonidoMuerte = this.sound.add('Nano_muerteS');
             this.sonidoDano = this.sound.add('Nano_Dano')
+            this.sonidoSO = this.sound.add('Nano_SO')
+
 
 
 
@@ -359,6 +365,7 @@ class GameScene extends Phaser.Scene {
             this.pelucheSonido = this.sound.add('Shizuka_coin');
             this.SonidoMuerte = this.sound.add('Shizuka_muerteS');
             this.sonidoDano = this.sound.add('Shizuka_Dano')
+            this.sonidoSO = this.sound.add('Shizuka_SO')
 
         }
 
@@ -786,7 +793,7 @@ class GameScene extends Phaser.Scene {
     createRentaro() {
         this.rentaroTimeLeft = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
-        this.rentaroValue = 400; // Puntos que se sumarán al recoger a Rentaro
+        this.rentaroValue = 50;
         this.sound.add('Objeto_Especial').play();
         const y = 0; // Aparece en la parte superior de la pantalla
         this.rentaro = this.physics.add.sprite(x, y, 'RentaroR').setScale(0.1);
@@ -904,6 +911,7 @@ class GameScene extends Phaser.Scene {
         rentaro.disableBody(true, true);
         this.score += this.rentaroValue;; // Rentaro vale 50 puntos
         this.jugador.puntos = this.score;
+        this.sonidoSO.play();
         this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
         this.rentaro.destroy();
@@ -1061,6 +1069,7 @@ class GameScene extends Phaser.Scene {
         this.jugador.puntos = this.score;
         this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
+        this.sonidoSO.play();
         this.rentaro2.destroy();
         this.rentaro2 = null; // Limpiar la referencia
 

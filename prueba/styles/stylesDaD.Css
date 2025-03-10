@@ -26,6 +26,10 @@ body {
     position: relative; /* Para posicionar el contador */
 }
 
+canvas {
+    display: none;
+}
+
 .container::before {
     content: '';
     position: absolute;

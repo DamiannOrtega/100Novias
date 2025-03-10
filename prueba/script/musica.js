@@ -12,36 +12,48 @@ const config = {
 const game = new Phaser.Game(config);
 
 let music;
+let musicFile = obtenerCancion(); // Obtener la canción según el HTML
 
 function preload() {
-    // Cargar música
-    this.load.audio('MusicaPrincipal', 'assets/Sounds/opening.mp3');
+    // Cargar la música seleccionada dinámicamente
+    this.load.audio('MusicaDinamica', musicFile);
 }
 
 function create() {
     // Reproducir la música en bucle
-    music = this.sound.add('MusicaPrincipal', { loop: true });
+    music = this.sound.add('MusicaDinamica', { loop: true });
     music.play();
 
     // Cargar el volumen guardado
     let savedVolume = localStorage.getItem("gameVolume");
     if (savedVolume !== null) {
-        setVolume(savedVolume); // Aplicar el volumen guardado
-        document.getElementById("volumen").value = savedVolume; // Ajustar el slider
-        document.getElementById("volumen-actual").textContent = savedVolume; // Mostrar el volumen actual
+        setVolume(savedVolume);
+        document.getElementById("volumen").value = savedVolume;
+        document.getElementById("volumen-actual").textContent = savedVolume;
     }
 
     // Control de volumen
     const volumenSlider = document.getElementById("volumen");
     volumenSlider.addEventListener("input", () => {
         const newVolume = volumenSlider.value;
-        setVolume(newVolume); // Aplicar el nuevo volumen
-        localStorage.setItem("gameVolume", newVolume); // Guardar el volumen
-        document.getElementById("volumen-actual").textContent = newVolume; // Mostrar el nuevo volumen
+        setVolume(newVolume);
+        localStorage.setItem("gameVolume", newVolume);
+        document.getElementById("volumen-actual").textContent = newVolume;
     });
 }
 
 function setVolume(volume) {
-    // Aplicar el volumen a la música
     music.setVolume(volume);
+}
+
+// Función para obtener la canción según el HTML de origen
+function obtenerCancion() {
+    const ruta = window.location.pathname; // Obtener la ruta del archivo HTML
+
+    if (ruta.includes("index.html")) {
+        return "assets/Sounds/opening.mp3";
+    } 
+     if (ruta.includes("rompecabezas.html")) {
+        return "assets/Sounds/Rompecabezas.mp3";
+    } 
 }
