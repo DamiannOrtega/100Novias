@@ -15,7 +15,8 @@ class GameScene extends Phaser.Scene {
         this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
-
+        this.ataque = null; // Grupo para los ataques
+        this.ataqueK    = null; // Tecla para atacar
 
         // Música y sonidos
         this.musicafondo = null;     // Música de fondo
@@ -97,6 +98,8 @@ class GameScene extends Phaser.Scene {
 
         //objeto especial
         this.load.image('vidas', 'assets/objetos/Corazones.png');
+        this.load.image('ataquaAliado', 'assets/objetos/Ataque.png');
+
 
 
     }
@@ -383,6 +386,8 @@ class GameScene extends Phaser.Scene {
 
         // Detecta si el jugador choca con una bomba
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+        this.ataque = this.physics.add.group(); // Grupo para los ataques
+        this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
         this.time.delayedCall(10000, this.createEnemy, [], this);
 
@@ -570,5 +575,21 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(2000, () => {
             window.location.href = 'rompecabezas.html';
         });
+    }
+
+
+    launchAttack() {
+        const ataques = this.ataque.create(this.player.x + (this.player.flipX ? -20 : 20), this.player.y, 'attack');
+        this.ataques.setScale(0.5); // Ajusta el tamaño del ataque
+        this.ataques.setVelocityX(this.player.flipX ? -300 : 300); // Mueve el ataque en la dirección del jugador
+        this.ataques.lifespan = 1000; // El ataque desaparecerá después de 1 segundo
+
+        // Configura la colisión del ataque con los enemigos
+        this.physics.add.collider(ataques, this.bombs, this.hitEnemy, null, this);
+    }
+
+    hitEnemy(attack, enemy) {
+        attack.destroy(); // Destruir el ataque
+        enemy.destroy(); // Destruir el enemigo (o aplicar daño)
     }
 }
