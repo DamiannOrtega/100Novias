@@ -906,26 +906,28 @@ moveRentaro() {
         
                 // Si el tiempo llega a 0, destruye Rentaro
                 if (this.rentaroTimeLeft2 <= 0) {
-                    this.rentarovalue2=10;
                     this.rentaroTimerText2.setVisible(false);
+                    this.rentarovalue2=10;
                     this.rentaroTimerEvent2.remove(); // Detener el temporizador
                 }
             },
             callbackScope: this,
             loop: true // Repetir el evento
         });
-                // Desactivar el parpadeo después de 10 segundos
-                this.time.delayedCall(10000, () => {
-                    this.rentaroBlinking2 = false;
-                    this.rentaro2.setTint(0xffffff); // Restablecer color
-                    this.rentaroTimer2.remove(); // Detener el parpadeo
-                });
-        
+           
 
         // Detectar si el jugador recoge a Rentaro
         this.physics.add.collider(this.rentaro2, this.platforms);
         this.physics.add.overlap(this.player, this.rentaro2, this.collectRentaro2, null, this);
 
+                // Desactivar el parpadeo después de 10 segundos
+                this.time.delayedCall(10000, () => {
+                    this.rentaroBlinking2 = false;
+                    this.rentaro2.setTint(0xffffff); // Restablecer color
+                    this.rentaroTimer2.remove(); // Detener el parpadeo
+                    this.rentaroValue2 = 10;
+                });
+     
         // Iniciar el movimiento de Rentaro
         this.moveRentaro2();
     }
@@ -996,7 +998,7 @@ moveRentaro() {
 
     collectRentaro2(player, rentaro) {
         rentaro.disableBody(true, true);
-        this.score += this.rentaroValue2; ; // Rentaro vale 50 puntos
+        this.score += this.rentaroValue2; ;
         this.jugador.puntos = this.score;
         this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
