@@ -420,10 +420,11 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada');
             }
             this.player.setVelocityX(0); // Asegúrate de que el jugador no se mueva
-
+    
             return; // Si el juego está en pausa, no actualices nada
         }
-
+    
+        // Lógica de movimiento
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
@@ -436,11 +437,15 @@ class GameScene extends Phaser.Scene {
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
-        } else {
+        }else if(this.cursors.down.isDown){
+            this.player.setVelocityX(0);
+            this.player.setVelocityY(300);
+            this.player.anims.play('agacharse', true);
+        }else {
             this.player.setVelocityX(0);
             this.idleTimer += time - (this.lastUpdateTime || time);
             this.lastUpdateTime = time;
-
+    
             // Cambia a la animación "quieto" si han pasado 3 segundos o más de inactividad
             if (this.idleTimer >= 3000) {
                 this.player.anims.play('quieto', true);
@@ -452,18 +457,19 @@ class GameScene extends Phaser.Scene {
                     this.player.setTexture('Shizuka_parada');
                 }
             }
-
+    
             // Verificar si es momento de reproducir un sonido de idle
             if (time > this.cancionrandom + this.delaycancion) {
                 let randomSound = Phaser.Math.RND.pick(this.SonidosQuietas);
                 randomSound.play();
-
+    
                 // Espera 3 segundos después de que termine y luego elige otro
                 this.delaycancion = Phaser.Math.Between(5000, 10000);
                 this.cancionrandom = time + randomSound.duration * 1000 + 3000;
             }
         }
-
+    
+        // Lógica de salto
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
             this.idleTimer = 0;
@@ -473,27 +479,7 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada2');
             }
         }
-
-
-    if (this.cursors.down.isDown) { // Cambia esto
-        if (this.player.body.touching.down) { // Verifica si el jugador está en la plataforma
-            this.player.setVelocityY(200); // Mueve al jugador hacia abajo
-            this.player.anims.play('agacharse'); // Cambia a la animación de agacharse
-            this.player.body.setSize(50, 50); // Ajusta el tamaño del collider al agacharse
-            this.player.body.setOffset(0, 10); // Ajusta la posición del collider
-        }
-    } else {
-        // Restablecer el tamaño del collider y la animación cuando no se está agachando
-        this.player.body.setSize(50, 100); // Tamaño normal
-        this.player.body.setOffset(0, 0); // Restablecer la posición del collider
-        this.player.anims.play('quieto'); // Cambia a la animación normal
-    }
     
-
-
-
-
-
     }
 
 
