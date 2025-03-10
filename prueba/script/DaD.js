@@ -49,8 +49,10 @@ if (colocadas === 9) {
         multiplicador = 10;
     } else if (tiempo > 10) {
         multiplicador = 5;
-    } else {
+    } else if (tiempo >0){
         multiplicador = 2;
+    }else{
+        multiplicador=1;
     }
 
     // Obtener el nombre del jugador desde localStorage
@@ -72,11 +74,19 @@ if (colocadas === 9) {
 
     // Guardar el objeto actualizado en localStorage
     localStorage.setItem('jugadores', JSON.stringify(jugadores));
+    setTimeout(() => {
+        console.log("Redirigiendo a nivel2.html");
+        window.location.href = "nivel2.html";
+    }, 2000);
 
     // Mostrar la puntuación total en la interfaz
-    score *= multiplicador; // Actualizar la puntuación total
+    // score *= multiplicador; // Actualizar la puntuación total
     document.getElementById('puntuacionTotal').textContent += ` Puntuación total: ${score}`;
+
+
 }
+
+
     });
 });
 
@@ -98,7 +108,8 @@ const contadorInterval = setInterval(() => {
         clearInterval(contadorInterval);
         document.getElementById('mensaje').textContent = '¡Tiempo agotado!';
         mensajeTiempo.style.display = 'none';
-        contadorElement.style.display = 'none'; // Ocultar el temporizador
+        contadorElement.style.display = 'none'; 
+        window.location.href = "nivel2.html";
     }
 }, 1000);
 
