@@ -882,7 +882,6 @@ moveRentaro() {
         // Asegúrate de que el segundo Rentaro no se cree si ya existe
         if (this.rentaro2) return;
         this.rentaroValue2 = 50;
-        this.sound.add('Objeto_Especial',{volume:10});
         this.sound.add('Objeto_Especial').play();
         this.rentaroTimeLeft2 = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
