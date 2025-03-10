@@ -1,0 +1,107 @@
+body {
+    background: url(../assets/background/Shizuka.png);
+    height: 100vh;
+    font-family: 'Aclonica', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+.container {
+    display: flex;
+    flex-direction: row; /* Mantener la dirección en fila */
+    align-items: flex-start; /* Alinear al inicio */
+    justify-content: center; /* Centrar horizontalmente */
+    gap: 20px;
+    width: 90vw;
+    height: 90vh;
+    margin-top: 50px; /* Mover el contenedor más abajo */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(../assets/background/fondo.jpg);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    position: relative; /* Para posicionar el contador */
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Color negro con 50% de opacidad */
+    border-radius: 15px; /* Asegúrate de que el borde coincida con el contenedor */
+    z-index: 0; /* Asegúrate de que esté detrás del contenido */
+}
+
+.container > * {
+    position: relative; /* Asegúrate de que el contenido esté por encima del pseudo-elemento */
+    z-index: 1; /* Asegúrate de que el contenido esté por encima del pseudo-elemento */
+}
+.board, .pieces {
+    display: grid;
+    margin-top: 10rem;
+    grid-template-columns: repeat(3, 100px); /* Cambiar a 100px */
+    grid-template-rows: repeat(3, 100px); /* Cambiar a 100px */
+    gap: 5px;
+    padding: 10px;
+    border: 2px solid rgb(255, 255, 255);
+    justify-content: center; /* Centrar el contenido del tablero */
+}
+.piece {
+    width: 100px; /* Cambiar a 100px */
+    height: 100px; /* Cambiar a 100px */
+    background-size: cover;
+    cursor: grab;
+}
+.dropzone {
+    width: 100px; /* Cambiar a 100px */
+    height: 100px; /* Cambiar a 100px */
+    border: 2px dashed rgb(255, 255, 255);
+}
+img {
+    width: 100px; /* Cambiar a 100px */
+    height: 100px; /* Cambiar a 100px */
+}
+#mensaje {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    color: rgb(0, 0, 0);
+    position: absolute; /* Para centrar el mensaje */
+    top: 50px; /* Ajustar la posición */
+    left: 50%;
+    transform: translateX(-50%);
+}
+#contador {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    color: rgb(0, 0, 0);
+    position: absolute; /* Para centrar el contador */
+    top: 50px; /* Ajustar la posición */
+    left: 50%;
+    transform: translateX(-50%);
+}
+#mensajeTiempo {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    color: rgb(0, 0, 0);
+    position: absolute; /* Para centrar el mensaje de tiempo */
+    top: 100px; /* Ajustar la posición */
+    left: 50%;
+    transform: translateX(-50%);
+}
+#mensajeBonificacion {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    position: absolute; /* Para centrar el mensaje de bonificación */
+    top: 35px; /* Ajustar la posición para que esté justo encima del contador */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center; /* Centrar el texto */
+    width: 80%; /* Ancho del mensaje */
+}

@@ -1092,7 +1092,7 @@ class GameScene extends Phaser.Scene {
 
         // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
         this.time.delayedCall(2000, () => {
-            window.location.href = 'nivel2.html';
+            window.location.href = 'rompecabezas.html';
         });
     }
 }

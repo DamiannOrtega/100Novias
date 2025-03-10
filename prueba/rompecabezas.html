@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BONIFICACIÓN</title>
+    <link rel="stylesheet" href="styles/stylesDaD.Css">
+
+</head>
+<body>
+    <div class="container">
+        <div class="pieces">
+            <div class="piece" id="p1" draggable="true"><img src="assets/Rompecabezas/1.jpg" alt=""></div>
+            <div class="piece" id="p2" draggable="true"><img src="assets/Rompecabezas/2.jpg" alt=""></div>
+            <div class="piece" id="p3" draggable="true"><img src="assets/Rompecabezas/3.jpg" alt=""></div>
+            <div class="piece" id="p4" draggable="true"><img src="assets/Rompecabezas/4.jpg" alt=""></div>
+            <div class="piece" id="p5" draggable="true"><img src="assets/Rompecabezas/5.jpg" alt=""></div>
+            <div class="piece" id="p6" draggable="true"><img src="assets/Rompecabezas/6.jpg" alt=""></div>
+            <div class="piece" id="p7" draggable="true"><img src="assets/Rompecabezas/7.jpg" alt=""></div>
+            <div class="piece" id="p8" draggable="true"><img src="assets/Rompecabezas/8.jpg" alt=""></div>
+            <div class="piece" id="p9" draggable="true"><img src="assets/Rompecabezas/9.jpg" alt=""></div>
+        </div>
+        <div class="board">
+            <div class="dropzone" data-id="p1"></div>
+            <div class="dropzone" data-id="p2"></div>
+            <div class="dropzone" data-id="p3"></div>
+            <div class="dropzone" data-id="p4"></div>
+            <div class="dropzone" data-id="p5"></div>
+            <div class="dropzone" data-id="p6"></div>
+            <div class="dropzone" data-id="p7"></div>
+            <div class="dropzone" data-id="p8"></div>
+            <div class="dropzone" data-id="p9"></div>
+        </div>
+    </div>
+    
+    <p id="contador">30</p> <!-- Contador inicial -->
+    <p id="mensaje"></p>
+    <p id="mensajeTiempo"></p> <!-- Mensaje de tiempo -->
+    <p id="mensajeBonificacion">Completa el rompecabezas en menos de 30 segundos para obtener una bonificación de puntos!!</p> <!-- Mensaje de bonificación -->
+
+    <script src="script/DaD.js"></script>
+</body>
+</html>
