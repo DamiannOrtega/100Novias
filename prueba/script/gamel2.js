@@ -6,6 +6,7 @@ class GameScene extends Phaser.Scene {
         this.player = null;          // Jugador
         
         this.bombs = null;           // Grupo de bombas
+        this.suelo=null;
         this.platforms = null;       // Plataformas del juego
         this.cursors = null;         // Teclas del cursor (flechas)
         this.score = 0;              // Puntuación del jugador
@@ -14,7 +15,8 @@ class GameScene extends Phaser.Scene {
         this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
-
+        this.ataque = null; // Grupo para los ataques
+        this.ataqueK    = null; // Tecla para atacar
 
         // Música y sonidos
         this.musicafondo = null;     // Música de fondo
@@ -96,6 +98,8 @@ class GameScene extends Phaser.Scene {
 
         //objeto especial
         this.load.image('vidas', 'assets/objetos/Corazones.png');
+        this.load.image('ataquaAliado', 'assets/objetos/Ataque.png');
+
 
 
     }
@@ -146,11 +150,16 @@ class GameScene extends Phaser.Scene {
 
         // Crea un grupo de plataformas estáticas (no se mueven)
         this.platforms = this.physics.add.staticGroup();
-
+        this.suelo = this.physics.add.staticGroup();
+        
         // Crea el suelo del juego y lo escala para que cubra el ancho de la pantalla
+            
         for (let x = 0; x <= 1500; x += 30) {
-            this.platforms.create(x, 745, 'groundsmall').setScale(0.8).refreshBody();
+            this.suelo.create(x, 745, 'groundsmall').setScale(0.8).refreshBody();
         }
+        this.suelo.children.iterate((platform) => {
+            platform.setTint(0xDD4444); // Aplica color rojo
+        });
 
         this.playerNameText = this.add.text(16, 100, 'Jugador: ' + this.jugador.nombre, {
             fontSize: '32px',
@@ -182,7 +191,7 @@ class GameScene extends Phaser.Scene {
             platform.body.checkCollision.left = false;
             platform.body.checkCollision.right = false;
         });
-        
+
         // Crea al jugador en una posición inicial
         if (this.personaje == 1) {
             this.player = this.physics.add.sprite(100, 650, 'Nano_parada').setScale(0.2);
@@ -191,6 +200,7 @@ class GameScene extends Phaser.Scene {
             this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
 
         }
+
 
         this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', {
             fontSize: '32px',
@@ -372,10 +382,12 @@ class GameScene extends Phaser.Scene {
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.bombs, this.platforms);
-
+        this.physics.add.collider(this.player, this.suelo);
 
         // Detecta si el jugador choca con una bomba
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+        this.ataque = this.physics.add.group(); // Grupo para los ataques
+        this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
         this.time.delayedCall(10000, this.createEnemy, [], this);
 
@@ -420,10 +432,11 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada');
             }
             this.player.setVelocityX(0); // Asegúrate de que el jugador no se mueva
-
+    
             return; // Si el juego está en pausa, no actualices nada
         }
-
+    
+        // Lógica de movimiento
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
             this.player.anims.play('walk_left', true);
@@ -436,11 +449,23 @@ class GameScene extends Phaser.Scene {
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
-        } else {
+        }else if(this.cursors.down.isDown){
+            this.player.setVelocityX(0);
+            this.player.setVelocityY(300);
+            this.player.anims.play('agacharse', true);
+            this.platforms.children.iterate((platform) => {
+                platform.body.checkCollision.up = false;   
+
+            });
+        }else {
             this.player.setVelocityX(0);
             this.idleTimer += time - (this.lastUpdateTime || time);
             this.lastUpdateTime = time;
+            this.platforms.children.iterate((platform) => {
+                platform.body.checkCollision.up = true;   
 
+            });
+    
             // Cambia a la animación "quieto" si han pasado 3 segundos o más de inactividad
             if (this.idleTimer >= 3000) {
                 this.player.anims.play('quieto', true);
@@ -452,18 +477,19 @@ class GameScene extends Phaser.Scene {
                     this.player.setTexture('Shizuka_parada');
                 }
             }
-
+    
             // Verificar si es momento de reproducir un sonido de idle
             if (time > this.cancionrandom + this.delaycancion) {
                 let randomSound = Phaser.Math.RND.pick(this.SonidosQuietas);
                 randomSound.play();
-
+    
                 // Espera 3 segundos después de que termine y luego elige otro
                 this.delaycancion = Phaser.Math.Between(5000, 10000);
                 this.cancionrandom = time + randomSound.duration * 1000 + 3000;
             }
         }
-
+    
+        // Lógica de salto
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
             this.idleTimer = 0;
@@ -473,27 +499,7 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada2');
             }
         }
-
-
-    if (this.cursors.down.isDown) { // Cambia esto
-        if (this.player.body.touching.down) { // Verifica si el jugador está en la plataforma
-            this.player.setVelocityY(200); // Mueve al jugador hacia abajo
-            this.player.anims.play('agacharse'); // Cambia a la animación de agacharse
-            this.player.body.setSize(50, 50); // Ajusta el tamaño del collider al agacharse
-            this.player.body.setOffset(0, 10); // Ajusta la posición del collider
-        }
-    } else {
-        // Restablecer el tamaño del collider y la animación cuando no se está agachando
-        this.player.body.setSize(50, 100); // Tamaño normal
-        this.player.body.setOffset(0, 0); // Restablecer la posición del collider
-        this.player.anims.play('quieto'); // Cambia a la animación normal
-    }
     
-
-
-
-
-
     }
 
 
@@ -569,5 +575,21 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(2000, () => {
             window.location.href = 'rompecabezas.html';
         });
+    }
+
+
+    launchAttack() {
+        const ataques = this.ataque.create(this.player.x + (this.player.flipX ? -20 : 20), this.player.y, 'attack');
+        this.ataques.setScale(0.5); // Ajusta el tamaño del ataque
+        this.ataques.setVelocityX(this.player.flipX ? -300 : 300); // Mueve el ataque en la dirección del jugador
+        this.ataques.lifespan = 1000; // El ataque desaparecerá después de 1 segundo
+
+        // Configura la colisión del ataque con los enemigos
+        this.physics.add.collider(ataques, this.bombs, this.hitEnemy, null, this);
+    }
+
+    hitEnemy(attack, enemy) {
+        attack.destroy(); // Destruir el ataque
+        enemy.destroy(); // Destruir el enemigo (o aplicar daño)
     }
 }
