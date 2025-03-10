@@ -1,21 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
     const volumenSlider = document.getElementById("volumen");
+    const volumenActual = document.getElementById("volumen-actual");
 
     // Cargar el volumen guardado
     let savedVolume = localStorage.getItem("gameVolume");
     if (savedVolume !== null) {
         volumenSlider.value = savedVolume;
+        volumenActual.textContent = savedVolume; // Mostrar el volumen guardado
     }
 
-    // Actualizar el volumen en el juego
+    // Control de volumen
     volumenSlider.addEventListener("input", () => {
-        let volumen = parseFloat(volumenSlider.value);
-        localStorage.setItem("gameVolume", volumen);
-
-        // Llamar a Phaser para actualizar el volumen
-        if (window.game) {
-            game.sound.volume = volumen; // Ajusta el volumen global del juego
-        }
+        const newVolume = volumenSlider.value;
+        volumenActual.textContent = newVolume; // Mostrar el nuevo volumen
+        localStorage.setItem("gameVolume", newVolume); // Guardar el volumen
     });
 });
-

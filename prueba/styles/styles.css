@@ -372,3 +372,8 @@ canvas {
     flex-direction: column;
 }
 
+
+.puntuaciones{
+    text-transform: uppercase;
+}
+

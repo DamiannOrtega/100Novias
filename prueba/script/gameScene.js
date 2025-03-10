@@ -23,7 +23,7 @@ class GameScene extends Phaser.Scene {
         this.SonidoMuerte = null;    // Sonido al morir
         this.cancionrandom = 0;      // Tiempo para reproducir sonidos de idle
         this.delaycancion = Phaser.Math.Between(5000, 10000); // Delay entre sonidos de idle
-        this.sonidoDano=null;
+        this.sonidoDano = null;
         this.volumenOriginal = 3; // Volumen normal
         this.volumenAumentado = null; // Volumen aumentado
         // Instancia de la clase Jugador
@@ -35,8 +35,8 @@ class GameScene extends Phaser.Scene {
         this.sonidoaAHahari = null;
         this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
         this.ImagenVida = [];
-        this.numrand= null;
-        this.hahaiEnojada=null;
+        this.numrand = null;
+        this.hahaiEnojada = null;
 
 
         //Objeto especial
@@ -45,19 +45,19 @@ class GameScene extends Phaser.Scene {
         this.rentaroBlinking = false; // Estado de parpadeo
         this.rentaroTimerText = null; // Texto del contador de tiempo
         this.rentaroTimeLeft = 0; // Tiempo inicial para la bonificación (en segundos)
-        this.numrand=null;
+        this.numrand = null;
 
         //Objeto especial
         this.rentaro2 = null;
         this.rentaroTimer2 = null; // Temporizador para el parpadeo
-        this.numrand2=null;
-        this.rentarovalue=null;
-        this.rentarovalue2=null;
+        this.numrand2 = null;
+        this.rentarovalue = null;
+        this.rentarovalue2 = null;
         this.rentaroBlinking2 = false; // Estado de parpadeo
         this.rentaroTimeLeft2 = 0; // Tiempo inicial para la bonificación (en segundos)
         this.rentaroTimerText2 = null; // Texto del contador de tiempo
 
-        
+
     }
 
     init() {
@@ -121,7 +121,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Shizuka_paradaS4', 'assets/Shizuka/DialogoShizuka4.mp3');
         this.load.audio('Shizuka_paradaS5', 'assets/Shizuka/DialogoShizuka5.mp3');
         this.load.audio('Shizuka_Dano', 'assets/Shizuka/ShizukaDano.mp3');
-        
+
 
         // NANO
         this.load.audio('Nano_coin', 'assets/Nano/RegojerPeluche.mp3');
@@ -173,10 +173,16 @@ class GameScene extends Phaser.Scene {
 
         }
 
+
+
         this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         this.musicafondo.play();
+
+        // Recuperar el volumen guardado
+
+
         this.idleTimer = 0;
         this.lastUpdateTime = 0;
         this.sonidoaAHahari = this.sound.add('Aparece_enemigo');
@@ -192,7 +198,12 @@ class GameScene extends Phaser.Scene {
             this.platforms.create(x, 715, 'groundsmall').setScale(0.8).refreshBody();
         }
 
-        this.playerNameText = this.add.text(16, 100, 'Jugador: ' + this.jugador.nombre, { fontSize: '32px', fill: '#000' });
+        this.playerNameText = this.add.text(16, 100, 'Jugador: ' + this.jugador.nombre, {
+            fontSize: '32px',
+            fontFamily: 'Aclonica , sans-serif',
+            color: '#FFFFFF',
+            fill: '#000'
+        });
 
 
         //Enemigos
@@ -219,12 +230,20 @@ class GameScene extends Phaser.Scene {
 
         }
 
-
-
-        this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', { fontSize: '32px', fill: '#000' });
+        this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', {
+            fontSize: '32px',
+            fill: '#000',
+            fontFamily: 'Aclonica , sans-serif',
+            color: '#FFFFFF',
+        });
         this.rentaroTimerText.setVisible(false);
-        
-        this.rentaroTimerText2 = this.add.text(16, 190, 'Tiempo: 0', { fontSize: '32px', fill: '#000' });
+
+        this.rentaroTimerText2 = this.add.text(16, 190, 'Tiempo: 0', { 
+            fontSize: '32px', 
+            fill: '#000',
+            fontFamily: 'Aclonica , sans-serif',
+            color: '#FFFFFF', });
+            
         this.rentaroTimerText2.setVisible(false);
         // Configura propiedades físicas del jugador (rebote y límites del mundo)
         this.player.setBounce(0.2);
@@ -325,7 +344,7 @@ class GameScene extends Phaser.Scene {
             ];
             this.pelucheSonido = this.sound.add('Nano_coin');
             this.SonidoMuerte = this.sound.add('Nano_muerteS');
-            this.sonidoDano=this.sound.add('Nano_Dano')
+            this.sonidoDano = this.sound.add('Nano_Dano')
 
 
 
@@ -339,8 +358,16 @@ class GameScene extends Phaser.Scene {
             ];
             this.pelucheSonido = this.sound.add('Shizuka_coin');
             this.SonidoMuerte = this.sound.add('Shizuka_muerteS');
-            this.sonidoDano=this.sound.add('Shizuka_Dano')
+            this.sonidoDano = this.sound.add('Shizuka_Dano')
 
+        }
+
+        // Llama a setVolume después de inicializar los sonidos
+        let savedVolume = localStorage.getItem("gameVolume");
+        if (savedVolume !== null) {
+            this.setVolume(parseFloat(savedVolume)); // Asegúrate de convertir a número
+        } else {
+            this.setVolume(0.5); // Valor por defecto
         }
 
         // Configura las teclas del cursor para mover al jugador
@@ -377,7 +404,12 @@ class GameScene extends Phaser.Scene {
         this.bombs = this.physics.add.group();
 
         // Añade el texto de la puntuación en la esquina superior izquierda
-        this.scoreText = this.add.text(16, 130, 'score: 0', { fontSize: '32px', fill: '#000' });
+        this.scoreText = this.add.text(16, 130, 'score: 0', {
+            fontFamily: 'Aclonica , sans-serif',
+            fontSize: '32px',
+            color: '#FFFFFF',
+            fill: '#000',
+        });
 
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
@@ -395,7 +427,30 @@ class GameScene extends Phaser.Scene {
 
     }
 
+    setVolume(volume) {
+        // Asegúrate de que this.musicafondo no sea null
+        if (this.musicafondo) {
+            this.musicafondo.setVolume(volume);
+        } else {
+            console.error("La música de fondo no está inicializada.");
+        }
 
+        // Aplicar el volumen a otros sonidos si es necesario
+        this.SonidosQuietas.forEach(sonido => {
+            if (sonido) {
+                sonido.setVolume(volume);
+            }
+        });
+        if (this.pelucheSonido) {
+            this.pelucheSonido.setVolume(volume);
+        }
+        if (this.SonidoMuerte) {
+            this.SonidoMuerte.setVolume(volume);
+        }
+        if (this.sonidoDano) {
+            this.sonidoDano.setVolume(volume);
+        }
+    }
 
 
     update(time) {
@@ -480,11 +535,11 @@ class GameScene extends Phaser.Scene {
             }
         }
 
-                // Verificar si la puntuación ha alcanzado los 400 puntos
-                if (this.score >= 400 && !this.hahaiEnojada) {
-                    this.lanzarBombasAdicionales(); // Llama a la función para lanzar bombas adicionales
-                    this.hahaiEnojada = true; // Marca que ya se lanzaron las bombas adicionales
-                }
+        // Verificar si la puntuación ha alcanzado los 400 puntos
+        if (this.score >= 400 && !this.hahaiEnojada) {
+            this.lanzarBombasAdicionales(); // Llama a la función para lanzar bombas adicionales
+            this.hahaiEnojada = true; // Marca que ya se lanzaron las bombas adicionales
+        }
 
     }
 
@@ -503,7 +558,7 @@ class GameScene extends Phaser.Scene {
         this.jugador.guardar();
         // Genera un número aleatorio múltiplo de 10 hasta 100
         // Usando ese número en tu condicional
-        
+
         // Verificar si el puntaje coincide con el número aleatorio generado
         if (this.score === this.numrand) {
             this.createRentaro(); // Crear el objeto especial
@@ -563,8 +618,8 @@ class GameScene extends Phaser.Scene {
             this.isInvincible = true; // Activar inmunidad
             // Definir el volumen original
 
-        // Reproducir el sonido
-        this.sonidoDano.play();
+            // Reproducir el sonido
+            this.sonidoDano.play();
 
             this.player.setTint(0xff0000); // Efecto visual de daño
 
@@ -651,7 +706,7 @@ class GameScene extends Phaser.Scene {
             }
         });
     }
-    
+
     lanzarBombasAdicionales() {
         // Lanza 10 bombas adicionales
         for (let i = 0; i < 10; i++) {
@@ -660,21 +715,21 @@ class GameScene extends Phaser.Scene {
                 const bomb = this.bombs.create(this.enemigo.x, this.enemigo.y, 'bomb');
                 bomb.setBounce(1); // Permite que la bomba rebote
                 bomb.setCollideWorldBounds(true); // Colisiona con los límites del mundo
-    
+
                 bomb.setScale(0.05); // Cambia el tamaño de la bomba
                 bomb.body.allowGravity = false;
-    
+
                 // Establecer la dirección de la bomba según la dirección del enemigo
                 const direction = this.enemigoDireccion === 1 ? 250 : -250; // 200 es la velocidad horizontal de la bomba
                 bomb.setVelocityX(direction); // Velocidad horizontal
-    
+
                 // Establecer una velocidad vertical baja para que baje lentamente
                 bomb.setVelocityY(60); // Ajusta este valor para controlar la velocidad de descenso
                 this.physics.add.collider(bomb, this.platforms, () => {
                     // Invertir la velocidad vertical para que la bomba suba
                     bomb.setVelocityY(-60); // Cambia este valor para controlar la velocidad de subida
                 });
-    
+
                 // Eliminar la bomba después de 10 segundos
                 this.time.delayedCall(10000, () => {
                     if (bomb.active) {
@@ -746,7 +801,7 @@ class GameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-        
+
         this.rentaroTimerText.setVisible(true);
         this.rentaroTimerText.setText('Tiempo: ' + this.rentaroTimeLeft); // Actualiza el texto
 
@@ -755,7 +810,7 @@ class GameScene extends Phaser.Scene {
             callback: () => {
                 this.rentaroTimeLeft--;
                 this.rentaroTimerText.setText('Tiempo: ' + this.rentaroTimeLeft); // Actualiza el texto
-    
+
                 // Si el tiempo llega a 0, destruye Rentaro
                 if (this.rentaroTimeLeft <= 0) {
                     this.rentaroTimerText.setVisible(false);
@@ -781,62 +836,62 @@ class GameScene extends Phaser.Scene {
         this.moveRentaro();
     }
 
-moveRentaro() {
-    if (!this.rentaro) return;
+    moveRentaro() {
+        if (!this.rentaro) return;
 
-    // Movimiento horizontal de Rentaro
-    const direction = Phaser.Math.Between(-1, 1); // Movimiento a la izquierda (-1) o a la derecha (1)
-    const speedX = 200; // Velocidad de movimiento horizontal
+        // Movimiento horizontal de Rentaro
+        const direction = Phaser.Math.Between(-1, 1); // Movimiento a la izquierda (-1) o a la derecha (1)
+        const speedX = 200; // Velocidad de movimiento horizontal
 
-    // Establecer velocidad horizontal
-    this.rentaro.setVelocityX(direction * speedX); // Velocidad horizontal
+        // Establecer velocidad horizontal
+        this.rentaro.setVelocityX(direction * speedX); // Velocidad horizontal
 
-    // Configurar colisión con los límites del mundo y rebote
-    this.rentaro.setCollideWorldBounds(true);
-    this.rentaro.setBounce(1); // Permitir rebote en los límites del mundo
+        // Configurar colisión con los límites del mundo y rebote
+        this.rentaro.setCollideWorldBounds(true);
+        this.rentaro.setBounce(1); // Permitir rebote en los límites del mundo
 
-    // Hacer que Rentaro parpadee mientras se mueve
-    this.rentaroBlinking = true;
-    this.rentaroTimer = this.time.addEvent({
-        delay: 100, // Cambiar cada 100 ms
-        callback: this.blinkRentaro,
-        callbackScope: this,
-        loop: true
-    });
+        // Hacer que Rentaro parpadee mientras se mueve
+        this.rentaroBlinking = true;
+        this.rentaroTimer = this.time.addEvent({
+            delay: 100, // Cambiar cada 100 ms
+            callback: this.blinkRentaro,
+            callbackScope: this,
+            loop: true
+        });
 
-    // Desactivar el parpadeo después de 10 segundos
-    this.time.delayedCall(10000, () => {
-        this.rentaroBlinking = false;
-        this.rentaro.setTint(0xffffff); // Restablecer color
-        if (this.rentaroTimer) {
-            this.rentaroTimer.remove(); // Detener el parpadeo
-        }
-    });
-
-    // Añadir un evento de actualización para verificar la posición de Rentaro
-    this.time.addEvent({
-        delay: 100, // Comprobar cada 100 ms
-        callback: () => {
-            if (this.rentaro && this.rentaro.body) { // Verifica que rentaro esté definido
-                // Cambiar la textura según la dirección de movimiento
-                if (this.rentaro.body.velocity.x < 0) {
-                    this.rentaro.setTexture('Rentaro'); // Cambiar a la imagen de Rentaro si se mueve a la izquierda
-                } else if (this.rentaro.body.velocity.x > 0) {
-                    this.rentaro.setTexture('RentaroR'); // Cambiar a la imagen de RentaroR si se mueve a la derecha
-                }
-
-                // Verificar límites de la pantalla
-                if (this.rentaro.x >= 1420) {
-                    this.rentaro.setVelocityX(-speedX); // Cambiar dirección
-                } else if (this.rentaro.x <= 80) {
-                    this.rentaro.setVelocityX(speedX); // Cambiar dirección
-                }
+        // Desactivar el parpadeo después de 10 segundos
+        this.time.delayedCall(10000, () => {
+            this.rentaroBlinking = false;
+            this.rentaro.setTint(0xffffff); // Restablecer color
+            if (this.rentaroTimer) {
+                this.rentaroTimer.remove(); // Detener el parpadeo
             }
-        },
-        callbackScope: this,
-        loop: true // Repetir el evento
-    });
-}
+        });
+
+        // Añadir un evento de actualización para verificar la posición de Rentaro
+        this.time.addEvent({
+            delay: 100, // Comprobar cada 100 ms
+            callback: () => {
+                if (this.rentaro && this.rentaro.body) { // Verifica que rentaro esté definido
+                    // Cambiar la textura según la dirección de movimiento
+                    if (this.rentaro.body.velocity.x < 0) {
+                        this.rentaro.setTexture('Rentaro'); // Cambiar a la imagen de Rentaro si se mueve a la izquierda
+                    } else if (this.rentaro.body.velocity.x > 0) {
+                        this.rentaro.setTexture('RentaroR'); // Cambiar a la imagen de RentaroR si se mueve a la derecha
+                    }
+
+                    // Verificar límites de la pantalla
+                    if (this.rentaro.x >= 1420) {
+                        this.rentaro.setVelocityX(-speedX); // Cambiar dirección
+                    } else if (this.rentaro.x <= 80) {
+                        this.rentaro.setVelocityX(speedX); // Cambiar dirección
+                    }
+                }
+            },
+            callbackScope: this,
+            loop: true // Repetir el evento
+        });
+    }
 
     blinkRentaro() {
         if (this.rentaroBlinking) {
@@ -847,17 +902,17 @@ moveRentaro() {
 
     collectRentaro(player, rentaro) {
         rentaro.disableBody(true, true);
-        this.score += this.rentaroValue; ; // Rentaro vale 50 puntos
+        this.score += this.rentaroValue;; // Rentaro vale 50 puntos
         this.jugador.puntos = this.score;
         this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
         this.rentaro.destroy();
 
-    // Detener el temporizador y ocultar el texto
-    if (this.rentaroTimerEvent) {
-        this.rentaroTimerEvent.remove(); // Detener el temporizador
-    }
-    this.rentaroTimerText.setVisible(false); // Ocultar el texto del temporizador
+        // Detener el temporizador y ocultar el texto
+        if (this.rentaroTimerEvent) {
+            this.rentaroTimerEvent.remove(); // Detener el temporizador
+        }
+        this.rentaroTimerText.setVisible(false); // Ocultar el texto del temporizador
     }
 
     generarAleatorio() {
@@ -871,8 +926,8 @@ moveRentaro() {
         this.numrand2 = Math.floor(Math.random() * ((350 - 200) / 10 + 1)) * 10 + 200;
         console.log('Número 2 aleatorio generado: ' + this.numrand2);
     }
-    
-    
+
+
     createSecondRentaro() {
         // Asegúrate de que el segundo Rentaro no se cree si ya existe
         if (this.rentaro2) return;
@@ -894,7 +949,7 @@ moveRentaro() {
             callbackScope: this,
             loop: true
         });
-        
+
         this.rentaroTimerText2.setVisible(true);
         this.rentaroTimerText2.setText('Tiempo: ' + this.rentaroTimeLeft2); // Actualiza el texto
 
@@ -903,31 +958,31 @@ moveRentaro() {
             callback: () => {
                 this.rentaroTimeLeft2--;
                 this.rentaroTimerText2.setText('Tiempo: ' + this.rentaroTimeLeft2); // Actualiza el texto
-        
+
                 // Si el tiempo llega a 0, destruye Rentaro
                 if (this.rentaroTimeLeft2 <= 0) {
                     this.rentaroTimerText2.setVisible(false);
-                    this.rentarovalue2=10;
+                    this.rentarovalue2 = 10;
                     this.rentaroTimerEvent2.remove(); // Detener el temporizador
                 }
             },
             callbackScope: this,
             loop: true // Repetir el evento
         });
-           
+
 
         // Detectar si el jugador recoge a Rentaro
         this.physics.add.collider(this.rentaro2, this.platforms);
         this.physics.add.overlap(this.player, this.rentaro2, this.collectRentaro2, null, this);
 
-                // Desactivar el parpadeo después de 10 segundos
-                this.time.delayedCall(10000, () => {
-                    this.rentaroBlinking2 = false;
-                    this.rentaro2.setTint(0xffffff); // Restablecer color
-                    this.rentaroTimer2.remove(); // Detener el parpadeo
-                    this.rentaroValue2 = 10;
-                });
-     
+        // Desactivar el parpadeo después de 10 segundos
+        this.time.delayedCall(10000, () => {
+            this.rentaroBlinking2 = false;
+            this.rentaro2.setTint(0xffffff); // Restablecer color
+            this.rentaroTimer2.remove(); // Detener el parpadeo
+            this.rentaroValue2 = 10;
+        });
+
         // Iniciar el movimiento de Rentaro
         this.moveRentaro2();
     }
@@ -955,7 +1010,7 @@ moveRentaro() {
             loop: true
         });
 
-            // Desactivar el parpadeo después de 10 segundos
+        // Desactivar el parpadeo después de 10 segundos
         this.time.delayedCall(10000, () => {
             this.rentaroBlinking2 = false;
             this.rentaro2.setTint(0xffffff); // Restablecer color
@@ -998,7 +1053,7 @@ moveRentaro() {
 
     collectRentaro2(player, rentaro) {
         rentaro.disableBody(true, true);
-        this.score += this.rentaroValue2; ;
+        this.score += this.rentaroValue2;;
         this.jugador.puntos = this.score;
         this.scoreText.setText('Score: ' + this.score);
         this.jugador.guardar();
@@ -1012,32 +1067,32 @@ moveRentaro() {
         this.rentaroTimerText2.setVisible(false); // Ocultar el texto del temporizador
     }
 
-completeLevel() {
-    // Detener música y sonidos
-    pauseButton.style.display = 'none';
-    this.musicafondo.stop();
-    this.SonidoMuerte.stop();
-    this.sonidoaAHahari.stop();
-    this.SonidosQuietas.forEach((sonido) => sonido.stop());
-    this.sonidoaAHahari.stop();
-    this.pelucheSonido.stop();
-    
-    // Cambiar el color de fondo a negro
-    this.cameras.main.setBackgroundColor('#000000'); // Establecer el fondo de la cámara a negro
-    this.physics.pause(); // Pausar la física
+    completeLevel() {
+        // Detener música y sonidos
+        pauseButton.style.display = 'none';
+        this.musicafondo.stop();
+        this.SonidoMuerte.stop();
+        this.sonidoaAHahari.stop();
+        this.SonidosQuietas.forEach((sonido) => sonido.stop());
+        this.sonidoaAHahari.stop();
+        this.pelucheSonido.stop();
 
-    // Eliminar todos los elementos del juego
-    this.children.removeAll(); // Eliminar todos los objetos hijos del juego
+        // Cambiar el color de fondo a negro
+        this.cameras.main.setBackgroundColor('#000000'); // Establecer el fondo de la cámara a negro
+        this.physics.pause(); // Pausar la física
 
-    // Mostrar el mensaje "Nivel 1 Completo"
-    const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Nivel 1 Completo', {
-        fontSize: '64px',
-        fill: '#ffffff'
-    }).setOrigin(0.5); // Centrar el texto
+        // Eliminar todos los elementos del juego
+        this.children.removeAll(); // Eliminar todos los objetos hijos del juego
 
-    // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
-    this.time.delayedCall(2000, () => {
-        window.location.href = 'nivel2.html'; 
-    });
-}
+        // Mostrar el mensaje "Nivel 1 Completo"
+        const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Nivel 1 Completo', {
+            fontSize: '64px',
+            fill: '#ffffff'
+        }).setOrigin(0.5); // Centrar el texto
+
+        // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
+        this.time.delayedCall(2000, () => {
+            window.location.href = 'nivel2.html';
+        });
+    }
 }
