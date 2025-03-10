@@ -377,3 +377,34 @@ canvas {
     text-transform: uppercase;
 }
 
+@media screen and (min-width: 768px) {
+    .contenedor {
+       display: flex;
+       gap: 20px;
+    }
+
+    .titulo img {
+        width: 200px;
+        height: auto;
+        align-items: center;
+        margin-left: 12rem;
+    }
+
+    .titulo p {
+        font-size: 30px;
+        margin-top: 1rem;
+        margin-left: 12rem;
+        margin-bottom: -1rem;
+    }
+
+    .botones{
+        display: flex;
+        justify-content: center;
+        gap: -20px;
+    }
+    button{
+        flex: 1 1 100%x;
+        max-width: 250px;
+        max-height: 200px;
+    }
+}

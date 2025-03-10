@@ -118,9 +118,32 @@
     color: white;
     cursor: pointer;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 50px;
 }
 
 #submitNameButton:hover {
     background-color: #45a049;
+}
+
+@media screen and (min-width: 768px) {
+    #characterSelection h2{
+        margin-top: 7rem;
+    }
+
+    .contenedorPersonajes{
+        width: 90%;
+        margin: 0 auto;
+        
+    }
+
+    #nameInputContainer{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+        height: 12%;
+        gap: 10px;
+        margin-top: 7rem
+    }
 }
