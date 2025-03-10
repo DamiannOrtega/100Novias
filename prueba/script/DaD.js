@@ -101,3 +101,22 @@ const contadorInterval = setInterval(() => {
         contadorElement.style.display = 'none'; // Ocultar el temporizador
     }
 }, 1000);
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Obtener el nombre del jugador desde localStorage
+    let playerName = localStorage.getItem("playerName");
+
+    if (playerName) {
+        let jugadores = JSON.parse(localStorage.getItem("jugadores")) || {};
+        
+        // Verificar si el jugador existe en el almacenamiento
+        if (jugadores[playerName]) {
+            let puntosJugador = jugadores[playerName].puntos;
+            document.getElementById("puntos").textContent = puntosJugador; // Actualiza el HTML con la puntuación
+        } else {
+            document.getElementById("puntos").textContent = "0"; // Si no existe, muestra 0
+        }
+    } else {
+        document.getElementById("puntos").textContent = "0"; // Si no hay playerName, muestra 0
+    }
+});

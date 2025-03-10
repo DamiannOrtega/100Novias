@@ -786,7 +786,7 @@ class GameScene extends Phaser.Scene {
     createRentaro() {
         this.rentaroTimeLeft = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
-        this.rentaroValue = 50;
+        this.rentaroValue = 400; // Puntos que se sumarán al recoger a Rentaro
         this.sound.add('Objeto_Especial').play();
         const y = 0; // Aparece en la parte superior de la pantalla
         this.rentaro = this.physics.add.sprite(x, y, 'RentaroR').setScale(0.1);
