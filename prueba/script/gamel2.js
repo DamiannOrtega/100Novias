@@ -6,6 +6,7 @@ class GameScene extends Phaser.Scene {
         this.player = null;          // Jugador
         
         this.bombs = null;           // Grupo de bombas
+        this.suelo=null;
         this.platforms = null;       // Plataformas del juego
         this.cursors = null;         // Teclas del cursor (flechas)
         this.score = 0;              // Puntuación del jugador
@@ -146,11 +147,16 @@ class GameScene extends Phaser.Scene {
 
         // Crea un grupo de plataformas estáticas (no se mueven)
         this.platforms = this.physics.add.staticGroup();
-
+        this.suelo = this.physics.add.staticGroup();
+        
         // Crea el suelo del juego y lo escala para que cubra el ancho de la pantalla
+            
         for (let x = 0; x <= 1500; x += 30) {
-            this.platforms.create(x, 745, 'groundsmall').setScale(0.8).refreshBody();
+            this.suelo.create(x, 745, 'groundsmall').setScale(0.8).refreshBody();
         }
+        this.suelo.children.iterate((platform) => {
+            platform.setTint(0xDD4444); // Aplica color rojo
+        });
 
         this.playerNameText = this.add.text(16, 100, 'Jugador: ' + this.jugador.nombre, {
             fontSize: '32px',
@@ -182,7 +188,7 @@ class GameScene extends Phaser.Scene {
             platform.body.checkCollision.left = false;
             platform.body.checkCollision.right = false;
         });
-        
+
         // Crea al jugador en una posición inicial
         if (this.personaje == 1) {
             this.player = this.physics.add.sprite(100, 650, 'Nano_parada').setScale(0.2);
@@ -191,6 +197,7 @@ class GameScene extends Phaser.Scene {
             this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
 
         }
+
 
         this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', {
             fontSize: '32px',
@@ -372,7 +379,7 @@ class GameScene extends Phaser.Scene {
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.bombs, this.platforms);
-
+        this.physics.add.collider(this.player, this.suelo);
 
         // Detecta si el jugador choca con una bomba
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
@@ -441,10 +448,18 @@ class GameScene extends Phaser.Scene {
             this.player.setVelocityX(0);
             this.player.setVelocityY(300);
             this.player.anims.play('agacharse', true);
+            this.platforms.children.iterate((platform) => {
+                platform.body.checkCollision.up = false;   
+
+            });
         }else {
             this.player.setVelocityX(0);
             this.idleTimer += time - (this.lastUpdateTime || time);
             this.lastUpdateTime = time;
+            this.platforms.children.iterate((platform) => {
+                platform.body.checkCollision.up = true;   
+
+            });
     
             // Cambia a la animación "quieto" si han pasado 3 segundos o más de inactividad
             if (this.idleTimer >= 3000) {
