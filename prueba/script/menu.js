@@ -2,19 +2,29 @@ let selectedCharacter = null;
 
 // Función para seleccionar personaje
 function selectCharacter(personaje) {
-    let selectedCharacter;
     let volume = localStorage.getItem("gameVolume") || 1; // Recuperar el volumen guardado o usar 1 como valor por defecto
 
     if (personaje === 'Nano') {
-        selectedCharacter = 1;
+        selectedCharacter = 1; // Asignar el valor a la variable global
         const nanoAudio = new Audio('assets/Nano/PresentacionNano.mp3');
         nanoAudio.volume = volume; // Aplicar el volumen
         nanoAudio.play();
     } else if (personaje === 'Shizuka') {
-        selectedCharacter = 2;
+        selectedCharacter = 2; // Asignar el valor a la variable global
         const shizukaAudio = new Audio('assets/Shizuka/ShizukaPresentación.mp3');
         shizukaAudio.volume = volume; // Aplicar el volumen
         shizukaAudio.play();
+    } else {
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Atención!',
+            text: 'Por favor selecciona un personaje antes de continuar.',
+            position: 'bottom',
+            toast: true,
+            showConfirmButton: false,
+            timer: 3000
+        });
+        return;
     }
 
     console.log(`Personaje seleccionado: ${selectedCharacter}`);
@@ -22,9 +32,8 @@ function selectCharacter(personaje) {
     // Almacenar la selección en localStorage
     localStorage.setItem('selectedCharacter', selectedCharacter);
 
-    // Mostrar la pantalla de ingreso de nombre
-    document.getElementById('nameInputContainer').style.display = 'block';
 }
+
 // Función para iniciar el juego y redirigir a otro HTML
 function startGame() {
     window.location.href = "juego.html";
@@ -34,28 +43,44 @@ function startGame() {
 document.getElementById('submitNameButton').addEventListener('click', function () {
     let playerName = document.getElementById('playerName').value.trim();
 
-    if (playerName) {
-        // Almacenar el nombre en localStorage
-        localStorage.setItem('playerName', playerName);
-
-        // Eliminar la pantalla de ingreso de nombre
-        document.getElementById('nameInputContainer').style.display = 'none';
-
-        // Hacer visible el botón de "Jugar"
-        document.getElementById('playButton').style.display = 'block';
-    } else {
-        alert('Por favor ingresa un nombre válido.');
+    // Validación de nombre vacío
+    if (!playerName) {
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Atención!',
+            text: 'Por favor ingresa un nombre válido.',
+            position: 'bottom',
+            toast: true,
+            showConfirmButton: false,
+            timer: 3000
+        });
+        return;
     }
+
+    // Validación de longitud mínima
+    if (playerName.length < 3) {
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Atención!',
+            text: 'El nombre debe tener al menos 3 caracteres.',
+            position: 'bottom',
+            toast: true,
+            showConfirmButton: false,
+            timer: 3000
+        });
+        return;
+    }
+
+    // Almacenar el nombre en localStorage
+    localStorage.setItem('playerName', playerName);
+
+    // Eliminar la pantalla de ingreso de nombre
+    document.getElementById('nameInputContainer').style.display = 'none';
+
+    // Mostrar el botón "Jugar"
+    document.getElementById('playButton').style.display = 'block';
 });
 
-// Eventos para mostrar y ocultar el placeholder del input de nombre
-const input = document.getElementById("playerName");
-input.addEventListener("focus", function () {
-    this.placeholder = "";
-});
-input.addEventListener("blur", function () {
-    this.placeholder = "Nombre del jugador";
-});
 
 // Función para cambiar la imagen cuando el usuario pasa el ratón por encima
 function hoverCharacter(element, newSrc) {
@@ -66,3 +91,8 @@ function hoverCharacter(element, newSrc) {
         img.style.opacity = "1"; // Restaurar la opacidad
     }, 150);
 }
+
+// Al cargar la página, asegurarse de que el botón "Jugar" esté oculto
+window.onload = function() {
+    document.getElementById('playButton').style.display = 'none'; // Asegurarse de que el botón "Jugar" esté oculto al cargar
+};
