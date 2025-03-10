@@ -562,12 +562,7 @@ class GameScene extends Phaser.Scene {
         if (this.lives > 0) {
             this.isInvincible = true; // Activar inmunidad
             // Definir el volumen original
-            if (this.personaje == 1){
-                this.sonidoDano = this.sound.add('Nano_Dano', { volume: 5 });
-        } else if (this.personaje == 2) {  // Shizuka
-            this.sonidoDano = this.sound.add('Shizuka_Dano', { volume: 5 });
 
-        }
         // Reproducir el sonido
         this.sonidoDano.play();
 
