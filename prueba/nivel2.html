@@ -22,10 +22,19 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
                 <path d="M10 6v12l8-6z"></path> <!-- Flecha hacia la derecha -->
             </svg>
-
-
-
         </div>
+    </div>
+    <!-- Canvas para Game Over -->
+    <canvas id="gameOverCanvas" style="display: none; position: absolute; top: 0; left: 0; z-index: 10;"></canvas>
+
+    <!-- Contenedor de botones -->
+    <div class="buttonContainer" id="gameOverButtons"style="display: none; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); z-index: 20;">
+        <button id="restartButton" class="btnJugar" style="display: none;">
+            Reiniciar
+        </button>
+        <button id="menuButton" class="btnJugar" style="display: none;">
+            Menú Principal
+        </button>
     </div>
     <script src="script/jugador.js"></script>
     <script src="script/gamel2.js"></script>
