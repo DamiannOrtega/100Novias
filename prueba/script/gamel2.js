@@ -4,7 +4,7 @@ class GameScene extends Phaser.Scene {
 
         // Propiedades de la clase (antes variables globales)
         this.player = null;          // Jugador
-        
+        this.playerPosition = { x: 0, y: 0 };
         this.magia = null;           // Grupo de bombas
         this.suelo=null;
         this.platforms = null;       // Plataformas del juego
@@ -38,7 +38,10 @@ class GameScene extends Phaser.Scene {
         this.bosslives=15;
         this.boss=null;
         this.sonidoBoss=null;
-
+        this.ataqueE = null; // Grupo para los ataques
+        this.bossAttackCooldown = 1000; // Tiempo de espera entre ataques del jefe
+        this.lastBossAttackTime = 0;
+        this.bossHasStartedMoving =false;
     }
 
     init() {
@@ -113,6 +116,8 @@ class GameScene extends Phaser.Scene {
         //objeto especial
         this.load.image('vidas', 'assets/objetos/Corazones.png');
         this.load.image('ataquaAliado', 'assets/objetos/Ataque.png');
+        this.load.image('attackBoss', 'assets/Enemigos/ataqueEnemigo.png');
+
     }
 
     create() {
@@ -219,15 +224,14 @@ class GameScene extends Phaser.Scene {
             this.boss.setVelocity(0);
             this.boss.invulnerable = true; // Hacer que el jefe sea inmune
             this.time.delayedCall(5000, () => {
-                this.boss.body.allowGravity = true;
+                // this.boss.body.allowGravity = true;
                 this.boss.invulnerable = false; // El jefe ya no es inmune después de 5 segundos
                 this.bossIcon=this.add.image(1200,70,'IconoBoss').setScale(0.7);
                 for (let i = 0; i < this.bosslives; i++) {
                     const vidaImage = this.add.image(1160 + (i * 14), 65, 'Barra_Vida').setScale(0.7);
                     this.ImagenVida.push(vidaImage);
                 }
-           
-           
+                this.startBossBehavior();
             });
         });
 
@@ -428,6 +432,10 @@ class GameScene extends Phaser.Scene {
 
         // Detecta si el jugador choca con una bomba
         this.ataque = this.physics.add.group(); // Grupo para los ataques
+        this.ataqueE = this.physics.add.group(); // Grupo para los ataques
+
+       
+        this.physics.add.collider(this.ataque, this.player, this.hitPlayer, null, this);
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.physics.add.collider(this.ataque, this.suelo, this.destroyAttack, null, this);
        
@@ -458,12 +466,16 @@ class GameScene extends Phaser.Scene {
 
 
     update(time) {
+        // Actualizar la posición del jugador
+        this.playerPosition.x = this.player.x;
+        this.playerPosition.y = this.player.y;
         if (this.gameOver) {
             return;
         }
         if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
             this.togglePause();
         }
+
         if (this.isPaused) {
             // Si el juego está en pausa, detener la animación y establecer la textura de "parado"
             if (this.personaje == 1) {
@@ -475,6 +487,9 @@ class GameScene extends Phaser.Scene {
     
             return; // Si el juego está en pausa, no actualices nada
         }
+
+
+
         const currentTime = this.time.now;
         // Lógica de movimiento
         if (this.cursors.left.isDown) {
@@ -575,7 +590,13 @@ class GameScene extends Phaser.Scene {
                 ataque.lifespan -= this.time.delta; // Resta el tiempo transcurrido
             }
         });
-
+        this.ataqueE.children.iterate((ataque) => {
+            if (ataque && ataque.lifespan <= 0) {
+                ataque.destroy();
+            } else if (ataque) {
+                ataque.lifespan -= this.time.delta; // Resta el tiempo transcurrido
+            }
+        });
     }
 
 
@@ -701,6 +722,7 @@ class GameScene extends Phaser.Scene {
             ataque.destroy();
         });
     }
+    
     destroyAttack(ataque) {
         ataque.destroy(); // Destruir el ataque
     }
@@ -709,4 +731,128 @@ class GameScene extends Phaser.Scene {
         attack.destroy(); // Destruir el ataque
         enemy.destroy(); // Destruir el enemigo (o aplicar daño)
     }
+
+    startBossBehavior() {
+        this.boss.setVelocity(0); // Inicialmente detenido
+        this.boss.body.setCollideWorldBounds(true); // Asegúrate de que el jefe no salga de la pantalla
+    
+        // Definir las rutas como un array de puntos
+        this.routes = [
+            { x: 100, y: 300 },
+            { x: 400, y: 300 },
+            { x: 400, y: 100 },
+            { x: 700, y: 100 },
+            { x: 700, y: 300 },
+            { x: 300, y: 300 },
+            { x: 350, y: 250 },
+            { x: 400, y: 200 },
+            { x: 1000, y: 300 },
+            { x: 1000, y: 100 },
+            { x: 1400, y: 100 },
+            { x: 200, y: 400 },
+            { x: 600, y: 400 },
+            { x: 600, y: 200 },
+            { x: 900, y: 200 },
+            { x: 900, y: 400 },
+            { x: 1200, y: 400 },
+            { x: 1200, y: 200 },
+            { x: 1600, y: 200 },
+            { x: 300, y: 500 },
+            { x: 700, y: 500 },
+            { x: 700, y: 300 },
+            { x: 1000, y: 300 },
+            { x: 1000, y: 500 },
+            { x: 1300, y: 500 },
+            { x: 1300, y: 300 },
+            { x: 1700, y: 300 },
+            { x: 400, y: 600 },
+            { x: 800, y: 600 },
+            { x: 800, y: 400 },
+            { x: 1100, y: 400 },
+            { x: 1100, y: 600 },
+            { x: 1400, y: 600 },
+            { x: 1400, y: 400 },
+            { x: 1800, y: 400 },
+            { x: 500, y: 700 },
+            { x: 900, y: 700 },
+            { x: 900, y: 500 },
+            { x: 1200, y: 500 },
+            { x: 1200, y: 700 },
+            { x: 1500, y: 700 }
+        ];
+    
+        this.currentRouteIndex = 0; // Índice de la ruta actual
+        this.moveToNextPoint(); // Iniciar el movimiento
+    
+        // Iniciar el movimiento en un patrón
+        this.time.addEvent({
+            delay: 100, // Comprobar la posición cada 100 ms
+            callback: this.checkForDirectionChange,
+            callbackScope: this,
+            loop: true
+        });
+    
+        // Variable para rastrear si el jefe ha comenzado a moverse
+        this.bossHasStartedMoving = false;
+    
+        // Iniciar el ataque solo después de que el jefe haya comenzado a moverse
+        this.time.addEvent({
+            delay: 2000, // Intervalo de ataque (cada 2 segundos)
+            callback: () => {
+                if (this.bossHasStartedMoving) {
+                    this.bossAttack();
+                }
+            },
+            callbackScope: this,
+            loop: true
+        });
+    }
+    
+    moveToNextPoint() {
+        const target = this.routes[this.currentRouteIndex];
+    
+        // Mover al siguiente punto a velocidad 200
+        this.physics.moveTo(this.boss, target.x, target.y, 200);
+    
+        // Marcar que el jefe ha comenzado a moverse
+        this.bossHasStartedMoving = true;
+    
+        // Comprobar si el jefe ha llegado al punto objetivo
+        this.boss.once('animationcomplete', () => {
+            this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
+            this.moveToNextPoint(); // Mover al siguiente punto
+        });
+    }
+    
+    checkForDirectionChange() {
+        const target = this.routes[this.currentRouteIndex];
+    
+        // Verificar si el jefe ha alcanzado las coordenadas específicas
+        if (Phaser.Math.Distance.Between(this.boss.x, this.boss.y, target.x, target.y) < 10) {
+            // Cambiar dirección al llegar a la coordenada
+            this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
+            this.moveToNextPoint(); // Mover al siguiente punto
+        }
+    }
+    
+    
+    bossAttack() {
+        // Lógica para que el jefe ataque la posición actual del jugador
+        const attack = this.ataqueE.create(this.boss.x, this.boss.y, 'attackBoss');
+        attack.setScale(0.1);
+        attack.lifespan = 2000; // Duración del ataque
+
+        // Calcular la dirección del ataque hacia la posición del jugador
+        const directionX = this.playerPosition.x - this.boss.x;
+        const directionY = this.playerPosition.y - this.boss.y;
+        const angle = Math.atan2(directionY, directionX);
+
+        // Establecer la velocidad del ataque
+        attack.setVelocity(Math.cos(angle) * 300, Math.sin(angle) * 300); // Velocidad de ataque
+
+        // Colisión entre el ataque del jefe y el jugador
+        this.physics.add.collider(attack, this.player, this.hitPlayer, null, this);
+    }
+
+
 }
