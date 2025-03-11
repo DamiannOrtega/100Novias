@@ -64,10 +64,10 @@ class GameScene extends Phaser.Scene {
             this.lives = parseInt(vidasGuardadas, 10);
         }
 
-        const puntosGuardados = localStorage.getItem(jugador[playerName].puntos);
-        if (puntosGuardados !== null) {
-            this.score = parseInt(puntosGuardados, 10);
-        }
+        const puntosGuardados = localStorage.getItem(this.jugador.puntos);
+        // if (puntosGuardados !== null) {
+        //     this.score = parseInt(puntosGuardados, 10);
+        // }
     }
 
     // Carga los recursos del juego
@@ -190,7 +190,13 @@ class GameScene extends Phaser.Scene {
         });
 
         //Mostrar punto guardados
-        this.scoreText.setText('Score: ' + this.puntosGuardados);
+        this.scoreText = this.add.text(16, 150, 'Score: ' + this.jugador.puntos, {
+            fontSize: '32px',
+            fontFamily: 'Aclonica , sans-serif',
+            color: '#FFFFFF',
+            fill: '#ffffff'
+        });
+        // this.scoreText.setText('Score: ' + this.jugador.puntos);
 
 
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
@@ -420,13 +426,6 @@ class GameScene extends Phaser.Scene {
             this.ImagenVida.push(vidaImage);
         }
 
-        // Añade el texto de la puntuación en la esquina superior izquierda
-        this.scoreText = this.add.text(16, 130, 'score: 0', {
-            fontFamily: 'Aclonica , sans-serif',
-            fontSize: '32px',
-            color: '#FFFFFF',
-            fill: '#FFFFFF',
-        });
 
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
