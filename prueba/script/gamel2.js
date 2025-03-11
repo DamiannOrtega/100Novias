@@ -36,6 +36,7 @@ class GameScene extends Phaser.Scene {
         //Enemigos
         this.bossIcon = null;
         this.bosslife = null;
+        this.bossAlive = true;
         this.bosslives = 15;
         this.boss = null;
         this.sonidoBoss = null;
@@ -830,6 +831,8 @@ class GameScene extends Phaser.Scene {
             // Lógica para cuando el jefe es derrotado
             console.log("El jefe ha sido derrotado.");
             enemy.destroy(); // Destruir el jefe
+            this.bossAlive = false; // Marcar que el jefe ha sido derrotado
+            this.bossAttackEvent.remove(); 
             this.scoreText.setText('¡Jefe Derrotado!'); // Mensaje de victoria
         } else {
             // Si el jefe aún tiene vidas, puedes agregar un efecto visual o sonido
@@ -909,10 +912,10 @@ class GameScene extends Phaser.Scene {
         this.bossHasStartedMoving = false;
 
         // Iniciar el ataque solo después de que el jefe haya comenzado a moverse
-        this.time.addEvent({
+        this.bossAttackEvent = this.time.addEvent({
             delay: 2000, // Intervalo de ataque (cada 2 segundos)
             callback: () => {
-                if (this.bossHasStartedMoving) {
+                if (this.bossAlive) { // Verificar si el jefe está vivo
                     this.bossAttack();
                 }
             },
