@@ -190,7 +190,7 @@ class GameScene extends Phaser.Scene {
         });
 
         //Mostrar punto guardados
-        this.scoreText = this.add.text(16, 150, 'Score: ' + this.jugador.puntos, {
+        this.scoreText = this.add.text(16, 134, 'Score: ' + this.jugador.puntos, {
             fontSize: '32px',
             fontFamily: 'Aclonica , sans-serif',
             color: '#FFFFFF',
@@ -596,7 +596,6 @@ class GameScene extends Phaser.Scene {
             }
         });
     }
-
     togglePause() {
         this.isPaused = !this.isPaused; // Cambiar el estado de pausa
         const canvas = document.querySelector('canvas');
@@ -614,10 +613,11 @@ class GameScene extends Phaser.Scene {
                 }
             });
 
-            // Pausar el sonido del enemigo si está reproduciéndose
-            if (this.sonidoaAHahari.isPlaying) {
-                this.sonidoaAHahari.pause();
+            if(this.sonidoBoss.isPlaying){
+                this.sonidoBoss.pause();
             }
+
+
 
             // Aquí puedes pausar otros sonidos si es necesario
         } else {
@@ -632,15 +632,12 @@ class GameScene extends Phaser.Scene {
                 }
             });
 
-            // Reanudar el sonido del enemigo si estaba pausado
-            if (this.sonidoaAHahari.isPaused) {
-                this.sonidoaAHahari.resume();
+            if(this.sonidoBoss.isPaused){
+                this.sonidoBoss.resume();
             }
 
-            // Aquí puedes reanudar otros sonidos si es necesario
         }
     }
-
     completeLevel() {
         // Detener música y sonidos
         pauseButton.style.display = 'none';
