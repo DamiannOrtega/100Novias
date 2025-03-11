@@ -114,10 +114,10 @@ a{
 .contenedorP {
     display: flex;
     justify-content: center; 
-    /* align-items: flex-end;
+    align-items: flex-end;
     align-items: center;
-    height: 100vh; /* Altura de la ventana completa */
-    /* position: relative; */
+    height: 100vh;
+    position: relative;
     background-image: url(../assets/background/karane.jpg);
 }
 
@@ -202,7 +202,8 @@ button {
     justify-content: center; /* Centra el contenido horizontalmente */
     align-items: center; /* Centra el contenido verticalmente */
     position: absolute;
-    bottom: 10%; /* Ajusta la distancia desde el fondo de la pantalla */
+    /* margin-top: 40px; */
+    bottom: 5%; /* Ajusta la distancia desde el fondo de la pantalla */
 }
 
 .buttonContainer {
@@ -299,6 +300,10 @@ button {
     background: linear-gradient(135deg, #495bf8, #52d7ff);
 }
 
+.btnRegresarT {
+    background: linear-gradient(135deg, #495bf8, #52d7ff);
+}
+
 #playButton{
     background: linear-gradient(135deg, #f82371, #fc25a2);
 }
@@ -373,13 +378,12 @@ canvas {
     
 }
 
-
-
 #playButton{
     flex-direction: column;
 }
 
 
+/* TITULOS DE CADA PANTALLA */
 .tituloSeccion{
     display: flex;
     position: absolute;
@@ -397,23 +401,117 @@ canvas {
     border-radius: 5px;
 }
 
+
 .tutorial{
     background: linear-gradient(135deg, #7619f0, #b35ded);
+    width: 80%;
+    font-size: 30px;
 
 }
 .puntuaciones{
     background: linear-gradient(135deg, #f09819, #edde5d);
+    width: 80%;
     
 }
 .ajustes{
     background: linear-gradient(135deg, #ff1c68, #cc3e51);
-
+    width: 80%;
 }
 .creditos{
     background: linear-gradient(135deg, #00c6ff, #0072ff);
+    width: 80%;
 
 }
 
+
+/* TUTORIAL */
+.tutorial-container {
+    width: 80%;
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.slide {
+    display: none;
+    padding: 20px;
+    
+}
+
+.slide h2{
+    font-size: 30px;
+    text-align: center;
+}
+
+.slide p{
+    font-size: 15px;
+    text-align: center;
+}
+
+.slide.active {
+    display: block;
+}
+
+.buttons{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+#prev,#next{
+    background: linear-gradient(135deg, #7619f0, #b35ded);
+    
+}
+
+.personajes,.imagenes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Espacio entre personajes */
+}
+
+.personaje {
+    text-align: center;
+}
+
+.personaje-img {
+    width: 80px;   
+    height: auto;
+    border-radius: 10px;
+}
+
+.nano{
+    width: 50px;
+}
+.hahari{
+    width: 150px;
+}
+
+.rentaro{
+    width: 80px;
+}
+
+.rentaroCaballo{
+    width: 100px;
+}
+
+.ataque{
+    width: 90px;
+}
+.flechas{
+    width: 120px;
+}
+.vidas{
+    width: 300px;
+}
+.input-img{
+    width: 500px;
+    height: auto;
+    border-radius: 10px;
+}
 
 
 
