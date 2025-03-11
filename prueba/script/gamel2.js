@@ -727,7 +727,6 @@ class GameScene extends Phaser.Scene {
         pauseButton.style.display = 'none';
         this.musicafondo.stop();
         this.SonidoMuerte.stop();
-        this.sonidoaAHahari.stop();
         this.SonidosQuietas.forEach((sonido) => sonido.stop());
 
 
@@ -739,14 +738,14 @@ class GameScene extends Phaser.Scene {
         this.children.removeAll(); // Eliminar todos los objetos hijos del juego
 
         // Mostrar el mensaje "Nivel 1 Completo"
-        const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Nivel 1 Completo', {
+        const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Juego Completado', {
             fontSize: '64px',
             fill: '#ffffff'
         }).setOrigin(0.5); // Centrar el texto
 
         // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
-        this.time.delayedCall(2000, () => {
-            window.location.href = 'rompecabezas.html';
+        this.time.delayedCall(3000, () => {
+            window.location.href = 'pantallaWin.html';
         });
     }
 
@@ -834,6 +833,7 @@ class GameScene extends Phaser.Scene {
             this.bossAlive = false; // Marcar que el jefe ha sido derrotado
             this.bossAttackEvent.remove(); 
             this.scoreText.setText('¡Jefe Derrotado!'); // Mensaje de victoria
+            this.completeLevel()
         } else {
             // Si el jefe aún tiene vidas, puedes agregar un efecto visual o sonido
             this.time.delayedCall(500, () => {
@@ -844,6 +844,7 @@ class GameScene extends Phaser.Scene {
 
         // Destruir el ataque después de un tiempo
         attack.destroy(); // Destruir el ataque
+       
         console.log("El ataque ha sido destruido.");
     }
 
