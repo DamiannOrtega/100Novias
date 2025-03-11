@@ -898,21 +898,21 @@ class GameScene extends Phaser.Scene {
             { x: 900, y: 400 },
             { x: 1200, y: 400 },
             { x: 1200, y: 200 },
-            { x: 1300, y: 200 },
+            { x: 1200, y: 200 },
             { x: 300, y: 500 },
             { x: 700, y: 500 },
             { x: 700, y: 300 },
             { x: 1000, y: 300 },
             { x: 1000, y: 500 },
             { x: 1300, y: 500 },
-            { x: 1300, y: 300 },
+            { x: 1200, y: 400 },
             { x: 1200, y: 300 },
             { x: 400, y: 600 },
             { x: 800, y: 600 },
             { x: 800, y: 400 },
             { x: 1100, y: 400 },
             { x: 1100, y: 600 },
-            { x: 1200, y: 600 },
+            { x: 1000, y: 600 },
             { x: 1200, y: 400 },
             { x: 1100, y: 400 },
             { x: 500, y: 700 },
@@ -956,7 +956,7 @@ class GameScene extends Phaser.Scene {
         // Asegúrate de que el objetivo esté dentro de los límites de la pantalla
         if (target.x < 0) target.x = 100;
         if (target.x > 1500) target.x = 1400; // Limite derecho
-        if (target.y < 50) target.y = 60;
+        if (target.y < 50) target.y = 100;
         if (target.y > 700) target.y = 600; // Limite inferior
     
         // Mover al siguiente punto a la velocidad actual
