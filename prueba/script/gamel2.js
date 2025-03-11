@@ -6,17 +6,17 @@ class GameScene extends Phaser.Scene {
         this.player = null;          // Jugador
         this.playerPosition = { x: 0, y: 0 };
         this.magia = null;           // Grupo de bombas
-        this.suelo=null;
+        this.suelo = null;
         this.platforms = null;       // Plataformas del juego
         this.cursors = null;         // Teclas del cursor (flechas)
-        this.score = 0;              // Puntuación del jugador
+        // this.score = 0;              // Puntuación del jugador
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
         this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
         this.ataque = null; // Grupo para los ataques
-        this.ataqueK    = null; // Tecla para atacar
+        this.ataqueK = null; // Tecla para atacar
         this.attackActive = false; // Variable para controlar el estado del ataque
         this.attackCooldown = 200; // Tiempo de espera entre ataques en milisegundos
         this.lastAttackTime = 0; // Tiempo del último ataque        
@@ -34,15 +34,15 @@ class GameScene extends Phaser.Scene {
         this.ImagenVida = [];
         this.ImagenVidaBoss = [];
         //Enemigos
-        this.bossIcon=null;
-        this.bosslife=null;
-        this.bosslives=15;
-        this.boss=null;
-        this.sonidoBoss=null;
+        this.bossIcon = null;
+        this.bosslife = null;
+        this.bosslives = 15;
+        this.boss = null;
+        this.sonidoBoss = null;
         this.ataqueE = null; // Grupo para los ataques
         this.bossAttackCooldown = 1000; // Tiempo de espera entre ataques del jefe
         this.lastBossAttackTime = 0;
-        this.bossHasStartedMoving =false;
+        this.bossHasStartedMoving = false;
         this.bossIsMoving = false; // Inicialmente, el jefe no se está moviendo
     }
 
@@ -53,15 +53,20 @@ class GameScene extends Phaser.Scene {
 
         // Cargar el jugador desde localStorage
         this.jugador = Jugador.cargar(playerName);
-        
+
         if (!this.jugador) {
             // Si no existe el jugador en localStorage, crear uno nuevo
             this.jugador = new Jugador(playerName);
         }
 
         const vidasGuardadas = localStorage.getItem('vidasActuales');
-        if(vidasGuardadas!==null){
-            this.lives=parseInt(vidasGuardadas,10);
+        if (vidasGuardadas !== null) {
+            this.lives = parseInt(vidasGuardadas, 10);
+        }
+
+        const puntosGuardados = localStorage.getItem(jugador[playerName].puntos);
+        if (puntosGuardados !== null) {
+            this.score = parseInt(puntosGuardados, 10);
         }
     }
 
@@ -167,9 +172,9 @@ class GameScene extends Phaser.Scene {
         // Crea un grupo de plataformas estáticas (no se mueven)
         this.platforms = this.physics.add.staticGroup();
         this.suelo = this.physics.add.staticGroup();
-        
+
         // Crea el suelo del juego y lo escala para que cubra el ancho de la pantalla
-            
+
         for (let x = 0; x <= 1500; x += 30) {
             this.suelo.create(x, 745, 'groundsmall').setScale(0.8).refreshBody();
         }
@@ -183,6 +188,9 @@ class GameScene extends Phaser.Scene {
             color: '#FFFFFF',
             fill: '#ffffff'
         });
+
+        //Mostrar punto guardados
+        this.scoreText.setText('Score: ' + this.puntosGuardados);
 
 
         this.platforms.create(600, 400, 'groundsmall').setScale(0.8).refreshBody();
@@ -203,7 +211,7 @@ class GameScene extends Phaser.Scene {
         });
         this.platforms.children.iterate((platform) => {
             platform.body.checkCollision.down = false;
-            platform.body.checkCollision.up = true;   
+            platform.body.checkCollision.up = true;
             platform.body.checkCollision.left = false;
             platform.body.checkCollision.right = false;
         });
@@ -219,7 +227,7 @@ class GameScene extends Phaser.Scene {
         this.sonidoBoss = this.sound.add('SoundBoss');
         this.boss = this.physics.add.sprite(750, 30, 'Dios_Amor').setScale(0.25);
         this.boss.setVisible(false);
-       
+
         this.sonidoBoss.play();
 
         this.time.delayedCall(1000, () => {
@@ -231,7 +239,7 @@ class GameScene extends Phaser.Scene {
             this.time.delayedCall(5000, () => {
                 // this.boss.body.allowGravity = true;
                 this.boss.invulnerable = false; // El jefe ya no es inmune después de 5 segundos
-                this.bossIcon=this.add.image(1200,70,'IconoBoss').setScale(0.7);
+                this.bossIcon = this.add.image(1200, 70, 'IconoBoss').setScale(0.7);
                 for (let i = 0; i < this.bosslives; i++) {
                     const vidaImage = this.add.image(1160 + (i * 14), 65, 'Barra_Vida').setScale(0.7);
                     this.ImagenVidaBoss.push(vidaImage);
@@ -241,7 +249,7 @@ class GameScene extends Phaser.Scene {
         });
 
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
-                
+
         this.time.delayedCall(26000, () => {
             this.musicafondo.play();
         });
@@ -254,12 +262,13 @@ class GameScene extends Phaser.Scene {
         });
         this.rentaroTimerText.setVisible(false);
 
-        this.rentaroTimerText2 = this.add.text(16, 190, 'Tiempo: 0', { 
-            fontSize: '32px', 
+        this.rentaroTimerText2 = this.add.text(16, 190, 'Tiempo: 0', {
+            fontSize: '32px',
             fill: 'ffffff',
             fontFamily: 'Aclonica , sans-serif',
-            color: '#FFFFFF', });
-            
+            color: '#FFFFFF',
+        });
+
         this.rentaroTimerText2.setVisible(false);
         // Configura propiedades físicas del jugador (rebote y límites del mundo)
         this.player.setBounce(0.2);
@@ -309,7 +318,7 @@ class GameScene extends Phaser.Scene {
 
             this.anims.create({
                 key: 'agacharse',
-                frames: [{ key: 'Nano_quieta', frame: 1 }], 
+                frames: [{ key: 'Nano_quieta', frame: 1 }],
                 frameRate: 10,
                 repeat: -1
             });
@@ -354,10 +363,10 @@ class GameScene extends Phaser.Scene {
                 frameRate: 1, // Se ejecuta lentamente
                 repeat: -1    // Se mantiene en el último frame
             });
-            
+
             this.anims.create({
                 key: 'agacharse',
-                frames: [{ key: 'Shizuka_muerte', frame: 1 }], 
+                frames: [{ key: 'Shizuka_muerte', frame: 1 }],
                 frameRate: 10,
                 repeat: -1
             });
@@ -410,7 +419,7 @@ class GameScene extends Phaser.Scene {
             const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2);
             this.ImagenVida.push(vidaImage);
         }
-        
+
         // Añade el texto de la puntuación en la esquina superior izquierda
         this.scoreText = this.add.text(16, 130, 'score: 0', {
             fontFamily: 'Aclonica , sans-serif',
@@ -423,13 +432,13 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, this.suelo);
         this.physics.add.collider(this.boss, this.suelo);
-    
+
         // Detecta si el jugador choca con una bomba
         this.ataque = this.physics.add.group(); // Grupo para los ataques
         this.ataqueE = this.physics.add.group(); // Grupo para los ataques
 
         this.physics.add.collider(this.ataqueE, this.suelo, this.destroyAttack, null, this);
-       
+
         this.physics.add.collider(this.ataqueE, this.player, this.hitPlayer, null, this);
         this.physics.add.collider(this.ataque, this.boss, this.hitEnemy, null, this);
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
@@ -478,7 +487,7 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada');
             }
             this.player.setVelocityX(0); // Asegúrate de que el jugador no se mueva
-    
+
             return; // Si el juego está en pausa, no actualices nada
         }
 
@@ -496,23 +505,23 @@ class GameScene extends Phaser.Scene {
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
-        }else if(this.cursors.down.isDown){
+        } else if (this.cursors.down.isDown) {
             this.player.setVelocityX(0);
             this.player.setVelocityY(300);
             this.player.anims.play('agacharse', true);
             this.platforms.children.iterate((platform) => {
-                platform.body.checkCollision.up = false;   
+                platform.body.checkCollision.up = false;
 
             });
-        }else {
+        } else {
             this.player.setVelocityX(0);
             this.idleTimer += time - (this.lastUpdateTime || time);
             this.lastUpdateTime = time;
             this.platforms.children.iterate((platform) => {
-                platform.body.checkCollision.up = true;   
+                platform.body.checkCollision.up = true;
 
             });
-    
+
             // Cambia a la animación "quieto" si han pasado 3 segundos o más de inactividad
             if (this.idleTimer >= 3000) {
                 this.player.anims.play('quieto', true);
@@ -524,18 +533,18 @@ class GameScene extends Phaser.Scene {
                     this.player.setTexture('Shizuka_parada');
                 }
             }
-    
+
             // Verificar si es momento de reproducir un sonido de idle
             if (time > this.cancionrandom + this.delaycancion) {
                 let randomSound = Phaser.Math.RND.pick(this.SonidosQuietas);
                 randomSound.play();
-    
+
                 // Espera 3 segundos después de que termine y luego elige otro
                 this.delaycancion = Phaser.Math.Between(5000, 10000);
                 this.cancionrandom = time + randomSound.duration * 1000 + 3000;
             }
         }
-    
+
         // Lógica de salto
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
@@ -551,10 +560,10 @@ class GameScene extends Phaser.Scene {
         const abajo = this.cursors.down.isDown;
         const izquierda = this.cursors.left.isDown;
         const derecha = this.cursors.right.isDown;
-      
+
         if (this.ataqueK.isDown && (currentTime - this.lastAttackTime > this.attackCooldown)) {
             // Verificar las teclas de flecha
-                // Determinar la dirección del ataque
+            // Determinar la dirección del ataque
             if (arriba && izquierda) {
                 this.launchAttack('up-left');
             } else if (arriba && derecha) {
@@ -572,7 +581,7 @@ class GameScene extends Phaser.Scene {
             } else if (derecha) {
                 this.launchAttack('right');
             }
-        } 
+        }
         this.ataque.children.iterate((ataque) => {
             if (ataque && ataque.lifespan <= 0) {
                 ataque.destroy();
@@ -667,8 +676,8 @@ class GameScene extends Phaser.Scene {
 
         const ataque = this.ataque.create(this.player.x, this.player.y, 'ataquaAliado');
         ataque.setScale(0.04);
-        ataque.lifespan = 800; 
-    
+        ataque.lifespan = 800;
+
         switch (direction) {
             case 'left':
                 ataque.setVelocityX(-850);
@@ -703,31 +712,31 @@ class GameScene extends Phaser.Scene {
                 ataque.setVelocityY(850);
                 break;
         }
-    
+
         this.time.delayedCall(ataque.lifespan, () => {
             ataque.destroy();
         });
     }
-    
+
     destroyAttack(ataque) {
-        ataque.destroy(); 
+        ataque.destroy();
     }
 
     hitEnemy(enemy, attack) {
         // Resta una vida al jefe
         if (!this.bossIsMoving) {
-        attack.destroy(); // Destruir el ataque
+            attack.destroy(); // Destruir el ataque
 
             console.log("El jefe no está en movimiento, no se le puede hacer daño.");
             return; // No hacer nada si el jefe no se está moviendo
         }
         this.bosslives--;
         console.log("Vidas del jefe restantes: ", this.bosslives);
-    
+
         // Cambiar el color del jefe a rojo
         enemy.setTint(0xff0000);
         console.log("El jefe ha sido golpeado y su color ha cambiado a rojo.");
-    
+
         // Eliminar la última imagen de vida del jefe
         if (this.ImagenVidaBoss.length > 0) {
             const vidaImage = this.ImagenVidaBoss.pop(); // Eliminar la última imagen de vida
@@ -736,7 +745,7 @@ class GameScene extends Phaser.Scene {
         } else {
             console.log("No quedan imágenes de vida del jefe.");
         }
-    
+
         // Verificar si el jefe ha perdido todas sus vidas
         if (this.bosslives <= 0) {
             // Lógica para cuando el jefe es derrotado
@@ -750,7 +759,7 @@ class GameScene extends Phaser.Scene {
                 console.log("El tinte del jefe ha sido limpiado.");
             });
         }
-    
+
         // Destruir el ataque después de un tiempo
         attack.destroy(); // Destruir el ataque
         console.log("El ataque ha sido destruido.");
@@ -760,7 +769,7 @@ class GameScene extends Phaser.Scene {
     startBossBehavior() {
         this.boss.setVelocity(0); // Inicialmente detenido
         this.boss.body.setCollideWorldBounds(true); // Asegúrate de que el jefe no salga de la pantalla
-    
+
         // Definir las rutas como un array de puntos
         this.routes = [
             { x: 100, y: 300 },
@@ -805,7 +814,7 @@ class GameScene extends Phaser.Scene {
             { x: 1200, y: 700 },
             { x: 1500, y: 700 }
         ];
-    
+
         this.currentRouteIndex = 0; // Índice de la ruta actual
         this.moveToNextPoint(); // Iniciar el movimiento
         this.bossIsMoving = true;
@@ -816,10 +825,10 @@ class GameScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-    
+
         // Variable para rastrear si el jefe ha comenzado a moverse
         this.bossHasStartedMoving = false;
-    
+
         // Iniciar el ataque solo después de que el jefe haya comenzado a moverse
         this.time.addEvent({
             delay: 2000, // Intervalo de ataque (cada 2 segundos)
@@ -832,26 +841,26 @@ class GameScene extends Phaser.Scene {
             loop: true
         });
     }
-    
+
     moveToNextPoint() {
         const target = this.routes[this.currentRouteIndex];
-    
+
         // Mover al siguiente punto a velocidad 200
         this.physics.moveTo(this.boss, target.x, target.y, 200);
-    
+
         // Marcar que el jefe ha comenzado a moverse
         this.bossHasStartedMoving = true;
-    
+
         // Comprobar si el jefe ha llegado al punto objetivo
         this.boss.once('animationcomplete', () => {
             this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
             this.moveToNextPoint(); // Mover al siguiente punto
         });
     }
-    
+
     checkForDirectionChange() {
         const target = this.routes[this.currentRouteIndex];
-    
+
         // Verificar si el jefe ha alcanzado las coordenadas específicas
         if (Phaser.Math.Distance.Between(this.boss.x, this.boss.y, target.x, target.y) < 10) {
             // Cambiar dirección al llegar a la coordenada
@@ -859,7 +868,7 @@ class GameScene extends Phaser.Scene {
             this.moveToNextPoint(); // Mover al siguiente punto
         }
     }
-        
+
     bossAttack() {
         // Lógica para que el jefe ataque la posición actual del jugador
         const attack = this.ataqueE.create(this.boss.x, this.boss.y, 'attackBoss');
@@ -881,7 +890,7 @@ class GameScene extends Phaser.Scene {
     hitPlayer(player, attack) {
         if (this.isInvincible) return;
         // Resta una vida al jugador
-        this.vidasGuardadas --;
+        this.vidasGuardadas--;
         console.log("Vidas restantes: ", this.vidasGuardadas);
         if (this.ImagenVida.length > 0) {
             const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
@@ -890,7 +899,7 @@ class GameScene extends Phaser.Scene {
 
         // Destruir el ataque
         attack.destroy();
-    
+
         // Verifica si el jugador ha perdido todas sus vidas
         if (this.vidasGuardadas > 0) {
             this.isInvincible = true; // Activar inmunidad

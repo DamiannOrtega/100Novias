@@ -58,7 +58,6 @@ class GameScene extends Phaser.Scene {
         this.rentaroTimeLeft2 = 0; // Tiempo inicial para la bonificación (en segundos)
         this.rentaroTimerText2 = null; // Texto del contador de tiempo
 
-
     }
 
     init() {
