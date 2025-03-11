@@ -32,6 +32,7 @@ class GameScene extends Phaser.Scene {
         this.jugador = null;
         this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
         this.ImagenVida = [];
+        this.ImagenVidaBoss = [];
         //Enemigos
         this.bossIcon=null;
         this.bosslife=null;
@@ -229,7 +230,7 @@ class GameScene extends Phaser.Scene {
                 this.bossIcon=this.add.image(1200,70,'IconoBoss').setScale(0.7);
                 for (let i = 0; i < this.bosslives; i++) {
                     const vidaImage = this.add.image(1160 + (i * 14), 65, 'Barra_Vida').setScale(0.7);
-                    this.ImagenVida.push(vidaImage);
+                    this.ImagenVidaBoss.push(vidaImage);
                 }
                 this.startBossBehavior();
             });
@@ -436,7 +437,7 @@ class GameScene extends Phaser.Scene {
 
         this.physics.add.collider(this.ataqueE, this.suelo, this.destroyAttack, null, this);
        
-        this.physics.add.collider(this.ataque, this.player, this.hitPlayer, null, this);
+        this.physics.add.collider(this.ataqueE, this.player, this.hitPlayer, null, this);
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.physics.add.collider(this.ataque, this.suelo, this.destroyAttack, null, this);
     }
@@ -852,6 +853,62 @@ class GameScene extends Phaser.Scene {
 
         // Colisión entre el ataque del jefe y el jugador
         this.physics.add.collider(attack, this.player, this.hitPlayer, null, this);
+    }
+
+    hitPlayer(player, attack) {
+        if (this.isInvincible) return;
+        // Resta una vida al jugador
+        this.lives --;
+        console.log("Vidas restantes: ", this.lives);
+        if (this.ImagenVida.length > 0) {
+            const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
+            vidaImage.destroy(); // Destruir la imagen de vida
+        }
+
+        // Destruir el ataque
+        attack.destroy();
+    
+        // Verifica si el jugador ha perdido todas sus vidas
+        if (this.lives > 0) {
+            this.isInvincible = true; // Activar inmunidad
+            // Definir el volumen original
+
+            // Reproducir el sonido
+            this.sonidoDano.play();
+
+            this.player.setTint(0xff0000); // Efecto visual de daño
+
+            // Parpadeo: Cambiar la opacidad del jugador
+            this.tweens.add({
+                targets: this.player,
+                alpha: 0, // El jugador desaparecerá
+                duration: 200, // 200ms de fade out
+                yoyo: true,  // Volverá a la opacidad normal
+                repeat: 5,  // El parpadeo se repite 5 veces
+                onComplete: () => {
+                    this.player.clearTint(); // Limpiar el tinte del jugador al terminar
+                }
+            });
+
+            // Después de 3 segundos, desactivar la inmunidad
+            this.time.delayedCall(3000, () => {
+                this.isInvincible = false;
+                this.player.clearTint(); // Eliminar el tinte del jugador
+            });
+
+        } else {
+            // Si las vidas llegan a 0, terminar el juego
+            this.player.setTint(0xff0000);
+            this.player.anims.play('die'); // Animación de muerte
+            this.physics.pause();
+            this.sonidoDano.stop();
+            this.musicafondo.stop();
+            this.SonidoMuerte.play();
+            this.gameOver = true;
+            this.scoreText.setText('¡GAME OVER!');
+            // Llamar al método para mostrar el mensaje de Game Over
+            this.showGameOver();
+        }
     }
 
 
