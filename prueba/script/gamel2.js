@@ -9,6 +9,7 @@ class GameScene extends Phaser.Scene {
         this.suelo = null;
         this.platforms = null;       // Plataformas del juego
         this.cursors = null;         // Teclas del cursor (flechas)
+        this.trailGroup = null;
         // this.score = 0;              // Puntuación del jugador
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
@@ -20,7 +21,10 @@ class GameScene extends Phaser.Scene {
         this.attackActive = false; // Variable para controlar el estado del ataque
         this.attackCooldown = 200; // Tiempo de espera entre ataques en milisegundos
         this.lastAttackTime = 0; // Tiempo del último ataque        
-
+        this.lastDashTime = 0; // Tiempo de la última pulsación
+        this.dashCooldown = 1000; // Tiempo en milisegundos para considerar un doble toque
+        this.isDashing = false; // Estado del dash
+        this.dashSpeed = 3000; // Velocidad del dash
         // Música y sonidos
         this.musicafondo = null;     // Música de fondo
         this.SonidosQuietas = [];    // Sonidos de idle
@@ -30,12 +34,13 @@ class GameScene extends Phaser.Scene {
         this.sonidoDano = null;
         // Instancia de la clase Jugador
         this.jugador = null;
-        this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
+        this.lives = null;  // Inicialmente, el jugador tiene 3 vidas
         this.ImagenVida = [];
         this.ImagenVidaBoss = [];
         //Enemigos
         this.bossIcon = null;
         this.bosslife = null;
+        this.bossAlive = true;
         this.bosslives = 15;
         this.boss = null;
         this.sonidoBoss = null;
@@ -65,9 +70,7 @@ class GameScene extends Phaser.Scene {
         }
 
         const puntosGuardados = localStorage.getItem(this.jugador.puntos);
-        // if (puntosGuardados !== null) {
-        //     this.score = parseInt(puntosGuardados, 10);
-        // }
+
     }
 
     // Carga los recursos del juego
@@ -150,6 +153,8 @@ class GameScene extends Phaser.Scene {
             this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
         }
 
+        
+
 
         // Selección de personaje
         if (this.personaje === 1) {
@@ -160,6 +165,7 @@ class GameScene extends Phaser.Scene {
 
         }
         this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+        this.dashKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
         // Recuperar el volumen guardado
 
@@ -421,7 +427,7 @@ class GameScene extends Phaser.Scene {
 
         }
 
-        for (let i = 0; i < this.vidasGuardadas; i++) {
+        for (let i = 0; i < this.lives; i++) {
             const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2);
             this.ImagenVida.push(vidaImage);
         }
@@ -434,6 +440,7 @@ class GameScene extends Phaser.Scene {
 
         // Detecta si el jugador choca con una bomba
         this.ataque = this.physics.add.group(); // Grupo para los ataques
+        this.trailGroup = this.physics.add.group()
         this.ataqueE = this.physics.add.group(); // Grupo para los ataques
 
         this.physics.add.collider(this.ataqueE, this.suelo, this.destroyAttack, null, this);
@@ -510,12 +517,26 @@ class GameScene extends Phaser.Scene {
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
+                    // Detección de doble toque para dash
+          // Detección de dash
+            if (this.dashKey.isDown && !this.isDashing) {
+                this.createTrail();
+
+                this.dash('left');
+            }
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('walk_right', true);
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
+
+
+            // Detección de dash
+            if (this.dashKey.isDown && !this.isDashing) {
+                this.createTrail();
+                this.dash('right');
+            }
         } else if (this.cursors.down.isDown) {
             this.player.setVelocityX(0);
             this.player.setVelocityY(300);
@@ -608,75 +629,6 @@ class GameScene extends Phaser.Scene {
             }
         });
     }
-    togglePause() {
-        this.isPaused = !this.isPaused; // Cambiar el estado de pausa
-        const canvas = document.querySelector('canvas');
-        const pauseButton = document.getElementById('pauseButton');
-        const resumeButton = document.getElementById('resumeButton');
-        if (this.isPaused) {
-            this.physics.pause(); // Pausar la física
-            this.musicafondo.pause(); // Pausar la música de fondo
-            canvas.classList.add('blur'); // Agregar la clase de desenfoque al canvas
-            pauseButton.style.display = 'none'; // Ocultar el botón de pausa
-            resumeButton.style.display = 'flex'; // Mostrar el botón de reanudar
-            this.SonidosQuietas.forEach((sonido) => {
-                if (sonido.isPlaying) {
-                    sonido.pause();
-                }
-            });
-
-            if (this.sonidoBoss.isPlaying) {
-                this.sonidoBoss.pause();
-            }
-
-
-
-            // Aquí puedes pausar otros sonidos si es necesario
-        } else {
-            this.physics.resume(); // Reanudar la física
-            this.musicafondo.resume(); // Reanudar la música de fondo
-            canvas.classList.remove('blur'); // Agregar la clase de desenfoque al canvas
-            pauseButton.style.display = 'flex'; // Mostrar el botón de pausa
-            resumeButton.style.display = 'none'; // Ocultar el botón de reanudar
-            this.SonidosQuietas.forEach((sonido) => {
-                if (sonido.isPaused) {
-                    sonido.resume();
-                }
-            });
-
-            if (this.sonidoBoss.isPaused) {
-                this.sonidoBoss.resume();
-            }
-
-        }
-    }
-    completeLevel() {
-        // Detener música y sonidos
-        pauseButton.style.display = 'none';
-        this.musicafondo.stop();
-        this.SonidoMuerte.stop();
-        this.sonidoaAHahari.stop();
-        this.SonidosQuietas.forEach((sonido) => sonido.stop());
-
-
-        // Cambiar el color de fondo a negro
-        this.cameras.main.setBackgroundColor('#000000'); // Establecer el fondo de la cámara a negro
-        this.physics.pause(); // Pausar la física
-
-        // Eliminar todos los elementos del juego
-        this.children.removeAll(); // Eliminar todos los objetos hijos del juego
-
-        // Mostrar el mensaje "Nivel 1 Completo"
-        const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Nivel 1 Completo', {
-            fontSize: '64px',
-            fill: '#ffffff'
-        }).setOrigin(0.5); // Centrar el texto
-
-        // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
-        this.time.delayedCall(2000, () => {
-            window.location.href = 'rompecabezas.html';
-        });
-    }
 
     showGameOver() {
         // Detener música y sonidos
@@ -731,7 +683,7 @@ class GameScene extends Phaser.Scene {
             // Dibujar el texto de OVER
             context.fillStyle = `rgba(255, 255, 255, ${opacity})`; // Color rojo con opacidad
             context.fillText('OVER', gameOverCanvas.width / 2 + 100, overYPosition); // Desplazar a la derecha
-
+            pauseButton.style.display = 'none'; // Ocultar el botón de pausa
             // Continuar la animación hasta que ambas palabras se junten
             if (gameYPosition < gameOverCanvas.height / 2 && overYPosition > gameOverCanvas.height / 2) {
                 requestAnimationFrame(animateText);
@@ -747,6 +699,74 @@ class GameScene extends Phaser.Scene {
 
         // Iniciar la animación
         animateText();
+    }
+    togglePause() {
+        this.isPaused = !this.isPaused; // Cambiar el estado de pausa
+        const canvas = document.querySelector('canvas');
+        const pauseButton = document.getElementById('pauseButton');
+        const resumeButton = document.getElementById('resumeButton');
+        if (this.isPaused) {
+            this.physics.pause(); // Pausar la física
+            this.musicafondo.pause(); // Pausar la música de fondo
+            canvas.classList.add('blur'); // Agregar la clase de desenfoque al canvas
+            pauseButton.style.display = 'none'; // Ocultar el botón de pausa
+            resumeButton.style.display = 'flex'; // Mostrar el botón de reanudar
+            this.SonidosQuietas.forEach((sonido) => {
+                if (sonido.isPlaying) {
+                    sonido.pause();
+                }
+            });
+
+            if(this.sonidoBoss.isPlaying){
+                this.sonidoBoss.pause();
+            }
+
+
+
+        // Aquí puedes pausar otros sonidos si es necesario
+        } else {
+            this.physics.resume(); // Reanudar la física
+            this.musicafondo.resume(); // Reanudar la música de fondo
+            canvas.classList.remove('blur'); // Agregar la clase de desenfoque al canvas
+            pauseButton.style.display = 'flex'; // Mostrar el botón de pausa
+            resumeButton.style.display = 'none'; // Ocultar el botón de reanudar
+            this.SonidosQuietas.forEach((sonido) => {
+                if (sonido.isPaused) {
+                    sonido.resume();
+                }
+            });
+
+            if(this.sonidoBoss.isPaused){
+                this.sonidoBoss.resume();
+            }
+
+        }
+    }
+    completeLevel() {
+        // Detener música y sonidos
+        pauseButton.style.display = 'none';
+        this.musicafondo.stop();
+        this.SonidoMuerte.stop();
+        this.SonidosQuietas.forEach((sonido) => sonido.stop());
+
+
+        // Cambiar el color de fondo a negro
+        this.cameras.main.setBackgroundColor('#000000'); // Establecer el fondo de la cámara a negro
+        this.physics.pause(); // Pausar la física
+
+        // Eliminar todos los elementos del juego
+        this.children.removeAll(); // Eliminar todos los objetos hijos del juego
+
+        // Mostrar el mensaje "Nivel 1 Completo"
+        const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Juego Completado', {
+            fontSize: '64px',
+            fill: '#ffffff'
+        }).setOrigin(0.5); // Centrar el texto
+
+        // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
+        this.time.delayedCall(3000, () => {
+            window.location.href = 'pantallaWin.html';
+        });
     }
 
     launchAttack(direction) {
@@ -830,7 +850,10 @@ class GameScene extends Phaser.Scene {
             // Lógica para cuando el jefe es derrotado
             console.log("El jefe ha sido derrotado.");
             enemy.destroy(); // Destruir el jefe
+            this.bossAlive = false; // Marcar que el jefe ha sido derrotado
+            this.bossAttackEvent.remove(); 
             this.scoreText.setText('¡Jefe Derrotado!'); // Mensaje de victoria
+            this.completeLevel()
         } else {
             // Si el jefe aún tiene vidas, puedes agregar un efecto visual o sonido
             this.time.delayedCall(500, () => {
@@ -841,6 +864,7 @@ class GameScene extends Phaser.Scene {
 
         // Destruir el ataque después de un tiempo
         attack.destroy(); // Destruir el ataque
+       
         console.log("El ataque ha sido destruido.");
     }
 
@@ -909,10 +933,10 @@ class GameScene extends Phaser.Scene {
         this.bossHasStartedMoving = false;
 
         // Iniciar el ataque solo después de que el jefe haya comenzado a moverse
-        this.time.addEvent({
+        this.bossAttackEvent = this.time.addEvent({
             delay: 2000, // Intervalo de ataque (cada 2 segundos)
             callback: () => {
-                if (this.bossHasStartedMoving) {
+                if (this.bossAlive) { // Verificar si el jefe está vivo
                     this.bossAttack();
                 }
             },
@@ -969,8 +993,8 @@ class GameScene extends Phaser.Scene {
     hitPlayer(player, attack) {
         if (this.isInvincible) return;
         // Resta una vida al jugador
-        this.vidasGuardadas--;
-        console.log("Vidas restantes: ", this.vidasGuardadas);
+        this.lives--;
+        console.log("Vidas restantes: ", this.lives);
         if (this.ImagenVida.length > 0) {
             const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
             vidaImage.destroy(); // Destruir la imagen de vida
@@ -980,7 +1004,7 @@ class GameScene extends Phaser.Scene {
         attack.destroy();
 
         // Verifica si el jugador ha perdido todas sus vidas
-        if (this.vidasGuardadas > 0) {
+        if (this.lives > 0) {
             this.isInvincible = true; // Activar inmunidad
             // Definir el volumen original
 
@@ -1023,5 +1047,48 @@ class GameScene extends Phaser.Scene {
     }
 
 
+    dash(direction) {
+        this.isDashing = true; // Activar el estado de dash
+    
+        // Cambiar el color del jugador
+        this.player.setTint(0x00ff00); // Cambiar a un color verde (puedes elegir otro)
+    
+        // Establecer la velocidad del jugador según la dirección
+        if (direction === 'left') {
+            this.player.setVelocityX(-this.dashSpeed);
+        } else if (direction === 'right') {
+            this.player.setVelocityX(this.dashSpeed);
+        }
+    
+       
+        // Desactivar el dash después de un corto período de tiempo
+        this.time.delayedCall(500, () => {
+            this.isDashing = false; // Desactivar el estado de dash
+            this.player.clearTint(); // Limpiar el tinte del jugador
+        });
+    }
+createTrail() {
+    let trailKey;
+
+    // Determinar la animación del rastro según la dirección del movimiento
+    if (this.cursors.left.isDown) {
+        trailKey = this.personaje === 1 ? 'Nano_izquierda' : 'Shizuka_izquierda';
+    } else if (this.cursors.right.isDown) {
+        trailKey = this.personaje === 1 ? 'Nano_derecha' : 'Shizuka_derecha';
+    }
+
+    // Crear el rastro usando la animación correspondiente
+    if (trailKey) {
+        const trail = this.add.sprite(this.player.x, this.player.y, trailKey);
+        trail.setScale(0.2); // Ajusta el tamaño del rastro
+        trail.setTint(0x00ff00);
+        trail.lifespan = 300; // Duración del rastro en milisegundos
+
+        this.time.delayedCall(300, () => {
+            trail.destroy();
+        });
+    }
+}
+    
 
 }

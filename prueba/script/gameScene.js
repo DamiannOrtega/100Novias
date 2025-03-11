@@ -66,6 +66,7 @@ class GameScene extends Phaser.Scene {
         const playerName = localStorage.getItem('playerName');
 
         // Cargar el jugador desde localStorage
+        localStorage.setItem('vidasActuales',this.lives);
         this.jugador = Jugador.cargar(playerName);
         this.generarAleatorio();
         this.generarAleatorio2();
@@ -566,7 +567,7 @@ class GameScene extends Phaser.Scene {
         this.SonidosQuietas.forEach((sonido) => sonido.stop());
 
         // Aumentar los puntos del jugador
-        this.score += 10;
+        this.score += 40;
         this.scoreText.setText('Score: ' + this.score);
 
         // Actualizar los puntos del jugador
