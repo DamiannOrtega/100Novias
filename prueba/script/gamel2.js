@@ -43,6 +43,7 @@ class GameScene extends Phaser.Scene {
         this.bossAttackCooldown = 1000; // Tiempo de espera entre ataques del jefe
         this.lastBossAttackTime = 0;
         this.bossHasStartedMoving =false;
+        this.bossIsMoving = false; // Inicialmente, el jefe no se está moviendo
     }
 
     init() {
@@ -222,6 +223,7 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(1000, () => {
             this.boss.body.allowGravity = false;
             this.boss.setVisible(true);
+            this.boss.body.immovable = true;
             this.boss.setVelocity(0);
             this.boss.invulnerable = true; // Hacer que el jefe sea inmune
             this.time.delayedCall(5000, () => {
@@ -429,7 +431,7 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, this.suelo);
         this.physics.add.collider(this.boss, this.suelo);
-        this.physics.add.collider(this.boss, this.player);
+    
 
         // Detecta si el jugador choca con una bomba
         this.ataque = this.physics.add.group(); // Grupo para los ataques
@@ -438,6 +440,7 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.ataqueE, this.suelo, this.destroyAttack, null, this);
        
         this.physics.add.collider(this.ataqueE, this.player, this.hitPlayer, null, this);
+        this.physics.add.collider(this.ataque, this.boss, this.hitEnemy, null, this);
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.physics.add.collider(this.ataque, this.suelo, this.destroyAttack, null, this);
     }
@@ -728,10 +731,49 @@ class GameScene extends Phaser.Scene {
         ataque.destroy(); 
     }
 
-    hitEnemy(attack, enemy) {
+    hitEnemy(enemy, attack) {
+        // Resta una vida al jefe
+        if (!this.bossIsMoving) {
         attack.destroy(); // Destruir el ataque
-        enemy.destroy(); // Destruir el enemigo (o aplicar daño)
+
+            console.log("El jefe no está en movimiento, no se le puede hacer daño.");
+            return; // No hacer nada si el jefe no se está moviendo
+        }
+        this.bosslives--;
+        console.log("Vidas del jefe restantes: ", this.bosslives);
+    
+        // Cambiar el color del jefe a rojo
+        enemy.setTint(0xff0000);
+        console.log("El jefe ha sido golpeado y su color ha cambiado a rojo.");
+    
+        // Eliminar la última imagen de vida del jefe
+        if (this.ImagenVidaBoss.length > 0) {
+            const vidaImage = this.ImagenVidaBoss.pop(); // Eliminar la última imagen de vida
+            vidaImage.destroy(); // Destruir la imagen de vida
+            console.log("Se ha eliminado una imagen de vida del jefe.");
+        } else {
+            console.log("No quedan imágenes de vida del jefe.");
+        }
+    
+        // Verificar si el jefe ha perdido todas sus vidas
+        if (this.bosslives <= 0) {
+            // Lógica para cuando el jefe es derrotado
+            console.log("El jefe ha sido derrotado.");
+            enemy.destroy(); // Destruir el jefe
+            this.scoreText.setText('¡Jefe Derrotado!'); // Mensaje de victoria
+        } else {
+            // Si el jefe aún tiene vidas, puedes agregar un efecto visual o sonido
+            this.time.delayedCall(500, () => {
+                enemy.clearTint(); // Limpiar el tinte del jefe después de un tiempo
+                console.log("El tinte del jefe ha sido limpiado.");
+            });
+        }
+    
+        // Destruir el ataque después de un tiempo
+        attack.destroy(); // Destruir el ataque
+        console.log("El ataque ha sido destruido.");
     }
+
 
     startBossBehavior() {
         this.boss.setVelocity(0); // Inicialmente detenido
@@ -757,7 +799,7 @@ class GameScene extends Phaser.Scene {
             { x: 900, y: 400 },
             { x: 1200, y: 400 },
             { x: 1200, y: 200 },
-            { x: 1600, y: 200 },
+            { x: 1300, y: 200 },
             { x: 300, y: 500 },
             { x: 700, y: 500 },
             { x: 700, y: 300 },
@@ -765,7 +807,7 @@ class GameScene extends Phaser.Scene {
             { x: 1000, y: 500 },
             { x: 1300, y: 500 },
             { x: 1300, y: 300 },
-            { x: 1700, y: 300 },
+            { x: 1200, y: 300 },
             { x: 400, y: 600 },
             { x: 800, y: 600 },
             { x: 800, y: 400 },
@@ -773,7 +815,7 @@ class GameScene extends Phaser.Scene {
             { x: 1100, y: 600 },
             { x: 1400, y: 600 },
             { x: 1400, y: 400 },
-            { x: 1800, y: 400 },
+            { x: 1100, y: 400 },
             { x: 500, y: 700 },
             { x: 900, y: 700 },
             { x: 900, y: 500 },
@@ -784,7 +826,7 @@ class GameScene extends Phaser.Scene {
     
         this.currentRouteIndex = 0; // Índice de la ruta actual
         this.moveToNextPoint(); // Iniciar el movimiento
-    
+        this.bossIsMoving = true;
         // Iniciar el movimiento en un patrón
         this.time.addEvent({
             delay: 100, // Comprobar la posición cada 100 ms
