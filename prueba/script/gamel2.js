@@ -30,7 +30,7 @@ class GameScene extends Phaser.Scene {
         this.sonidoDano = null;
         // Instancia de la clase Jugador
         this.jugador = null;
-        this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
+        this.lives = null;  // Inicialmente, el jugador tiene 3 vidas
         this.ImagenVida = [];
         this.ImagenVidaBoss = [];
         //Enemigos
@@ -65,9 +65,7 @@ class GameScene extends Phaser.Scene {
         }
 
         const puntosGuardados = localStorage.getItem(this.jugador.puntos);
-        // if (puntosGuardados !== null) {
-        //     this.score = parseInt(puntosGuardados, 10);
-        // }
+
     }
 
     // Carga los recursos del juego
@@ -149,6 +147,8 @@ class GameScene extends Phaser.Scene {
         if (personajeSeleccionado) {
             this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
         }
+
+        
 
 
         // Selección de personaje
@@ -421,7 +421,7 @@ class GameScene extends Phaser.Scene {
 
         }
 
-        for (let i = 0; i < this.vidasGuardadas; i++) {
+        for (let i = 0; i < this.lives; i++) {
             const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2);
             this.ImagenVida.push(vidaImage);
         }
@@ -442,18 +442,6 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.ataque, this.boss, this.hitEnemy, null, this);
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.physics.add.collider(this.ataque, this.suelo, this.destroyAttack, null, this);
-
-        // Agregar eventos a los botones
-        document.getElementById('restartButton').addEventListener('click', () => {
-            // Reiniciar el juego
-            window.location.href = 'juego.html'; // Recargar la página para reiniciar el juego
-        });
-
-        // El botón de menú principal es un enlace, así que no necesita un evento adicional
-        document.getElementById('menuButton').addEventListener('click', () => {
-            // Redirigir al menú principal
-            window.location.href = 'index.html'; // Cambia 'index.html' por la ruta de tu menú principal
-        });
     }
 
     setVolume(volume) {
@@ -625,7 +613,7 @@ class GameScene extends Phaser.Scene {
                 }
             });
 
-            if (this.sonidoBoss.isPlaying) {
+            if(this.sonidoBoss.isPlaying){
                 this.sonidoBoss.pause();
             }
 
@@ -644,7 +632,7 @@ class GameScene extends Phaser.Scene {
                 }
             });
 
-            if (this.sonidoBoss.isPaused) {
+            if(this.sonidoBoss.isPaused){
                 this.sonidoBoss.resume();
             }
 
@@ -676,77 +664,6 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(2000, () => {
             window.location.href = 'rompecabezas.html';
         });
-    }
-
-    showGameOver() {
-        // Detener música y sonidos
-        this.musicafondo.stop();
-        this.sonidoBoss.stop();
-        this.SonidosQuietas.forEach((sonido) => sonido.stop());
-        this.sonidoDano.stop();
-
-        // Pausar la física
-        this.physics.pause();
-
-        // Agregar la clase de difuminado al canvas del juego
-        const canvas = document.querySelector('canvas');
-        canvas.classList.add('blur');
-
-        // Mostrar el canvas de Game Over
-        const gameOverCanvas = document.getElementById('gameOverCanvas');
-        gameOverCanvas.style.display = 'block';
-        gameOverCanvas.width = 1500; // Ajusta el ancho según tu juego
-        gameOverCanvas.height = 800; // Ajusta la altura según tu juego
-
-        const context = gameOverCanvas.getContext('2d');
-
-        // Limpiar el canvas antes de dibujar
-        context.clearRect(0, 0, gameOverCanvas.width, gameOverCanvas.height);
-
-        // Inicializar la opacidad y las posiciones del texto
-        let opacity = 0;
-        let gameYPosition = -100; // Comienza fuera de la pantalla (arriba)
-        let overYPosition = gameOverCanvas.height + 100; // Comienza fuera de la pantalla (abajo)
-
-        // Función para animar el texto
-        const animateText = () => {
-            // Limpiar el canvas
-            context.clearRect(0, 0, gameOverCanvas.width, gameOverCanvas.height);
-
-            // Aumentar la opacidad
-            opacity += 0.05; // Incrementar la opacidad
-            if (opacity > 1) opacity = 1; // Limitar la opacidad a 1
-
-            // Actualizar las posiciones de las palabras
-            gameYPosition += 5; // Mover "GAME" hacia abajo
-            overYPosition -= 5; // Mover "OVER" hacia arriba
-
-            // Dibujar el texto de GAME
-            context.fillStyle = `rgba(255, 255, 255, ${opacity})`; // Color rojo con opacidad
-            context.font = '64px Aclonica'; // Tamaño de fuente
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText('GAME', gameOverCanvas.width / 2 - 100, gameYPosition); // Desplazar a la izquierda
-
-            // Dibujar el texto de OVER
-            context.fillStyle = `rgba(255, 255, 255, ${opacity})`; // Color rojo con opacidad
-            context.fillText('OVER', gameOverCanvas.width / 2 + 100, overYPosition); // Desplazar a la derecha
-
-            // Continuar la animación hasta que ambas palabras se junten
-            if (gameYPosition < gameOverCanvas.height / 2 && overYPosition > gameOverCanvas.height / 2) {
-                requestAnimationFrame(animateText);
-            } else {
-                // Opcional: Agregar un temporizador para reiniciar el juego o ir a otro lugar
-                this.time.delayedCall(1500, () => {
-                    document.getElementById('gameOverButtons').style.display = 'flex'; // Cambiar a 'flex' para mostrar los botones
-                    document.getElementById('restartButton').style.display = 'block'; // Mostrar el botón de reiniciar
-                    document.getElementById('menuButton').style.display = 'block'; // Mostrar el botón de menú principal
-                });
-            }
-        };
-
-        // Iniciar la animación
-        animateText();
     }
 
     launchAttack(direction) {
@@ -969,8 +886,8 @@ class GameScene extends Phaser.Scene {
     hitPlayer(player, attack) {
         if (this.isInvincible) return;
         // Resta una vida al jugador
-        this.vidasGuardadas--;
-        console.log("Vidas restantes: ", this.vidasGuardadas);
+        this.lives--;
+        console.log("Vidas restantes: ", this.lives);
         if (this.ImagenVida.length > 0) {
             const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
             vidaImage.destroy(); // Destruir la imagen de vida

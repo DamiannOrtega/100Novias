@@ -66,6 +66,7 @@ class GameScene extends Phaser.Scene {
         const playerName = localStorage.getItem('playerName');
 
         // Cargar el jugador desde localStorage
+        localStorage.setItem('vidasActuales',this.lives);
         this.jugador = Jugador.cargar(playerName);
         this.generarAleatorio();
         this.generarAleatorio2();
