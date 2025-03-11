@@ -434,11 +434,11 @@ class GameScene extends Phaser.Scene {
         this.ataque = this.physics.add.group(); // Grupo para los ataques
         this.ataqueE = this.physics.add.group(); // Grupo para los ataques
 
+        this.physics.add.collider(this.ataqueE, this.suelo, this.destroyAttack, null, this);
        
         this.physics.add.collider(this.ataque, this.player, this.hitPlayer, null, this);
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.physics.add.collider(this.ataque, this.suelo, this.destroyAttack, null, this);
-       
     }
 
     setVolume(volume) {
@@ -680,7 +680,7 @@ class GameScene extends Phaser.Scene {
         this.lastAttackTime = this.time.now; // Actualizar el tiempo del último ataque
 
         const ataque = this.ataque.create(this.player.x, this.player.y, 'ataquaAliado');
-        ataque.setScale(0.06);
+        ataque.setScale(0.04);
         ataque.lifespan = 800; 
     
         switch (direction) {
@@ -724,7 +724,7 @@ class GameScene extends Phaser.Scene {
     }
     
     destroyAttack(ataque) {
-        ataque.destroy(); // Destruir el ataque
+        ataque.destroy(); 
     }
 
     hitEnemy(attack, enemy) {
@@ -853,6 +853,7 @@ class GameScene extends Phaser.Scene {
         // Colisión entre el ataque del jefe y el jugador
         this.physics.add.collider(attack, this.player, this.hitPlayer, null, this);
     }
+
 
 
 }
