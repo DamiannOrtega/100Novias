@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Aclonica&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Aclonica&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles/a.css">
 
     <title>Juego</title>
@@ -24,6 +26,19 @@
             </svg>
         </div>
     </div>
+    <!-- Canvas para Game Over -->
+    <canvas id="gameOverCanvas" style="display: none; position: absolute; top: 0; left: 0; z-index: 10;"></canvas>
+
+    <!-- Contenedor de botones -->
+    <div class="buttonContainer" id="gameOverButtons"style="display: none; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); z-index: 20;">
+        <button id="restartButton" class="btnJugar" style="display: none;">
+            Reiniciar
+        </button>
+        <button id="menuButton" class="btnJugar" style="display: none;">
+            Menú Principal
+        </button>
+    </div>
+
     <script src="script/jugador.js"></script>
     <script src="script/gameScene.js"></script>
     <script src="script/ajustes.js"></script>

@@ -15,7 +15,11 @@ class GameScene extends Phaser.Scene {
         this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
-
+        this.ataque = null; // Grupo para los ataques
+        this.ataqueK    = null; // Tecla para atacar
+        this.attackActive = false; // Variable para controlar el estado del ataque
+        this.attackCooldown = 200; // Tiempo de espera entre ataques en milisegundos
+        this.lastAttackTime = 0; // Tiempo del último ataque        
 
         // Música y sonidos
         this.musicafondo = null;     // Música de fondo
@@ -97,6 +101,8 @@ class GameScene extends Phaser.Scene {
 
         //objeto especial
         this.load.image('vidas', 'assets/objetos/Corazones.png');
+        this.load.image('ataquaAliado', 'assets/objetos/Ataque.png');
+
 
 
     }
@@ -380,12 +386,12 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.collider(this.player, this.suelo);
-
         // Detecta si el jugador choca con una bomba
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
-
-        this.time.delayedCall(10000, this.createEnemy, [], this);
-
+        this.ataque = this.physics.add.group(); // Grupo para los ataques
+        this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+        this.physics.add.collider(this.ataque, this.suelo, this.destroyAttack, null, this);
+       
     }
 
     setVolume(volume) {
@@ -430,7 +436,7 @@ class GameScene extends Phaser.Scene {
     
             return; // Si el juego está en pausa, no actualices nada
         }
-    
+        const currentTime = this.time.now;
         // Lógica de movimiento
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-160);
@@ -494,7 +500,43 @@ class GameScene extends Phaser.Scene {
                 this.player.setTexture('Shizuka_parada2');
             }
         }
+
+        const arriba = this.cursors.up.isDown;
+        const abajo = this.cursors.down.isDown;
+        const izquierda = this.cursors.left.isDown;
+        const derecha = this.cursors.right.isDown;
     
+
+  
+        if (this.ataqueK.isDown && (currentTime - this.lastAttackTime > this.attackCooldown)) {
+            // Verificar las teclas de flecha
+                // Determinar la dirección del ataque
+            if (arriba && izquierda) {
+                this.launchAttack('up-left');
+            } else if (arriba && derecha) {
+                this.launchAttack('up-right');
+            } else if (abajo && izquierda) {
+                this.launchAttack('down-left');
+            } else if (abajo && derecha) {
+                this.launchAttack('down-right');
+            } else if (arriba) {
+                this.launchAttack('up');
+            } else if (abajo) {
+                this.launchAttack('down');
+            } else if (izquierda) {
+                this.launchAttack('left');
+            } else if (derecha) {
+                this.launchAttack('right');
+            }
+        } 
+        this.ataque.children.iterate((ataque) => {
+            if (ataque && ataque.lifespan <= 0) {
+                ataque.destroy();
+            } else if (ataque) {
+                ataque.lifespan -= this.time.delta; // Resta el tiempo transcurrido
+            }
+        });
+
     }
 
 
@@ -570,5 +612,62 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(2000, () => {
             window.location.href = 'rompecabezas.html';
         });
+    }
+
+
+    launchAttack(direction) {
+        this.attackActive = true; // Establecer el ataque como activo
+        this.lastAttackTime = this.time.now; // Actualizar el tiempo del último ataque
+
+        const ataque = this.ataque.create(this.player.x, this.player.y, 'ataquaAliado');
+        ataque.setScale(0.06);
+        ataque.lifespan = 800; 
+    
+        switch (direction) {
+            case 'left':
+                ataque.setVelocityX(-850);
+                break;
+            case 'right':
+                ataque.setVelocityX(850);
+                break;
+            case 'up':
+                ataque.setVelocityY(-850);
+                break;
+            case 'down':
+                ataque.setVelocityY(850);
+                break;
+            case 'up-left':
+                ataque.setVelocityX(-850);
+                ataque.setVelocityY(-850);
+                break;
+            case 'up-right':
+                ataque.setVelocityX(850);
+                ataque.setVelocityY(-850);
+                break;
+            case 'down-left':
+                ataque.setVelocityX(-850);
+                ataque.setVelocityY(850);
+                break;
+            case 'down-right':
+                ataque.setVelocityX(850);
+                ataque.setVelocityY(850);
+                break;
+            default:
+                ataque.setVelocityX(850);
+                ataque.setVelocityY(850);
+                break;
+        }
+    
+        this.time.delayedCall(ataque.lifespan, () => {
+            ataque.destroy();
+        });
+    }
+    destroyAttack(ataque) {
+        ataque.destroy(); // Destruir el ataque
+    }
+
+    hitEnemy(attack, enemy) {
+        attack.destroy(); // Destruir el ataque
+        enemy.destroy(); // Destruir el enemigo (o aplicar daño)
     }
 }

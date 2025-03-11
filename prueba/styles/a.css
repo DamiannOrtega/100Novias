@@ -62,3 +62,58 @@ canvas {
     transform: translate(-50%, -50%); /* Centrar el botón */
     display: none; /* Inicialmente no visible */
 }
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column; /* Asegura que los botones se apilen verticalmente */
+    align-items: center; /* Centra los botones horizontalmente */
+    margin-top: 50px;
+}
+
+#restartButton, #menuButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px; /* Espaciado interno del botón */
+    color: white;
+    text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    height: 40px; /* Ajusta la altura según sea necesario */
+    width: 200px; /* Ajusta el ancho según sea necesario */
+    letter-spacing: 1px;
+    font-weight: 600;
+    font-size: 15px; /* Reduce el tamaño de la fuente */
+    border-radius: 25px; /* Ajusta el radio del borde */
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    margin: 5px 0; /* Margen vertical entre los botones */
+}
+
+#restartButton {
+    background: linear-gradient(135deg, #f82371, #fc25a2); /* Color de fondo para Reiniciar */
+}
+
+#restartButton:active {
+    transform: scale(0.9);
+    transition: all 50ms ease;
+}
+
+#restartButton:hover {
+    background: linear-gradient(135deg, #fc25a2, #f82371); /* Cambia el color de fondo al pasar el mouse */
+}
+
+#menuButton {
+    background: linear-gradient(135deg, #7619f0, #b35ded); /* Color de fondo para Menú Principal */
+}
+
+#menuButton:active {
+    transform: scale(0.9);
+    transition: all 50ms ease;
+}
+
+#menuButton:hover {
+    background: linear-gradient(135deg, #b35ded, #7619f0); /* Cambia el color de fondo al pasar el mouse */
+}
