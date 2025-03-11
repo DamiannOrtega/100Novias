@@ -44,6 +44,8 @@ class GameScene extends Phaser.Scene {
         this.bosslives = 15;
         this.boss = null;
         this.sonidoBoss = null;
+        this.bossMoveSpeed = 200; // Velocidad inicial del jefe
+        this.bossAttackSpeed = 1500; // Tiempo entre ataques inicial
         this.ataqueE = null; // Grupo para los ataques
         this.bossAttackCooldown = 1000; // Tiempo de espera entre ataques del jefe
         this.lastBossAttackTime = 0;
@@ -820,31 +822,27 @@ class GameScene extends Phaser.Scene {
     destroyAttack(ataque) {
         ataque.destroy();
     }
-
     hitEnemy(enemy, attack) {
         // Resta una vida al jefe
         if (!this.bossIsMoving) {
             attack.destroy(); // Destruir el ataque
-
             console.log("El jefe no está en movimiento, no se le puede hacer daño.");
             return; // No hacer nada si el jefe no se está moviendo
         }
         this.bosslives--;
         console.log("Vidas del jefe restantes: ", this.bosslives);
-
+    
         // Cambiar el color del jefe a rojo
         enemy.setTint(0xff0000);
         console.log("El jefe ha sido golpeado y su color ha cambiado a rojo.");
-
+    
         // Eliminar la última imagen de vida del jefe
         if (this.ImagenVidaBoss.length > 0) {
             const vidaImage = this.ImagenVidaBoss.pop(); // Eliminar la última imagen de vida
             vidaImage.destroy(); // Destruir la imagen de vida
             console.log("Se ha eliminado una imagen de vida del jefe.");
-        } else {
-            console.log("No quedan imágenes de vida del jefe.");
         }
-
+    
         // Verificar si el jefe ha perdido todas sus vidas
         if (this.bosslives <= 0) {
             // Lógica para cuando el jefe es derrotado
@@ -853,18 +851,25 @@ class GameScene extends Phaser.Scene {
             this.bossAlive = false; // Marcar que el jefe ha sido derrotado
             this.bossAttackEvent.remove(); 
             this.scoreText.setText('¡Jefe Derrotado!'); // Mensaje de victoria
-            this.completeLevel()
+            this.completeLevel();
         } else {
+            // Ajustar velocidad y tiempo de ataque según las vidas restantes
+            if (this.bosslives % 5 === 0) { // Cada 5 vidas perdidas
+                this.bossMoveSpeed += 150; // Aumentar la velocidad de movimiento
+                this.bossAttackSpeed -= 600; // Disminuir el tiempo entre ataques
+                this.bossAttackEvent.delay = this.bossAttackSpeed; // Actualizar el evento de ataque
+                console.log("El jefe se mueve más rápido y ataca más rápido.");
+            }
+    
             // Si el jefe aún tiene vidas, puedes agregar un efecto visual o sonido
             this.time.delayedCall(500, () => {
                 enemy.clearTint(); // Limpiar el tinte del jefe después de un tiempo
                 console.log("El tinte del jefe ha sido limpiado.");
             });
         }
-
+    
         // Destruir el ataque después de un tiempo
         attack.destroy(); // Destruir el ataque
-       
         console.log("El ataque ha sido destruido.");
     }
 
@@ -885,7 +890,7 @@ class GameScene extends Phaser.Scene {
             { x: 400, y: 200 },
             { x: 1000, y: 300 },
             { x: 1000, y: 100 },
-            { x: 1400, y: 100 },
+            { x: 1200, y: 100 },
             { x: 200, y: 400 },
             { x: 600, y: 400 },
             { x: 600, y: 200 },
@@ -907,15 +912,15 @@ class GameScene extends Phaser.Scene {
             { x: 800, y: 400 },
             { x: 1100, y: 400 },
             { x: 1100, y: 600 },
-            { x: 1400, y: 600 },
-            { x: 1400, y: 400 },
+            { x: 1200, y: 600 },
+            { x: 1200, y: 400 },
             { x: 1100, y: 400 },
             { x: 500, y: 700 },
             { x: 900, y: 700 },
             { x: 900, y: 500 },
             { x: 1200, y: 500 },
             { x: 1200, y: 700 },
-            { x: 1500, y: 700 }
+            { x: 1200, y: 700 }
         ];
 
         this.currentRouteIndex = 0; // Índice de la ruta actual
@@ -947,31 +952,49 @@ class GameScene extends Phaser.Scene {
 
     moveToNextPoint() {
         const target = this.routes[this.currentRouteIndex];
-
-        // Mover al siguiente punto a velocidad 200
-        this.physics.moveTo(this.boss, target.x, target.y, 200);
-
+    
+        // Asegúrate de que el objetivo esté dentro de los límites de la pantalla
+        if (target.x < 0) target.x = 100;
+        if (target.x > 1500) target.x = 1400; // Limite derecho
+        if (target.y < 50) target.y = 60;
+        if (target.y > 700) target.y = 600; // Limite inferior
+    
+        // Mover al siguiente punto a la velocidad actual
+        this.physics.moveTo(this.boss, target.x, target.y, this.bossMoveSpeed);
+    
         // Marcar que el jefe ha comenzado a moverse
         this.bossHasStartedMoving = true;
-
+    
         // Comprobar si el jefe ha llegado al punto objetivo
         this.boss.once('animationcomplete', () => {
-            this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
+            // Cambiar al siguiente punto
+            this.currentRouteIndex++;
+    
+            // Si hemos llegado al final de las rutas, reiniciar
+            if (this.currentRouteIndex >= this.routes.length) {
+                this.currentRouteIndex = 0; // Reiniciar al inicio
+            }
+    
             this.moveToNextPoint(); // Mover al siguiente punto
         });
     }
-
     checkForDirectionChange() {
         const target = this.routes[this.currentRouteIndex];
-
+    
         // Verificar si el jefe ha alcanzado las coordenadas específicas
         if (Phaser.Math.Distance.Between(this.boss.x, this.boss.y, target.x, target.y) < 10) {
             // Cambiar dirección al llegar a la coordenada
             this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
             this.moveToNextPoint(); // Mover al siguiente punto
         }
+    
+        // Verificar si el jefe está cerca de los bordes de la pantalla
+        if (this.boss.x <= 100 || this.boss.x >= 1400 || this.boss.y <= 50 || this.boss.y >= 650) {
+            // Cambiar la dirección del jefe
+            this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
+            this.moveToNextPoint(); // Mover al siguiente punto
+        }
     }
-
     bossAttack() {
         // Lógica para que el jefe ataque la posición actual del jugador
         const attack = this.ataqueE.create(this.boss.x, this.boss.y, 'attackBoss');
