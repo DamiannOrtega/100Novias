@@ -662,7 +662,7 @@ class GameScene extends Phaser.Scene {
             // Dibujar el texto de OVER
             context.fillStyle = `rgba(255, 255, 255, ${opacity})`; // Color rojo con opacidad
             context.fillText('OVER', gameOverCanvas.width / 2 + 100, overYPosition); // Desplazar a la derecha
-
+            pauseButton.style.display = 'none'; // Ocultar el botón de pausa
             // Continuar la animación hasta que ambas palabras se junten
             if (gameYPosition < gameOverCanvas.height / 2 && overYPosition > gameOverCanvas.height / 2) {
                 requestAnimationFrame(animateText);
@@ -980,7 +980,7 @@ class GameScene extends Phaser.Scene {
         attack.destroy();
 
         // Verifica si el jugador ha perdido todas sus vidas
-        if (this.vidasGuardadas > 0) {
+        if (this.lives > 0) {
             this.isInvincible = true; // Activar inmunidad
             // Definir el volumen original
 
