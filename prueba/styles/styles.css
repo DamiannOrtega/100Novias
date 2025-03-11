@@ -270,6 +270,10 @@ button {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.bP{
+    translate : -30%;
+}
+
 .btnJugar {
     background: linear-gradient(135deg, #f82371, #fc25a2);
 
@@ -378,16 +382,40 @@ canvas {
 
 .tituloSeccion{
     display: flex;
+    position: absolute;
+    top: 0;
+    margin-top: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
     text-transform: uppercase;
     align-items: center;
     justify-content: center;
     color: white;
     text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
-    background: #ecc030;
     /* display: inline-block; */
     padding: 10px;
     border-radius: 5px;
 }
+
+.tutorial{
+    background: linear-gradient(135deg, #7619f0, #b35ded);
+
+}
+.puntuaciones{
+    background: linear-gradient(135deg, #f09819, #edde5d);
+    
+}
+.ajustes{
+    background: linear-gradient(135deg, #ff1c68, #cc3e51);
+
+}
+.creditos{
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+
+}
+
+
+
 
 @media screen and (min-width: 768px) {
     .contenedor {
