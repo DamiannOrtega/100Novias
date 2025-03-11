@@ -9,6 +9,7 @@ class GameScene extends Phaser.Scene {
         this.suelo = null;
         this.platforms = null;       // Plataformas del juego
         this.cursors = null;         // Teclas del cursor (flechas)
+        this.trailGroup = null;
         // this.score = 0;              // Puntuación del jugador
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
@@ -20,7 +21,10 @@ class GameScene extends Phaser.Scene {
         this.attackActive = false; // Variable para controlar el estado del ataque
         this.attackCooldown = 200; // Tiempo de espera entre ataques en milisegundos
         this.lastAttackTime = 0; // Tiempo del último ataque        
-
+        this.lastDashTime = 0; // Tiempo de la última pulsación
+        this.dashCooldown = 1000; // Tiempo en milisegundos para considerar un doble toque
+        this.isDashing = false; // Estado del dash
+        this.dashSpeed = 3000; // Velocidad del dash
         // Música y sonidos
         this.musicafondo = null;     // Música de fondo
         this.SonidosQuietas = [];    // Sonidos de idle
@@ -161,6 +165,7 @@ class GameScene extends Phaser.Scene {
 
         }
         this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
+        this.dashKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 
         // Recuperar el volumen guardado
 
@@ -435,6 +440,7 @@ class GameScene extends Phaser.Scene {
 
         // Detecta si el jugador choca con una bomba
         this.ataque = this.physics.add.group(); // Grupo para los ataques
+        this.trailGroup = this.physics.add.group()
         this.ataqueE = this.physics.add.group(); // Grupo para los ataques
 
         this.physics.add.collider(this.ataqueE, this.suelo, this.destroyAttack, null, this);
@@ -511,12 +517,26 @@ class GameScene extends Phaser.Scene {
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
+                    // Detección de doble toque para dash
+          // Detección de dash
+            if (this.dashKey.isDown && !this.isDashing) {
+                this.createTrail();
+
+                this.dash('left');
+            }
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('walk_right', true);
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
+
+
+            // Detección de dash
+            if (this.dashKey.isDown && !this.isDashing) {
+                this.createTrail();
+                this.dash('right');
+            }
         } else if (this.cursors.down.isDown) {
             this.player.setVelocityX(0);
             this.player.setVelocityY(300);
@@ -1027,5 +1047,48 @@ class GameScene extends Phaser.Scene {
     }
 
 
+    dash(direction) {
+        this.isDashing = true; // Activar el estado de dash
+    
+        // Cambiar el color del jugador
+        this.player.setTint(0x00ff00); // Cambiar a un color verde (puedes elegir otro)
+    
+        // Establecer la velocidad del jugador según la dirección
+        if (direction === 'left') {
+            this.player.setVelocityX(-this.dashSpeed);
+        } else if (direction === 'right') {
+            this.player.setVelocityX(this.dashSpeed);
+        }
+    
+       
+        // Desactivar el dash después de un corto período de tiempo
+        this.time.delayedCall(500, () => {
+            this.isDashing = false; // Desactivar el estado de dash
+            this.player.clearTint(); // Limpiar el tinte del jugador
+        });
+    }
+createTrail() {
+    let trailKey;
+
+    // Determinar la animación del rastro según la dirección del movimiento
+    if (this.cursors.left.isDown) {
+        trailKey = this.personaje === 1 ? 'Nano_izquierda' : 'Shizuka_izquierda';
+    } else if (this.cursors.right.isDown) {
+        trailKey = this.personaje === 1 ? 'Nano_derecha' : 'Shizuka_derecha';
+    }
+
+    // Crear el rastro usando la animación correspondiente
+    if (trailKey) {
+        const trail = this.add.sprite(this.player.x, this.player.y, trailKey);
+        trail.setScale(0.2); // Ajusta el tamaño del rastro
+        trail.setTint(0x00ff00);
+        trail.lifespan = 300; // Duración del rastro en milisegundos
+
+        this.time.delayedCall(300, () => {
+            trail.destroy();
+        });
+    }
+}
+    
 
 }
