@@ -382,6 +382,9 @@ class GameScene extends Phaser.Scene {
             fill: '#FFFFFF',
         });
 
+
+        
+
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.bombs, this.platforms);
