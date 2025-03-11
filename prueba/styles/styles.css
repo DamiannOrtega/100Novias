@@ -113,10 +113,11 @@ a{
 
 .contenedorP {
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: flex-end; /* Alinea el contenido hacia la parte inferior */
+    justify-content: center; 
+    /* align-items: flex-end;
+    align-items: center;
     height: 100vh; /* Altura de la ventana completa */
-    position: relative; /* Asegura que el contenedor tenga el 100% de la altura */
+    /* position: relative; */
     background-image: url(../assets/background/karane.jpg);
 }
 
@@ -368,13 +369,24 @@ canvas {
     
 }
 
+
+
 #playButton{
     flex-direction: column;
 }
 
 
-.puntuaciones{
+.tituloSeccion{
+    display: flex;
     text-transform: uppercase;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.5);
+    background: #ecc030;
+    /* display: inline-block; */
+    padding: 10px;
+    border-radius: 5px;
 }
 
 @media screen and (min-width: 768px) {
