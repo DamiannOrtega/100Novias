@@ -5,7 +5,7 @@ class GameScene extends Phaser.Scene {
         // Propiedades de la clase (antes variables globales)
         this.player = null;          // Jugador
         
-        this.bombs = null;           // Grupo de bombas
+        this.magia = null;           // Grupo de bombas
         this.suelo=null;
         this.platforms = null;       // Plataformas del juego
         this.cursors = null;         // Teclas del cursor (flechas)
@@ -30,9 +30,12 @@ class GameScene extends Phaser.Scene {
         this.sonidoDano = null;
         // Instancia de la clase Jugador
         this.jugador = null;
-        //Enemigos
         this.lives = 3;  // Inicialmente, el jugador tiene 3 vidas
         this.ImagenVida = [];
+        //Enemigos
+        this.bossIcon=null;
+        this.bosslife=null;
+        this.bosslives=15;
 
     }
 
@@ -81,7 +84,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('Nano_quieta1', 'assets/Nano/NanoQuieta.png');
         this.load.image('Icono_Nano', 'assets/Nano/iconoNano.png');
         // MÚSICA Y SONIDOS
-        this.load.audio('musica_fondo', 'assets/Nivel1.mp3');
+        this.load.audio('musica_fondo', 'assets/Sounds/level2.mp3');
+        this.load.audio('SoundBoss', 'assets/Sounds/apareceBoss.mp3');
+
         // SHIZUKA
         this.load.audio('Shizuka_muerteS', 'assets/Shizuka/MuerteShizuka.mp3');
         this.load.audio('Shizuka_paradaS', 'assets/Shizuka/DialogoShizuka.mp3');
@@ -97,14 +102,13 @@ class GameScene extends Phaser.Scene {
         this.load.audio('Nano_paradaS3', 'assets/Nano/DialogoNano.mp3');
         this.load.audio('Nano_Dano', 'assets/Nano/NanoGolpe.mp3');
         //Enemigos
-        this.load.image('bomb', 'assets/Enemigos/atacke.png');
+        this.load.image('mahou', 'assets/Enemigos/ataqueEnemigo.png');
+        this.load.image('IconoBoss', 'assets/Enemigos/VidaBoss.png');
+        this.load.image('Barra_Vida', 'assets/Enemigos/BarradeVida.png');
 
         //objeto especial
         this.load.image('vidas', 'assets/objetos/Corazones.png');
         this.load.image('ataquaAliado', 'assets/objetos/Ataque.png');
-
-
-
     }
 
     create() {
@@ -365,14 +369,19 @@ class GameScene extends Phaser.Scene {
             this.icono = this.add.image(160, 50, 'Icono_Shizuka').setScale(0.5);
 
         }
+
         for (let i = 0; i < this.lives; i++) {
             const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2);
             this.ImagenVida.push(vidaImage);
         }
+        
+        this.bossIcon=this.add.image(1200,70,'IconoBoss').setScale(0.7);
+        for (let i = 0; i < this.bosslives; i++) {
+            const vidaImage = this.add.image(1160 + (i * 14), 65, 'Barra_Vida').setScale(0.7);
+            this.ImagenVida.push(vidaImage);
+        }
 
 
-        // Crea un grupo de bombas
-        this.bombs = this.physics.add.group();
 
         // Añade el texto de la puntuación en la esquina superior izquierda
         this.scoreText = this.add.text(16, 130, 'score: 0', {
@@ -387,10 +396,8 @@ class GameScene extends Phaser.Scene {
 
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
-        this.physics.add.collider(this.bombs, this.platforms);
         this.physics.add.collider(this.player, this.suelo);
         // Detecta si el jugador choca con una bomba
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
         this.ataque = this.physics.add.group(); // Grupo para los ataques
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.physics.add.collider(this.ataque, this.suelo, this.destroyAttack, null, this);
