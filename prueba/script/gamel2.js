@@ -36,6 +36,8 @@ class GameScene extends Phaser.Scene {
         this.bossIcon=null;
         this.bosslife=null;
         this.bosslives=15;
+        this.boss=null;
+        this.sonidoBoss=null;
 
     }
 
@@ -105,6 +107,8 @@ class GameScene extends Phaser.Scene {
         this.load.image('mahou', 'assets/Enemigos/ataqueEnemigo.png');
         this.load.image('IconoBoss', 'assets/Enemigos/VidaBoss.png');
         this.load.image('Barra_Vida', 'assets/Enemigos/BarradeVida.png');
+        this.load.image('Dios_Amor', 'assets/Enemigos/Dios_malo.png');
+
 
         //objeto especial
         this.load.image('vidas', 'assets/objetos/Corazones.png');
@@ -138,13 +142,9 @@ class GameScene extends Phaser.Scene {
             this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
 
         }
-
-
-
         this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
-        this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
-        this.musicafondo.play();
+
 
         // Recuperar el volumen guardado
 
@@ -207,7 +207,27 @@ class GameScene extends Phaser.Scene {
             this.player = this.physics.add.sprite(100, 650, 'Shizuka_parada').setScale(0.2);
 
         }
+        this.sonidoBoss = this.sound.add('SoundBoss');
+        this.boss = this.physics.add.sprite(750, 150, 'Dios_Amor').setScale(0.25);
+        this.boss.setVisible(false);
+       
+        this.sonidoBoss.play();
 
+        this.time.delayedCall(1000, () => {
+            this.boss.setVisible(true);
+            this.boss.invulnerable = true; // Hacer que el jefe sea inmune
+            this.time.delayedCall(5000, () => {
+                this.boss.invulnerable = false; // El jefe ya no es inmune después de 5 segundos
+            });
+        });
+
+
+        this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
+        
+        
+        this.time.delayedCall(30000, () => {
+            this.musicafondo.play();
+        });
 
         this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', {
             fontSize: '32px',
