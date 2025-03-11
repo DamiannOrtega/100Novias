@@ -208,15 +208,18 @@ class GameScene extends Phaser.Scene {
 
         }
         this.sonidoBoss = this.sound.add('SoundBoss');
-        this.boss = this.physics.add.sprite(750, 150, 'Dios_Amor').setScale(0.25);
+        this.boss = this.physics.add.sprite(750, 30, 'Dios_Amor').setScale(0.25);
         this.boss.setVisible(false);
        
         this.sonidoBoss.play();
 
         this.time.delayedCall(1000, () => {
+            this.boss.body.allowGravity = false;
             this.boss.setVisible(true);
+            this.boss.setVelocity(0);
             this.boss.invulnerable = true; // Hacer que el jefe sea inmune
             this.time.delayedCall(5000, () => {
+                this.boss.body.allowGravity = true;
                 this.boss.invulnerable = false; // El jefe ya no es inmune después de 5 segundos
             });
         });
