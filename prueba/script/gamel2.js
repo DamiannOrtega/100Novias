@@ -58,6 +58,11 @@ class GameScene extends Phaser.Scene {
             // Si no existe el jugador en localStorage, crear uno nuevo
             this.jugador = new Jugador(playerName);
         }
+
+        const vidasGuardadas = localStorage.getItem('vidasActuales');
+        if(vidasGuardadas!==null){
+            this.lives=parseInt(vidasGuardadas,10);
+        }
     }
 
     // Carga los recursos del juego
@@ -151,10 +156,7 @@ class GameScene extends Phaser.Scene {
         }
         this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
-
-
         // Recuperar el volumen guardado
-
 
         this.idleTimer = 0;
         this.lastUpdateTime = 0;
@@ -238,10 +240,8 @@ class GameScene extends Phaser.Scene {
             });
         });
 
-
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
-        
-        
+                
         this.time.delayedCall(26000, () => {
             this.musicafondo.play();
         });
@@ -362,7 +362,6 @@ class GameScene extends Phaser.Scene {
                 repeat: -1
             });
 
-
         }
 
         // Sonidos
@@ -407,15 +406,11 @@ class GameScene extends Phaser.Scene {
 
         }
 
-        for (let i = 0; i < this.lives; i++) {
+        for (let i = 0; i < this.vidasGuardadas; i++) {
             const vidaImage = this.add.image(160 + (i * 65), 55, 'vidas').setScale(0.2);
             this.ImagenVida.push(vidaImage);
         }
         
-
-
-
-
         // Añade el texto de la puntuación en la esquina superior izquierda
         this.scoreText = this.add.text(16, 130, 'score: 0', {
             fontFamily: 'Aclonica , sans-serif',
@@ -424,15 +419,11 @@ class GameScene extends Phaser.Scene {
             fill: '#FFFFFF',
         });
 
-
-        
-
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, this.suelo);
         this.physics.add.collider(this.boss, this.suelo);
     
-
         // Detecta si el jugador choca con una bomba
         this.ataque = this.physics.add.group(); // Grupo para los ataques
         this.ataqueE = this.physics.add.group(); // Grupo para los ataques
@@ -468,7 +459,6 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-
     update(time) {
         // Actualizar la posición del jugador
         this.playerPosition.x = this.player.x;
@@ -491,8 +481,6 @@ class GameScene extends Phaser.Scene {
     
             return; // Si el juego está en pausa, no actualices nada
         }
-
-
 
         const currentTime = this.time.now;
         // Lógica de movimiento
@@ -563,9 +551,7 @@ class GameScene extends Phaser.Scene {
         const abajo = this.cursors.down.isDown;
         const izquierda = this.cursors.left.isDown;
         const derecha = this.cursors.right.isDown;
-    
-
-  
+      
         if (this.ataqueK.isDown && (currentTime - this.lastAttackTime > this.attackCooldown)) {
             // Verificar las teclas de flecha
                 // Determinar la dirección del ataque
@@ -603,8 +589,6 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-
- 
     togglePause() {
         this.isPaused = !this.isPaused; // Cambiar el estado de pausa
         const canvas = document.querySelector('canvas');
@@ -649,7 +633,6 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-
     completeLevel() {
         // Detener música y sonidos
         pauseButton.style.display = 'none';
@@ -677,7 +660,6 @@ class GameScene extends Phaser.Scene {
             window.location.href = 'rompecabezas.html';
         });
     }
-
 
     launchAttack(direction) {
         this.attackActive = true; // Establecer el ataque como activo
@@ -877,8 +859,7 @@ class GameScene extends Phaser.Scene {
             this.moveToNextPoint(); // Mover al siguiente punto
         }
     }
-    
-    
+        
     bossAttack() {
         // Lógica para que el jefe ataque la posición actual del jugador
         const attack = this.ataqueE.create(this.boss.x, this.boss.y, 'attackBoss');
@@ -900,8 +881,8 @@ class GameScene extends Phaser.Scene {
     hitPlayer(player, attack) {
         if (this.isInvincible) return;
         // Resta una vida al jugador
-        this.lives --;
-        console.log("Vidas restantes: ", this.lives);
+        this.vidasGuardadas --;
+        console.log("Vidas restantes: ", this.vidasGuardadas);
         if (this.ImagenVida.length > 0) {
             const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
             vidaImage.destroy(); // Destruir la imagen de vida
@@ -911,7 +892,7 @@ class GameScene extends Phaser.Scene {
         attack.destroy();
     
         // Verifica si el jugador ha perdido todas sus vidas
-        if (this.lives > 0) {
+        if (this.vidasGuardadas > 0) {
             this.isInvincible = true; // Activar inmunidad
             // Definir el volumen original
 

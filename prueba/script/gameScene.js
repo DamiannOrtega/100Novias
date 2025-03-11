@@ -177,15 +177,12 @@ class GameScene extends Phaser.Scene {
 
         }
 
-
-
         this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         this.musicafondo.play();
 
         // Recuperar el volumen guardado
-
 
         this.idleTimer = 0;
         this.lastUpdateTime = 0;
@@ -1185,6 +1182,10 @@ class GameScene extends Phaser.Scene {
             fontSize: '64px',
             fill: '#ffffff'
         }).setOrigin(0.5); // Centrar el texto
+
+        //Guardar las vidas actuales en localstorage
+
+        localStorage.setItem('vidasActuales',this.lives);
 
         // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
         this.time.delayedCall(2000, () => {
