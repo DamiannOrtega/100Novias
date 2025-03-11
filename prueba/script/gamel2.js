@@ -221,6 +221,13 @@ class GameScene extends Phaser.Scene {
             this.time.delayedCall(5000, () => {
                 this.boss.body.allowGravity = true;
                 this.boss.invulnerable = false; // El jefe ya no es inmune después de 5 segundos
+                this.bossIcon=this.add.image(1200,70,'IconoBoss').setScale(0.7);
+                for (let i = 0; i < this.bosslives; i++) {
+                    const vidaImage = this.add.image(1160 + (i * 14), 65, 'Barra_Vida').setScale(0.7);
+                    this.ImagenVida.push(vidaImage);
+                }
+           
+           
             });
         });
 
@@ -228,7 +235,7 @@ class GameScene extends Phaser.Scene {
         this.musicafondo = this.sound.add('musica_fondo', { loop: true, volume: 0.5 });
         
         
-        this.time.delayedCall(30000, () => {
+        this.time.delayedCall(26000, () => {
             this.musicafondo.play();
         });
 
@@ -398,11 +405,7 @@ class GameScene extends Phaser.Scene {
             this.ImagenVida.push(vidaImage);
         }
         
-        this.bossIcon=this.add.image(1200,70,'IconoBoss').setScale(0.7);
-        for (let i = 0; i < this.bosslives; i++) {
-            const vidaImage = this.add.image(1160 + (i * 14), 65, 'Barra_Vida').setScale(0.7);
-            this.ImagenVida.push(vidaImage);
-        }
+
 
 
 
@@ -420,6 +423,9 @@ class GameScene extends Phaser.Scene {
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, this.suelo);
+        this.physics.add.collider(this.boss, this.suelo);
+        this.physics.add.collider(this.boss, this.player);
+
         // Detecta si el jugador choca con una bomba
         this.ataque = this.physics.add.group(); // Grupo para los ataques
         this.ataqueK = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
