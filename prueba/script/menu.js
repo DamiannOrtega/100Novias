@@ -58,11 +58,11 @@ document.getElementById('submitNameButton').addEventListener('click', function (
     }
 
     // Validación de longitud mínima
-    if (playerName.length < 3) {
+    if (playerName.length < 4) {
         Swal.fire({
             icon: 'warning',
             title: '¡Atención!',
-            text: 'El nombre debe tener al menos 3 caracteres.',
+            text: 'El nombre debe tener al menos 4 caracteres.',
             position: 'bottom',
             toast: true,
             showConfirmButton: false,
@@ -83,6 +83,31 @@ document.getElementById('submitNameButton').addEventListener('click', function (
             return;
         }
     }
+
+     // Validación de caracteres permitidos: solo letras, números y guion bajo
+     if (!/^[a-zA-Z0-9_]+$/.test(playerName)) {
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Atención!',
+            text: 'El nombre solo puede contener letras, números y guion bajo (_).',
+            position: 'bottom',
+            toast: true,
+            showConfirmButton: false,
+            timer: 3000
+        });
+        return;
+    }
+
+    // Si todo está bien, muestra el botón "Jugar"
+    Swal.fire({
+        icon: 'success',
+        title: '¡Nombre válido!',
+        text: 'Puedes continuar :D',
+        position: 'bottom',
+        toast: true,
+        showConfirmButton: false,
+        timer: 3000
+    });
 
     // Almacenar el nombre en localStorage
     localStorage.setItem('playerName', playerName);
