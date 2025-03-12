@@ -78,6 +78,7 @@ img {
     position: absolute; /* Para centrar el mensaje */
     top: 50px; /* Ajustar la posición */
     left: 50%;
+    margin-top:100px;
     transform: translateX(-50%);
 }
 #contador {
@@ -118,7 +119,7 @@ img {
     color: rgb(255, 255, 255);
     text-shadow: 2px 2px rgba(0, 0, 0, 0.7);
     position: absolute; /* Para centrar el contador */
-    bottom: 250px; /* Ajustar la posición */
+    bottom: -5%; /* Ajustar la posición */
     left: 50%;
     transform: translateX(-50%);
 }

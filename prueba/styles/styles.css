@@ -85,12 +85,33 @@ a{
 }
 
 .contenedorC {
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: flex-end; /* Alinea el contenido hacia la parte inferior */
-    height: 100vh; /* Altura de la ventana completa */
-    position: relative; /* Asegura que el contenedor tenga el 100% de la altura */
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 20px;
+    width: 90%;
+    text-align: center;
+    justify-content: center;
+    align-items: flex-end; 
+    height: 100vh; 
+    position: relative;
     background-image: url(../assets/background/ShizukaBackground.jpg);
+}
+
+.info-container{
+    display: grid;
+    margin-bottom: 4rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+.integrantes, .materia, .fecha {
+    padding: 20px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo img{
+    width: 400px;
 }
 
 .contenedorA {
@@ -203,7 +224,7 @@ button {
     align-items: center; /* Centra el contenido verticalmente */
     position: absolute;
     /* margin-top: 40px; */
-    bottom: 5%; /* Ajusta la distancia desde el fondo de la pantalla */
+    bottom: 2%; /* Ajusta la distancia desde el fondo de la pantalla */
 }
 
 .buttonContainer {
@@ -481,6 +502,31 @@ canvas {
     width: 80px;   
     height: auto;
     border-radius: 10px;
+}
+
+.nivel1-img{
+    width: 400px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.rompecabezas-img{
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.x-img, .z-img{
+    width: 75px;
+    height: auto;
+}
+
+.diosMalo{
+    width: 100px;
+}
+
+.ataqueDios{
+    width: 120px;
 }
 
 .nano{
