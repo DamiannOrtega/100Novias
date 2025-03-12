@@ -2,24 +2,21 @@ class Jugador {
     constructor(nombre) {
         this.nombre = nombre;
         this.puntos = 0;
+        this.fecha = new Date().toLocaleDateString(); //Para la fecha
     }
 
     // Guardar los datos del jugador en localStorage
     guardar() {
-        // Obtener los datos de los jugadores almacenados en el localStorage.
-        // Si no hay datos, se inicializa un objeto vacío.
         let jugadores = JSON.parse(localStorage.getItem('jugadores')) || {};
 
-        // Verificar si el jugador ya existe en el objeto 'jugadores'.
+        // Si el jugador ya existe, actualizar los puntos en lugar de sobrescribir
         if (jugadores[this.nombre]) {
-            // Si el jugador ya existe, actualizar sus puntos.
             jugadores[this.nombre].puntos = this.puntos;
+            jugadores[this.nombre].fecha = new Date().toLocaleDateString(); //Actualiza la tabla
         } else {
-            // Si el jugador no existe, agregarlo al objeto 'jugadores' con su nombre y puntos.
-            jugadores[this.nombre] = { nombre: this.nombre, puntos: this.puntos };
+            jugadores[this.nombre] = { nombre: this.nombre, puntos: this.puntos, fecha: this.fecha };
         }
 
-        // Guardar el objeto 'jugadores' actualizado en el localStorage.
         localStorage.setItem('jugadores', JSON.stringify(jugadores));
     }
 
@@ -30,6 +27,7 @@ class Jugador {
             let datos = jugadores[nombre];
             let jugador = new Jugador(datos.nombre);
             jugador.puntos = datos.puntos;
+            jugador.fecha = datos.fecha; 
             return jugador;
         }
         return null;
