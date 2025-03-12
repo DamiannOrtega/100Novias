@@ -11,6 +11,7 @@ class GameScene extends Phaser.Scene {
         this.score = 0;              // Puntuación del jugador
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
+        this.dateText = null         // Texto para la fecha
         this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
@@ -66,7 +67,7 @@ class GameScene extends Phaser.Scene {
         const playerName = localStorage.getItem('playerName');
 
         // Cargar el jugador desde localStorage
-        localStorage.setItem('vidasActuales',this.lives);
+        localStorage.setItem('vidasActuales', this.lives);
         this.jugador = Jugador.cargar(playerName);
         this.generarAleatorio();
         this.generarAleatorio2();
@@ -416,6 +417,15 @@ class GameScene extends Phaser.Scene {
             fill: '#000',
         });
 
+        // Obtener la fecha actual
+        const currentDate = new Date().toLocaleDateString(); // Formato de fecha
+        this.dateText = this.add.text(this.cameras.main.width - 200, this.cameras.main.height - 50, `Fecha: ${currentDate}`, {
+            fontFamily: 'Aclonica , sans-serif',
+            fontSize: '32px',
+            color: '#FFFFFF',
+            fill: '#ffff',
+        }).setOrigin(0.5, 0); // Alinear a la derecha y abajo
+
         // Añade colisiones entre el jugador, las estrellas y las plataformas
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.peluches, this.platforms);
@@ -558,6 +568,9 @@ class GameScene extends Phaser.Scene {
             this.hahaiEnojada = true; // Marca que ya se lanzaron las bombas adicionales
         }
 
+        // Actualizar la fecha si es necesario (opcional)
+        const currentDate = new Date().toLocaleDateString();
+        this.dateText.setText(`Fecha: ${currentDate}`);
     }
 
     collectStar(player, peluche) {
@@ -1185,7 +1198,7 @@ class GameScene extends Phaser.Scene {
 
         //Guardar las vidas actuales en localstorage
 
-        localStorage.setItem('vidasActuales',this.lives);
+        localStorage.setItem('vidasActuales', this.lives);
 
         // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
         this.time.delayedCall(2000, () => {

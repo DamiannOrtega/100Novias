@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${index + 1}</td>
                 <td>${jugador.nombre}</td>
                 <td>${jugador.puntos}</td>
+                <td>${jugador.fecha}</td>
             </tr>
         `;
         tabla.innerHTML += fila;

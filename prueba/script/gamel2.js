@@ -13,6 +13,7 @@ class GameScene extends Phaser.Scene {
         // this.score = 0;              // Puntuación del jugador
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
+        this.dateText = null         // Texto para la fecha
         this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
@@ -155,7 +156,7 @@ class GameScene extends Phaser.Scene {
             this.personaje = parseInt(personajeSeleccionado);  // Asegurarse de que es un número
         }
 
-        
+
 
 
         // Selección de personaje
@@ -282,6 +283,15 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Aclonica , sans-serif',
             color: '#FFFFFF',
         });
+
+        // Obtener la fecha actual
+        const currentDate = new Date().toLocaleDateString(); // Formato de fecha
+        this.dateText = this.add.text(this.cameras.main.width - 200, this.cameras.main.height - 50, `Fecha: ${currentDate}`, {
+            fontFamily: 'Aclonica , sans-serif',
+            fontSize: '32px',
+            color: '#FFFFFF',
+            fill: '#ffff',
+        }).setOrigin(0.5, 0); // Alinear a la derecha y abajo
 
         this.rentaroTimerText2.setVisible(false);
         // Configura propiedades físicas del jugador (rebote y límites del mundo)
@@ -519,8 +529,8 @@ class GameScene extends Phaser.Scene {
             this.idleTimer = 0; // Resetear el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
-                    // Detección de doble toque para dash
-          // Detección de dash
+            // Detección de doble toque para dash
+            // Detección de dash
             if (this.dashKey.isDown && !this.isDashing) {
                 this.createTrail();
 
@@ -630,6 +640,10 @@ class GameScene extends Phaser.Scene {
                 ataque.lifespan -= this.time.delta; // Resta el tiempo transcurrido
             }
         });
+
+        // Actualizar la fecha si es necesario (opcional)
+        const currentDate = new Date().toLocaleDateString();
+        this.dateText.setText(`Fecha: ${currentDate}`);
     }
 
     showGameOver() {
@@ -719,13 +733,13 @@ class GameScene extends Phaser.Scene {
                 }
             });
 
-            if(this.sonidoBoss.isPlaying){
+            if (this.sonidoBoss.isPlaying) {
                 this.sonidoBoss.pause();
             }
 
 
 
-        // Aquí puedes pausar otros sonidos si es necesario
+            // Aquí puedes pausar otros sonidos si es necesario
         } else {
             this.physics.resume(); // Reanudar la física
             this.musicafondo.resume(); // Reanudar la música de fondo
@@ -738,7 +752,7 @@ class GameScene extends Phaser.Scene {
                 }
             });
 
-            if(this.sonidoBoss.isPaused){
+            if (this.sonidoBoss.isPaused) {
                 this.sonidoBoss.resume();
             }
 
@@ -831,25 +845,25 @@ class GameScene extends Phaser.Scene {
         }
         this.bosslives--;
         console.log("Vidas del jefe restantes: ", this.bosslives);
-    
+
         // Cambiar el color del jefe a rojo
         enemy.setTint(0xff0000);
         console.log("El jefe ha sido golpeado y su color ha cambiado a rojo.");
-    
+
         // Eliminar la última imagen de vida del jefe
         if (this.ImagenVidaBoss.length > 0) {
             const vidaImage = this.ImagenVidaBoss.pop(); // Eliminar la última imagen de vida
             vidaImage.destroy(); // Destruir la imagen de vida
             console.log("Se ha eliminado una imagen de vida del jefe.");
         }
-    
+
         // Verificar si el jefe ha perdido todas sus vidas
         if (this.bosslives <= 0) {
             // Lógica para cuando el jefe es derrotado
             console.log("El jefe ha sido derrotado.");
             enemy.destroy(); // Destruir el jefe
             this.bossAlive = false; // Marcar que el jefe ha sido derrotado
-            this.bossAttackEvent.remove(); 
+            this.bossAttackEvent.remove();
             this.scoreText.setText('¡Jefe Derrotado!'); // Mensaje de victoria
             this.completeLevel();
         } else {
@@ -860,14 +874,14 @@ class GameScene extends Phaser.Scene {
                 this.bossAttackEvent.delay = this.bossAttackSpeed; // Actualizar el evento de ataque
                 console.log("El jefe se mueve más rápido y ataca más rápido.");
             }
-    
+
             // Si el jefe aún tiene vidas, puedes agregar un efecto visual o sonido
             this.time.delayedCall(500, () => {
                 enemy.clearTint(); // Limpiar el tinte del jefe después de un tiempo
                 console.log("El tinte del jefe ha sido limpiado.");
             });
         }
-    
+
         // Destruir el ataque después de un tiempo
         attack.destroy(); // Destruir el ataque
         console.log("El ataque ha sido destruido.");
@@ -952,42 +966,42 @@ class GameScene extends Phaser.Scene {
 
     moveToNextPoint() {
         const target = this.routes[this.currentRouteIndex];
-    
+
         // Asegúrate de que el objetivo esté dentro de los límites de la pantalla
         if (target.x < 0) target.x = 100;
         if (target.x > 1500) target.x = 1400; // Limite derecho
         if (target.y < 50) target.y = 100;
         if (target.y > 700) target.y = 600; // Limite inferior
-    
+
         // Mover al siguiente punto a la velocidad actual
         this.physics.moveTo(this.boss, target.x, target.y, this.bossMoveSpeed);
-    
+
         // Marcar que el jefe ha comenzado a moverse
         this.bossHasStartedMoving = true;
-    
+
         // Comprobar si el jefe ha llegado al punto objetivo
         this.boss.once('animationcomplete', () => {
             // Cambiar al siguiente punto
             this.currentRouteIndex++;
-    
+
             // Si hemos llegado al final de las rutas, reiniciar
             if (this.currentRouteIndex >= this.routes.length) {
                 this.currentRouteIndex = 0; // Reiniciar al inicio
             }
-    
+
             this.moveToNextPoint(); // Mover al siguiente punto
         });
     }
     checkForDirectionChange() {
         const target = this.routes[this.currentRouteIndex];
-    
+
         // Verificar si el jefe ha alcanzado las coordenadas específicas
         if (Phaser.Math.Distance.Between(this.boss.x, this.boss.y, target.x, target.y) < 10) {
             // Cambiar dirección al llegar a la coordenada
             this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
             this.moveToNextPoint(); // Mover al siguiente punto
         }
-    
+
         // Verificar si el jefe está cerca de los bordes de la pantalla
         if (this.boss.x <= 100 || this.boss.x >= 1400 || this.boss.y <= 50 || this.boss.y >= 650) {
             // Cambiar la dirección del jefe
@@ -1072,46 +1086,46 @@ class GameScene extends Phaser.Scene {
 
     dash(direction) {
         this.isDashing = true; // Activar el estado de dash
-    
+
         // Cambiar el color del jugador
         this.player.setTint(0x00ff00); // Cambiar a un color verde (puedes elegir otro)
-    
+
         // Establecer la velocidad del jugador según la dirección
         if (direction === 'left') {
             this.player.setVelocityX(-this.dashSpeed);
         } else if (direction === 'right') {
             this.player.setVelocityX(this.dashSpeed);
         }
-    
-       
+
+
         // Desactivar el dash después de un corto período de tiempo
         this.time.delayedCall(500, () => {
             this.isDashing = false; // Desactivar el estado de dash
             this.player.clearTint(); // Limpiar el tinte del jugador
         });
     }
-createTrail() {
-    let trailKey;
+    createTrail() {
+        let trailKey;
 
-    // Determinar la animación del rastro según la dirección del movimiento
-    if (this.cursors.left.isDown) {
-        trailKey = this.personaje === 1 ? 'Nano_izquierda' : 'Shizuka_izquierda';
-    } else if (this.cursors.right.isDown) {
-        trailKey = this.personaje === 1 ? 'Nano_derecha' : 'Shizuka_derecha';
+        // Determinar la animación del rastro según la dirección del movimiento
+        if (this.cursors.left.isDown) {
+            trailKey = this.personaje === 1 ? 'Nano_izquierda' : 'Shizuka_izquierda';
+        } else if (this.cursors.right.isDown) {
+            trailKey = this.personaje === 1 ? 'Nano_derecha' : 'Shizuka_derecha';
+        }
+
+        // Crear el rastro usando la animación correspondiente
+        if (trailKey) {
+            const trail = this.add.sprite(this.player.x, this.player.y, trailKey);
+            trail.setScale(0.2); // Ajusta el tamaño del rastro
+            trail.setTint(0x00ff00);
+            trail.lifespan = 300; // Duración del rastro en milisegundos
+
+            this.time.delayedCall(300, () => {
+                trail.destroy();
+            });
+        }
     }
 
-    // Crear el rastro usando la animación correspondiente
-    if (trailKey) {
-        const trail = this.add.sprite(this.player.x, this.player.y, trailKey);
-        trail.setScale(0.2); // Ajusta el tamaño del rastro
-        trail.setTint(0x00ff00);
-        trail.lifespan = 300; // Duración del rastro en milisegundos
-
-        this.time.delayedCall(300, () => {
-            trail.destroy();
-        });
-    }
-}
-    
 
 }
