@@ -593,7 +593,7 @@ class GameScene extends Phaser.Scene {
         this.SonidosQuietas.forEach((sonido) => sonido.stop());
 
         // Aumentar los puntos del jugador
-        this.score += 15;
+        this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
 
         // Actualizar los puntos del jugador
