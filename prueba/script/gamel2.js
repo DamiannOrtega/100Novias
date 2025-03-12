@@ -14,6 +14,7 @@ class GameScene extends Phaser.Scene {
         this.gameOver = false;       // Estado del juego (si ha terminado)
         this.scoreText = null;       // Texto que muestra la puntuación
         this.dateText = null         // Texto para la fecha
+        this.currentLevel = 2;       // Nivel actual
         this.icono = null;
         this.personaje = 1;          // Selección de personaje
         this.isPaused = false; // Estado de pausa
@@ -292,6 +293,14 @@ class GameScene extends Phaser.Scene {
             color: '#FFFFFF',
             fill: '#ffff',
         }).setOrigin(0.5, 0); // Alinear a la derecha y abajo
+
+        // Crear el texto para mostrar el nivel en la esquina inferior izquierda
+        this.levelText = this.add.text(16, this.cameras.main.height - 30, `Nivel: ${this.currentLevel}`, {
+            fontFamily: 'Aclonica , sans-serif',
+            fontSize: '32px',
+            color: '#ffff', // Color blanco
+            fill: '#FFFFFF',
+        }).setOrigin(0, 0.5); // Alinear a la izquierda y abajo
 
         this.rentaroTimerText2.setVisible(false);
         // Configura propiedades físicas del jugador (rebote y límites del mundo)
@@ -641,9 +650,11 @@ class GameScene extends Phaser.Scene {
             }
         });
 
-        // Actualizar la fecha si es necesario (opcional)
+        // Actualizar la fecha si es necesario
         const currentDate = new Date().toLocaleDateString();
         this.dateText.setText(`Fecha: ${currentDate}`);
+        // Mostar el nivel
+        this.levelText.setText(`Nivel: ${this.currentLevel}`);
     }
 
     showGameOver() {
