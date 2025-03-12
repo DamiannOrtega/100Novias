@@ -1,6 +1,6 @@
 :root{
     --btnJugar: linear-gradient(135deg, #f82371, #fc25a2);
-    --btnTutorial: linear-gradient(135deg, #f09819, #edde5d);
+    --btnTutorial: linear-gradient(135deg, #673cdb, #945ded);
     --btnPuntuaciones: linear-gradient(135deg, #f09819, #edde5d);
     --btnAjustes: linear-gradient(135deg, #ff1c68, #cc3e51);
     --btnCreditos: linear-gradient(135deg, #00c6ff, #0072ff);
