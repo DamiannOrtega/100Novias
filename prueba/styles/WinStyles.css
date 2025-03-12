@@ -1,0 +1,72 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url(../assets/background/Shizuka.png);
+    
+    background-size: cover;
+    /* Hace que la imagen cubra todo el contenedor */
+    background-position: center;
+    /* Centra la imagen */
+    background-repeat: no-repeat;
+}
+
+canvas {
+    background-color: black; /* Fondo del canvas */
+}
+
+
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column; /* Asegura que los botones se apilen verticalmente */
+    align-items: center; /* Centra los botones horizontalmente */
+    margin-top: 130px;
+
+}
+
+#menuButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px; /* Espaciado interno del botón */
+    color: white;
+    text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    height: 50px; /* Ajusta la altura según sea necesario */
+    width: 250px; /* Ajusta el ancho según sea necesario */
+    letter-spacing: 1px;
+    font-weight: 600;
+    
+    font-size: 20px; /* Reduce el tamaño de la fuente */
+    border-radius: 25px; /* Ajusta el radio del borde */
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    margin: 5px 0; /* Margen vertical entre los botones */
+    z-index: 1000;
+}
+
+
+#menuButton {
+    background: linear-gradient(135deg, #a3087c, #ff009d); /* Color de fondo para Menú Principal */
+    font-family: 'Aclonica', sans-serif;
+}
+
+#menuButton:active {
+    transform: scale(0.9);
+    transition: all 50ms ease;
+}
+
+#menuButton:hover {
+    background: linear-gradient(135deg, #ed5d5d, #7619f0); /* Cambia el color de fondo al pasar el mouse */
+}

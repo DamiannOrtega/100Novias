@@ -778,20 +778,13 @@ class GameScene extends Phaser.Scene {
 
 
         // Cambiar el color de fondo a negro
-        this.cameras.main.setBackgroundColor('#000000'); // Establecer el fondo de la cámara a negro
         this.physics.pause(); // Pausar la física
 
         // Eliminar todos los elementos del juego
         this.children.removeAll(); // Eliminar todos los objetos hijos del juego
 
-        // Mostrar el mensaje "Nivel 1 Completo"
-        const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Juego Completado', {
-            fontSize: '64px',
-            fill: '#ffffff'
-        }).setOrigin(0.5); // Centrar el texto
-
         // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
-        this.time.delayedCall(3000, () => {
+        this.time.delayedCall(500, () => {
             window.location.href = 'pantallaWin.html';
         });
     }
