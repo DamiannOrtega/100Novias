@@ -1,3 +1,16 @@
+:root{
+    --btnJugar: linear-gradient(135deg, #f82371, #fc25a2);
+    --btnTutorial: linear-gradient(135deg, #f09819, #edde5d);
+    --btnPuntuaciones: linear-gradient(135deg, #f09819, #edde5d);
+    --btnAjustes: linear-gradient(135deg, #ff1c68, #cc3e51);
+    --btnCreditos: linear-gradient(135deg, #00c6ff, #0072ff);
+    --btnRegresar: linear-gradient(135deg, #495bf8, #52d7ff);
+    --btnRegresarT: linear-gradient(135deg, #495bf8, #52d7ff);
+    --btnPlay: linear-gradient(135deg, #f82371, #fc25a2);
+    
+}
+
+
 body {
     background-color: #f0f0f0;
     /* Color de fondo opcional */
@@ -297,36 +310,36 @@ button {
 }
 
 .btnJugar {
-    background: linear-gradient(135deg, #f82371, #fc25a2);
+    background: var(--btnJugar)
 
 }
 
 .btnTutorial {
-    background: linear-gradient(135deg, #7619f0, #b35ded);
+    background: var(--btnTutorial);
 }
 
 .btnPuntuaciones {
-    background: linear-gradient(135deg, #f09819, #edde5d);
+    background: var(--btnPuntuaciones);
 }
 
 .btnAjustes {
-    background: linear-gradient(135deg, #ff1c68, #cc3e51);
+    background: var(--btnAjustes);
 }
 
 .btnCreditos {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    background: var(--btnCreditos);
 }
 
 .btnRegresar {
-    background: linear-gradient(135deg, #495bf8, #52d7ff);
+    background: var(--btnRegresar);
 }
 
 .btnRegresarT {
-    background: linear-gradient(135deg, #495bf8, #52d7ff);
+    background: var(--btnRegresarT);
 }
 
 #playButton{
-    background: linear-gradient(135deg, #f82371, #fc25a2);
+    background: var(--btnJugar);
 }
 
 #playButton:active {
