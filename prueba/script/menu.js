@@ -67,8 +67,21 @@ document.getElementById('submitNameButton').addEventListener('click', function (
             toast: true,
             showConfirmButton: false,
             timer: 3000
-        });
+        })
         return;
+    }else{
+        if(playerName.length > 8){
+            Swal.fire({
+                icon: 'warning',
+                title: '¡Atención!',
+                text: 'El nombre debe tener máximo 8 caracteres.',
+                position: 'bottom',
+                toast: true,
+                showConfirmButton: false,
+                timer: 3000
+            })
+            return;
+        }
     }
 
     // Almacenar el nombre en localStorage
