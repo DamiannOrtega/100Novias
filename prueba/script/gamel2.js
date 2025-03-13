@@ -85,8 +85,16 @@ class GameScene extends Phaser.Scene {
             this.lives = parseInt(vidasGuardadas, 10);
         }
 
-        const puntosGuardados = localStorage.getItem(this.jugador.puntos);
+        //const puntosGuardados = localStorage.getItem(this.jugador.puntos);
+        // Cargar la puntuación guardada usando el nombre del jugador como clave
+        const jugadores = JSON.parse(localStorage.getItem('jugadores')) || {};
+        const puntosGuardados = jugadores[playerName];
 
+    if (puntosGuardados) {
+        this.jugador.puntos = puntosGuardados.puntos;
+    } else {
+        this.jugador.puntos = 0; // Inicializar a 0 si no hay puntuación guardada
+    }
     }
 
     // Carga los recursos del juego
@@ -553,6 +561,28 @@ class GameScene extends Phaser.Scene {
         } else {
             console.error("La música de fondo no está inicializada.");
         }
+        if (this.pBoss) {
+            this.pBoss.setVolume(volume);
+        } else {
+            console.error("error.");
+        }
+
+        if (this.hit1) {
+            this.hit1.setVolume(volume);
+        } else {
+            console.error("error.");
+        }
+
+        if (this.hit2) {
+            this.hit2.setVolume(volume);
+        } else {
+            console.error("error.");
+        }
+        if (this.hitNormal) {
+            this.hitNormal.setVolume(volume);
+        } else {
+            console.error("error.");
+        }
         this.SonidosQuietas.forEach(sonido => {
             if (sonido) {
                 sonido.setVolume(volume);
@@ -811,7 +841,19 @@ class GameScene extends Phaser.Scene {
                 this.sonidoBoss.pause();
             }
 
+            if (this.pBoss.isPlaying) {
+                this.pBoss.pause();
+            }
+            if (this.hit1.isPlaying) {
+                this.hit1.pause();
+            }
+            if (this.hit2.isPlaying) {
+                this.hit2.pause();
+            }
 
+            if (this.hitNormal.isPlaying) {
+                this.hitNormal.pause();
+            }
 
             // Aquí puedes pausar otros sonidos si es necesario
         } else {
@@ -828,6 +870,18 @@ class GameScene extends Phaser.Scene {
 
             if (this.sonidoBoss.isPaused) {
                 this.sonidoBoss.resume();
+            }
+             if (this.pBoss.isPaused) {
+                this.pBoss.resume();
+            }
+            if (this.hit1.isPaused) {
+                this.hit1.resume();
+            }
+            if (this.hit2.isPaused) {
+                this.hit2.resume();
+            }
+            if (this.hitNormal.isPaused) {
+                this.hitNormal.resume();
             }
 
         }
@@ -926,7 +980,8 @@ class GameScene extends Phaser.Scene {
             vidaImage.destroy(); // Destruir la imagen de vida
             console.log("Se ha eliminado una imagen de vida del jefe.");
         }
-    
+        const puntosGanados = 10 * this.scoreMultiplier; // Multiplicar 10 por el multiplicador actual
+        this.updateScore(puntosGanados); 
         // Verificar si el jefe ha perdido todas sus vidas
         if (this.bosslives <= 0) {
             // Lógica para cuando el jefe es derrotado
@@ -1243,10 +1298,21 @@ class GameScene extends Phaser.Scene {
     }
 
 
-
     updateScore(points) {
         this.jugador.puntos += points * this.scoreMultiplier; // Multiplicar por el multiplicador
         this.scoreText.setText('Score: ' + this.jugador.puntos); // Actualizar el texto de la puntuación
+    
+        // Obtener los datos actuales de localStorage
+        const jugadores = JSON.parse(localStorage.getItem('jugadores')) || {};
+    
+        // Actualizar la puntuación del jugador actual
+        jugadores[this.jugador.nombre] = {
+            nombre: this.jugador.nombre,
+            puntos: this.jugador.puntos
+        };
+    
+        // Guardar el objeto actualizado de vuelta en localStorage
+        localStorage.setItem('jugadores', JSON.stringify(jugadores));
     }
 
 
