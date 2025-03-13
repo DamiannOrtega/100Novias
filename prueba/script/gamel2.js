@@ -980,9 +980,9 @@ class GameScene extends Phaser.Scene {
             vidaImage.destroy(); // Destruir la imagen de vida
             console.log("Se ha eliminado una imagen de vida del jefe.");
         }
-        const puntosGanados = 10 * this.scoreMultiplier; // Multiplicar 10 por el multiplicador actual
-        this.verificarYGuardarPuntuacion();
-        this.updateScore(puntosGanados); 
+
+        this.updateScore(); 
+        
         // Verificar si el jefe ha perdido todas sus vidas
         if (this.bosslives <= 0) {
             // Lógica para cuando el jefe es derrotado
@@ -1300,11 +1300,15 @@ class GameScene extends Phaser.Scene {
     }
 
 
-    updateScore(points) {
-        this.puntospartida += points * this.scoreMultiplier; // Multiplicar por el multiplicador
+    updateScore() {
+        this.puntospartida += 100 * this.scoreMultiplier; // Multiplicar por el multiplicador
 
         this.scoreText.setText('Score: ' + this.puntospartida); // Actualizar el texto de la puntuación
-    
+            // Guardar la puntuación en localStorage
+        localStorage.setItem('puntuacionNivel1', this.puntospartida); // Guardar en localStorage
+        this.jugador.puntos=this.puntospartida; // Actualizar la puntuación
+        this.jugador.guardar();
+        this.verificarYGuardarPuntuacion();
     }
 
     verificarYGuardarPuntuacion() {
@@ -1319,8 +1323,8 @@ class GameScene extends Phaser.Scene {
             // Comparar la puntuación acumulada con la puntuación del jugador
             if (this.puntospartida > jugadores[nombreJugador].puntos) {
                 // Si la puntuación acumulada es mayor, actualizar
-              
-                this.puntospartida= this.jugador.puntos; // Actualizar la puntuación
+                console.log("ayuda, llamen a la policia");
+                 this.jugador.puntos=this.puntospartida; // Actualizar la puntuación
                 this.jugador.guardar();
             }
         } else {
