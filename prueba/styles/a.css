@@ -34,8 +34,8 @@ canvas {
     background-color: #4CAF50; /* Color de fondo */
     border: none;
     border-radius: 50%; /* Hace que el botón sea redondo */
-    width: 60px; /* Ancho del botón */
-    height: 60px; /* Alto del botón */
+    width: 45px; /* Ancho del botón */
+    height: 45px; /* Alto del botón */
     display: flex; /* Usar flexbox para centrar el SVG */
     align-items: center; /* Centrar verticalmente */
     justify-content: center; /* Centrar horizontalmente */
@@ -43,7 +43,7 @@ canvas {
     transition: background-color 0.3s; /* Transición suave para el color de fondo */
     position: absolute; /* Posicionamiento absoluto */
     top: 60px; /* Distancia desde la parte superior */
-    right: 180px; /* Distancia desde la derecha */
+    right: 160px; /* Distancia desde la derecha */
     z-index: 100; /* Para que se vaya hacia adelante */
 }
 

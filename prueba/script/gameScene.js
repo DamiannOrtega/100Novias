@@ -29,6 +29,8 @@ class GameScene extends Phaser.Scene {
         this.sonidoSO = null;
         this.volumenOriginal = 3; // Volumen normal
         this.volumenAumentado = null; // Volumen aumentado
+        this.isMuted = false; // Estado de muteo
+        this.SonidoObjeto = null;
         // Instancia de la clase Jugador
         this.jugador = null;
         //Enemigos
@@ -367,7 +369,9 @@ class GameScene extends Phaser.Scene {
             this.sonidoDano = this.sound.add('Shizuka_Dano')
             this.sonidoSO = this.sound.add('Shizuka_SO')
 
+
         }
+        this.SonidoObjeto = this.sound.add('Objeto_Especial');
 
         // Llama a setVolume después de inicializar los sonidos
         let savedVolume = localStorage.getItem("gameVolume");
@@ -461,6 +465,11 @@ class GameScene extends Phaser.Scene {
             // Redirigir al menú principal
             window.location.href = 'index.html'; // Cambia 'index.html' por la ruta de tu menú principal
         });
+        // Evento de Mute
+        const muteButton = document.getElementById('muteButton');
+        muteButton.addEventListener('click', () => {
+            this.toggleMute();
+        });
 
     }
 
@@ -487,6 +496,14 @@ class GameScene extends Phaser.Scene {
         if (this.sonidoDano) {
             this.sonidoDano.setVolume(volume);
         }
+        if (this.sonidoaAHahari) {
+            this.sonidoaAHahari.setVolume(volume); // Silenciar sonido de enemigo
+        }
+        if (this.SonidoObjeto){
+            this.SonidoObjeto.setVolume(volume)
+        }
+
+
     }
 
 
@@ -901,7 +918,8 @@ class GameScene extends Phaser.Scene {
         this.rentaroTimeLeft = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
         this.rentaroValue = 50;
-        this.sound.add('Objeto_Especial').play();
+        this.SonidoObjeto.play();
+        
         const y = 0; // Aparece en la parte superior de la pantalla
         this.rentaro = this.physics.add.sprite(x, y, 'RentaroR').setScale(0.1);
         this.rentaro.setCollideWorldBounds(true);
@@ -1047,7 +1065,7 @@ class GameScene extends Phaser.Scene {
         // Asegúrate de que el segundo Rentaro no se cree si ya existe
         if (this.rentaro2) return;
         this.rentaroValue2 = 50;
-        this.sound.add('Objeto_Especial').play();
+        this.SonidoObjeto.play();
         this.rentaroTimeLeft2 = 10; // Reinicia el tiempo
         const x = Phaser.Math.Between(100, 1400);
         const y = 0; // Aparece en la parte superior de la pantalla
@@ -1218,5 +1236,28 @@ class GameScene extends Phaser.Scene {
         this.time.delayedCall(2000, () => {
             window.location.href = 'rompecabezas.html';
         });
+    }
+
+    toggleMute() {
+        this.isMuted = !this.isMuted; // Cambiar el estado de muteo
+        if (this.isMuted) {
+            this.setVolume(0); // Silenciar todos los sonidos
+            // Cambiar el icono del botón a uno de "mute"
+            document.getElementById('muteButton').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="40" height="40" stroke-width="2">
+                    <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5"></path>
+                    <path d="M16 10l4 4m0 -4l-4 4"></path>
+                </svg>
+            `;
+        } else {
+            this.setVolume(0.5); // Restaurar el volumen original
+            // Cambiar el icono del botón a uno de "unmute"
+            document.getElementById('muteButton').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="40" height="40" stroke-width="2">
+                    <path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5"></path>
+                    <path d="M16 10l4 4m0 -4l-4 4"></path>
+                </svg>
+            `;
+        }
     }
 }
