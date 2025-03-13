@@ -72,10 +72,12 @@ if (colocadas === 9) {
         // Si la puntuación del jugador es mayor que la puntuación del nivel 1
         if (jugadores[nombreJugador].puntos > puntuacionNivel1) {
             // Usar la puntuación del nivel 1 para el multiplicador
-            jugadores[nombreJugador].puntos = puntuacionNivel1 * multiplicador; // Sumar la puntuación del nivel 1
+            // jugadores[nombreJugador].puntos += puntuacionNivel1 * multiplicador; // Sumar la puntuación del nivel 1
+                // Guardar la puntuación acumulada en puntuacionNivel1
+            localStorage.setItem('puntuacionNivel1', score * multiplicador); 
         } else {
             // Usar la puntuación del jugador para el multiplicador
-            jugadores[nombreJugador].puntos = score * multiplicador; // Multiplicar los puntos
+            jugadores[nombreJugador].puntos += score * multiplicador; // Multiplicar los puntos
         }
     } else {
         // Si el jugador no existe, crear uno nuevo

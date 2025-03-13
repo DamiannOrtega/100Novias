@@ -896,10 +896,9 @@ class GameScene extends Phaser.Scene {
         // Eliminar todos los elementos del juego
         this.children.removeAll(); // Eliminar todos los objetos hijos del juego
         // Comparar la puntuación acumulada con la puntuación del nivel 1
-        if (this.jugador.puntos > this.puntospartida) {
-            this.jugador.puntos = this.jugador.puntos; // Actualizar la puntuación del jugador
-            localStorage.setItem('puntuacionNivel1', this.jugador.puntos); // Guardar la nueva puntuación en localStorage
-        }
+        this.jugador.puntos=this.puntospartida; // Actualizar la puntuación
+        this.jugador.guardar();
+        
         // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
         this.time.delayedCall(500, () => {
             window.location.href = 'pantallaWin.html';
@@ -1219,6 +1218,8 @@ class GameScene extends Phaser.Scene {
             this.gameOver = true;
             this.scoreText.setText('¡GAME OVER!');
             this.verificarYGuardarPuntuacion();
+            this.jugador.puntos=this.puntospartida; // Actualizar la puntuación
+            this.jugador.guardar();
             // Llamar al método para mostrar el mensaje de Game Over
             this.showGameOver();
         }

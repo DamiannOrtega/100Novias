@@ -14,8 +14,8 @@ video.play();
 // Obtener datos del jugador
 let playerName = localStorage.getItem("playerName") || "Jugador";
 let jugadores = JSON.parse(localStorage.getItem("jugadores")) || {};
-let playerPoints = jugadores[playerName] ? jugadores[playerName].puntos : 0;
-
+// let playerPoints = jugadores[playerName] ? jugadores[playerName].puntos : 0;
+let playerPoints=localStorage.getItem('puntuacionNivel1', this.puntospartida); // Guardar en localStorage
 // Cargar imagen
 const image = new Image();
 image.src = "assets/background/titulo.png";
