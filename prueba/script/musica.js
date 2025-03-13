@@ -12,19 +12,19 @@ const config = {
 const game = new Phaser.Game(config);
 
 let music;
-let musicFile = obtenerCancion(); // Obtener la canción según el HTML
+let musicFile = obtenerCancion(); // Obtemos la canción según el HTML
 
 function preload() {
-    // Cargar la música seleccionada dinámicamente
+    // Carga la música seleccionada dinámicamente
     this.load.audio('MusicaDinamica', musicFile);
 }
 
 function create() {
-    // Reproducir la música en bucle
+    // Reproduce la música en bucle
     music = this.sound.add('MusicaDinamica', { loop: true });
     music.play();
 
-    // Cargar el volumen guardado
+    // Carga el volumen guardado
     let savedVolume = localStorage.getItem("gameVolume");
     if (savedVolume !== null) {
         setVolume(savedVolume);
@@ -48,7 +48,7 @@ function setVolume(volume) {
 
 // Función para obtener la canción según el HTML de origen
 function obtenerCancion() {
-    const ruta = window.location.pathname; // Obtener la ruta del archivo HTML
+    const ruta = window.location.pathname; // Obtiene la ruta del archivo HTML
 
     if (ruta.includes("index.html")) {
         return "assets/Sounds/opening.mp3";
@@ -56,4 +56,7 @@ function obtenerCancion() {
      if (ruta.includes("rompecabezas.html")) {
         return "assets/Sounds/Rompecabezas.mp3";
     } 
+
+
+    return "assets/Sounds/menus.mp3";
 }
