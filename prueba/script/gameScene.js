@@ -708,6 +708,7 @@ class GameScene extends Phaser.Scene {
 
         // Pausar la física
         this.physics.pause();
+        pauseButton.style.display = 'none'; // Ocultar el botón de pausa
 
         // Agregar la clase de difuminado al canvas del juego
         const canvas = document.querySelector('canvas');
