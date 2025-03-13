@@ -1159,6 +1159,11 @@ class GameScene extends Phaser.Scene {
             this.currentRouteIndex = (this.currentRouteIndex + 1) % this.routes.length; // Cambiar al siguiente punto
             this.moveToNextPoint(); // Mover al siguiente punto
         }
+        if (this.boss.x > 1 && this.boss.x < 100) {
+            this.moveToNextPoint(); // Mover al siguiente punto
+        }
+
+        
     }
     bossAttack() {
         // Lógica para que el jefe ataque la posición actual del jugador
@@ -1179,9 +1184,14 @@ class GameScene extends Phaser.Scene {
     }
 
     hitPlayer(player, attack) {
-        if (this.isInvincible) return;
+        if (this.isInvincible){
+            attack.destroy();
+         return;
+          }
+            
         // Resta una vida al jugador
         this.lives--;
+        
         console.log("Vidas restantes: ", this.lives);
         if (this.ImagenVida.length > 0) {
             const vidaImage = this.ImagenVida.pop(); // Eliminar la última imagen de vida
@@ -1240,7 +1250,6 @@ class GameScene extends Phaser.Scene {
 
     dash(direction) {
         this.isDashing = true; // Activar el estado de dash
-
         // Cambiar el color del jugador
         this.player.setTint(0x00ff00); // Cambiar a un color verde (puedes elegir otro)
 
