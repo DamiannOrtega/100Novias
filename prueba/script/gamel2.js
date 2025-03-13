@@ -59,7 +59,12 @@ class GameScene extends Phaser.Scene {
         this.scoreMultiplierText = null; // Texto para mostrar el multiplicador
         this.gameOverTriggered = false; // Indica si el Game Over ya ha sido activado        
         this.phaseText = null; // Texto para mostrar la fase del jefe
-
+        //sonidos del jefe
+        this.pBoss=null;
+        this.hit1=null;
+        this.hit2=null;
+        this.hit3=null;
+        this.hitNormal=null;
     }
 
     init() {
@@ -137,7 +142,11 @@ class GameScene extends Phaser.Scene {
         this.load.image('IconoBoss', 'assets/Enemigos/VidaBoss.png');
         this.load.image('Barra_Vida', 'assets/Enemigos/BarradeVida.png');
         this.load.image('Dios_Amor', 'assets/Enemigos/Dios_malo.png');
-
+        this.load.audio('Presentacion_Boss', 'assets/Enemigos/PresentacionBoss.mp3');
+        this.load.audio('hit1', 'assets/Enemigos/daño.mp3');
+        this.load.audio('hit2', 'assets/Enemigos/hit1.mp3');
+        this.load.audio('hit3', 'assets/Enemigos/hit2.mp3');
+        this.load.audio('hit4', 'assets/Enemigos/hit3.mp3');
 
         //objeto especial
         this.load.image('vidas', 'assets/objetos/Corazones.png');
@@ -248,6 +257,13 @@ class GameScene extends Phaser.Scene {
 
         }
         this.sonidoBoss = this.sound.add('SoundBoss');
+        this.pBoss = this.sound.add('Presentacion_Boss');
+        this.hitNormal = this.sound.add('hit1');
+        this.hit1 = this.sound.add('hit2');
+        this.hit2 = this.sound.add('hit3');
+        this.hit3 = this.sound.add('hit4');
+
+
         this.boss = this.physics.add.sprite(750, 30, 'Dios_Amor').setScale(0.25);
         this.boss.setVisible(false);
 
@@ -258,6 +274,7 @@ class GameScene extends Phaser.Scene {
             this.boss.setVisible(true);
             this.boss.body.immovable = true;
             this.boss.setVelocity(0);
+            this.pBoss.play();
             this.boss.invulnerable = true; // Hacer que el jefe sea inmune
             this.time.delayedCall(5000, () => {
                 this.phaseText.setText('Fase 1'); // Mostrar texto de fase 2
@@ -895,6 +912,7 @@ class GameScene extends Phaser.Scene {
             console.log("El jefe no está en movimiento, no se le puede hacer daño.");
             return; // No hacer nada si el jefe no se está moviendo
         }
+        this.hitNormal.play();
         this.bosslives--;
         console.log("Vidas del jefe restantes: ", this.bosslives);
     
@@ -922,11 +940,13 @@ class GameScene extends Phaser.Scene {
             // Ajustar velocidad y tiempo de ataque según las vidas restantes
             if (this.bosslives % 5 === 0) { // Cada 5 vidas perdidas
                 if (this.bosslives === 10) {
+                    this.hit2.play();
                     this.phaseText.setText('Fase 2'); // Mostrar texto de fase 2
                     this.time.delayedCall(2000, () => {
                         this.phaseText.setText(''); // Limpiar el texto después de 2 segundos
                     });
                 } else if (this.bosslives === 5) {
+                    this.hit3.play();
                     this.phaseText.setText('Fase 3'); // Mostrar texto de fase 3
                     this.time.delayedCall(2000, () => {
                         this.phaseText.setText(''); // Limpiar el texto después de 2 segundos
@@ -1206,7 +1226,7 @@ class GameScene extends Phaser.Scene {
             } else if (this.timeLeft === 40) {
             this.scoreMultiplier = 6;
         } else if (this.timeLeft === 20) {
-            this.scoreMultiplier = 41;
+            this.scoreMultiplier = 4;
         } else if (this.timeLeft === 10) {
             this.scoreMultiplier = 1.5;
         }
