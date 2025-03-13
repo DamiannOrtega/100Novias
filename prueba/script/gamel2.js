@@ -763,6 +763,8 @@ class GameScene extends Phaser.Scene {
         canvas.classList.add('blur');
         this.timerText.setVisible(false); // Ocultar el texto del temporizador
         this.scoreMultiplierText.setVisible(false); // Ocultar el texto del multiplicador
+        const isMuted = document.getElementById('muteButton');
+        isMuted.style.display= 'none'; // Estado de muteo
 
         // Mostrar el canvas de Game Over
         const gameOverCanvas = document.getElementById('gameOverCanvas');
@@ -827,12 +829,15 @@ class GameScene extends Phaser.Scene {
         const canvas = document.querySelector('canvas');
         const pauseButton = document.getElementById('pauseButton');
         const resumeButton = document.getElementById('resumeButton');
+        const isMuted = document.getElementById('muteButton');
+
         if (this.isPaused) {
             this.physics.pause(); // Pausar la física
             this.musicafondo.pause(); // Pausar la música de fondo
             canvas.classList.add('blur'); // Agregar la clase de desenfoque al canvas
             pauseButton.style.display = 'none'; // Ocultar el botón de pausa
             resumeButton.style.display = 'flex'; // Mostrar el botón de reanudar
+            isMuted.style.display = 'none';
             this.SonidosQuietas.forEach((sonido) => {
                 if (sonido.isPlaying) {
                     sonido.pause();
@@ -864,6 +869,7 @@ class GameScene extends Phaser.Scene {
             canvas.classList.remove('blur'); // Agregar la clase de desenfoque al canvas
             pauseButton.style.display = 'flex'; // Mostrar el botón de pausa
             resumeButton.style.display = 'none'; // Ocultar el botón de reanudar
+            isMuted.style.display = 'flex';
             this.SonidosQuietas.forEach((sonido) => {
                 if (sonido.isPaused) {
                     sonido.resume();

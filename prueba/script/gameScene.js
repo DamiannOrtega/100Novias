@@ -726,7 +726,9 @@ class GameScene extends Phaser.Scene {
         // Pausar la física
         this.physics.pause();
         pauseButton.style.display = 'none'; // Ocultar el botón de pausa
-
+        const isMuted = document.getElementById('muteButton');
+        isMuted.style.display= 'none'; // Estado de muteo
+        
         // Agregar la clase de difuminado al canvas del juego
         const canvas = document.querySelector('canvas');
         canvas.classList.add('blur');
@@ -780,6 +782,7 @@ class GameScene extends Phaser.Scene {
                     document.getElementById('gameOverButtons').style.display = 'flex'; // Cambiar a 'flex' para mostrar los botones
                     document.getElementById('restartButton').style.display = 'block'; // Mostrar el botón de reiniciar
                     document.getElementById('menuButton').style.display = 'block'; // Mostrar el botón de menú principal
+                    
                 });
             }
         };
@@ -875,12 +878,14 @@ class GameScene extends Phaser.Scene {
         const canvas = document.querySelector('canvas');
         const pauseButton = document.getElementById('pauseButton');
         const resumeButton = document.getElementById('resumeButton');
+        const isMuted = document.getElementById('muteButton');
         if (this.isPaused) {
             this.physics.pause(); // Pausar la física
             this.musicafondo.pause(); // Pausar la música de fondo
             canvas.classList.add('blur'); // Agregar la clase de desenfoque al canvas
             pauseButton.style.display = 'none'; // Ocultar el botón de pausa
             resumeButton.style.display = 'flex'; // Mostrar el botón de reanudar
+            isMuted.style.display = 'none';
             this.SonidosQuietas.forEach((sonido) => {
                 if (sonido.isPlaying) {
                     sonido.pause();
@@ -899,6 +904,7 @@ class GameScene extends Phaser.Scene {
             canvas.classList.remove('blur'); // Agregar la clase de desenfoque al canvas
             pauseButton.style.display = 'flex'; // Mostrar el botón de pausa
             resumeButton.style.display = 'none'; // Ocultar el botón de reanudar
+            isMuted.style.display = 'flex';
             this.SonidosQuietas.forEach((sonido) => {
                 if (sonido.isPaused) {
                     sonido.resume();
@@ -1208,6 +1214,7 @@ class GameScene extends Phaser.Scene {
     completeLevel() {
         // Detener música y sonidos
         pauseButton.style.display = 'none';
+        
         this.musicafondo.stop();
         this.SonidoMuerte.stop();
         this.sonidoaAHahari.stop();

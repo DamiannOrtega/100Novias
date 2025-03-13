@@ -31,7 +31,7 @@ canvas {
 }
 
 .round-button {
-    background-color: #4CAF50; /* Color de fondo */
+    background: linear-gradient(135deg, #f82371, #fc25a2); /* Color de fondo */
     border: none;
     border-radius: 50%; /* Hace que el botón sea redondo */
     width: 45px; /* Ancho del botón */
