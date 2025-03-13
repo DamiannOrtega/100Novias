@@ -65,6 +65,8 @@ class GameScene extends Phaser.Scene {
         this.hit2=null;
         this.hit3=null;
         this.hitNormal=null;
+        this.puntospartida=0;
+        this.score=0;
     }
 
     init() {
@@ -85,16 +87,10 @@ class GameScene extends Phaser.Scene {
             this.lives = parseInt(vidasGuardadas, 10);
         }
 
-        //const puntosGuardados = localStorage.getItem(this.jugador.puntos);
-        // Cargar la puntuación guardada usando el nombre del jugador como clave
-        const jugadores = JSON.parse(localStorage.getItem('jugadores')) || {};
-        const puntosGuardados = jugadores[playerName];
+        const puntosGuardados = localStorage.getItem(this.jugador.puntos);
+        this.puntospartida = parseInt(localStorage.getItem('puntuacionNivel1')) || 0;
 
-    if (puntosGuardados) {
-        this.jugador.puntos = puntosGuardados.puntos;
-    } else {
-        this.jugador.puntos = 0; // Inicializar a 0 si no hay puntuación guardada
-    }
+     
     }
 
     // Carga los recursos del juego
@@ -224,7 +220,7 @@ class GameScene extends Phaser.Scene {
         });
 
         //Mostrar punto guardados
-        this.scoreText = this.add.text(16, 134, 'Score: ' + this.jugador.puntos, {
+        this.scoreText = this.add.text(16, 134, 'Score: ' + this.puntospartida, {
             fontSize: '32px',
             fontFamily: 'Aclonica , sans-serif',
             color: '#FFFFFF',
@@ -899,7 +895,11 @@ class GameScene extends Phaser.Scene {
 
         // Eliminar todos los elementos del juego
         this.children.removeAll(); // Eliminar todos los objetos hijos del juego
-
+        // Comparar la puntuación acumulada con la puntuación del nivel 1
+        if (this.jugador.puntos > this.puntospartida) {
+            this.jugador.puntos = this.jugador.puntos; // Actualizar la puntuación del jugador
+            localStorage.setItem('puntuacionNivel1', this.jugador.puntos); // Guardar la nueva puntuación en localStorage
+        }
         // Opcional: Agregar un temporizador para reiniciar el nivel o ir a otro
         this.time.delayedCall(500, () => {
             window.location.href = 'pantallaWin.html';
@@ -981,6 +981,7 @@ class GameScene extends Phaser.Scene {
             console.log("Se ha eliminado una imagen de vida del jefe.");
         }
         const puntosGanados = 10 * this.scoreMultiplier; // Multiplicar 10 por el multiplicador actual
+        this.verificarYGuardarPuntuacion();
         this.updateScore(puntosGanados); 
         // Verificar si el jefe ha perdido todas sus vidas
         if (this.bosslives <= 0) {
@@ -1217,6 +1218,7 @@ class GameScene extends Phaser.Scene {
             this.SonidoMuerte.play();
             this.gameOver = true;
             this.scoreText.setText('¡GAME OVER!');
+            this.verificarYGuardarPuntuacion();
             // Llamar al método para mostrar el mensaje de Game Over
             this.showGameOver();
         }
@@ -1299,19 +1301,37 @@ class GameScene extends Phaser.Scene {
 
 
     updateScore(points) {
-        this.jugador.puntos += points * this.scoreMultiplier; // Multiplicar por el multiplicador
-        this.scoreText.setText('Score: ' + this.jugador.puntos); // Actualizar el texto de la puntuación
+        this.puntospartida += points * this.scoreMultiplier; // Multiplicar por el multiplicador
+
+        this.scoreText.setText('Score: ' + this.puntospartida); // Actualizar el texto de la puntuación
     
-        // Obtener los datos actuales de localStorage
-        const jugadores = JSON.parse(localStorage.getItem('jugadores')) || {};
+    }
+
+    verificarYGuardarPuntuacion() {
+        // Obtener el nombre del jugador desde localStorage
+        const nombreJugador = localStorage.getItem('playerName'); // Obtener el nombre del jugador
     
-        // Actualizar la puntuación del jugador actual
-        jugadores[this.jugador.nombre] = {
-            nombre: this.jugador.nombre,
-            puntos: this.jugador.puntos
-        };
+        // Obtener los jugadores del localStorage
+        let jugadores = JSON.parse(localStorage.getItem("jugadores")) || {};
     
-        // Guardar el objeto actualizado de vuelta en localStorage
+        // Si el jugador ya existe
+        if (jugadores[nombreJugador]) {
+            // Comparar la puntuación acumulada con la puntuación del jugador
+            if (this.puntospartida > jugadores[nombreJugador].puntos) {
+                // Si la puntuación acumulada es mayor, actualizar
+              
+                this.puntospartida= this.jugador.puntos; // Actualizar la puntuación
+                this.jugador.guardar();
+            }
+        } else {
+            // Si el jugador no existe, crear uno nuevo
+            jugadores[nombreJugador] = {
+                nombre: nombreJugador,
+                puntos: this.jugador.puntos // Asignar puntos iniciales
+            };
+        }
+    
+        // Guardar el objeto actualizado en localStorage
         localStorage.setItem('jugadores', JSON.stringify(jugadores));
     }
 

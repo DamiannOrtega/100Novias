@@ -1203,7 +1203,7 @@ class GameScene extends Phaser.Scene {
 
         // Eliminar todos los elementos del juego
         this.children.removeAll(); // Eliminar todos los objetos hijos del juego
-
+        localStorage.setItem('puntuacionNivel1', this.jugador.puntos);
         // Mostrar el mensaje "Nivel 1 Completo"
         const levelCompleteText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Nivel 1 Completo', {
             fontSize: '64px',

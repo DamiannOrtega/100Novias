@@ -2,6 +2,8 @@ const piezas = document.querySelectorAll('.piece');
 const zonas = document.querySelectorAll('.dropzone');
 let colocadas = 0;
 let tiempo = 30; // Tiempo inicial
+let score = parseInt(localStorage.getItem('puntuacionNivel1')) || 0; // Cargar la puntuación del nivel 1
+
 
 // Función para mezclar las piezas aleatoriamente
 function mezclarPiezas() {
@@ -39,6 +41,7 @@ zonas.forEach(zona => {
         }
 
 // Al completar el rompecabezas
+// Al completar el rompecabezas
 if (colocadas === 9) {
     document.getElementById('mensaje').textContent = '¡Rompecabezas completado!';
     clearInterval(contadorInterval); // Detener el contador
@@ -49,10 +52,10 @@ if (colocadas === 9) {
         multiplicador = 10;
     } else if (tiempo > 10) {
         multiplicador = 5;
-    } else if (tiempo >0){
+    } else if (tiempo > 0) {
         multiplicador = 2;
-    }else{
-        multiplicador=1;
+    } else {
+        multiplicador = 1;
     }
 
     // Obtener el nombre del jugador desde localStorage
@@ -61,9 +64,19 @@ if (colocadas === 9) {
     // Obtener los jugadores del localStorage
     let jugadores = JSON.parse(localStorage.getItem("jugadores")) || {};
 
-    // Si el jugador ya existe, actualizar su puntuación
+    // Obtener la puntuación del nivel 1
+    const puntuacionNivel1 = parseInt(localStorage.getItem('puntuacionNivel1')) || 0;
+
+    // Si el jugador ya existe
     if (jugadores[nombreJugador]) {
-        jugadores[nombreJugador].puntos *= multiplicador; // Multiplicar los puntos
+        // Si la puntuación del jugador es mayor que la puntuación del nivel 1
+        if (jugadores[nombreJugador].puntos > puntuacionNivel1) {
+            // Usar la puntuación del nivel 1 para el multiplicador
+            jugadores[nombreJugador].puntos += puntuacionNivel1 * multiplicador; // Sumar la puntuación del nivel 1
+        } else {
+            // Usar la puntuación del jugador para el multiplicador
+            jugadores[nombreJugador].puntos += score * multiplicador; // Multiplicar los puntos
+        }
     } else {
         // Si el jugador no existe, crear uno nuevo
         jugadores[nombreJugador] = {
@@ -74,18 +87,18 @@ if (colocadas === 9) {
 
     // Guardar el objeto actualizado en localStorage
     localStorage.setItem('jugadores', JSON.stringify(jugadores));
+
+    // Guardar la puntuación acumulada en puntuacionNivel1
+    localStorage.setItem('puntuacionNivel1', score * multiplicador); // Guardar la puntuación acumulada
+
     setTimeout(() => {
         console.log("Redirigiendo a nivel2.html");
         window.location.href = "nivel2.html";
     }, 2000);
 
     // Mostrar la puntuación total en la interfaz
-    // score *= multiplicador; // Actualizar la puntuación total
-    document.getElementById('puntuacionTotal').textContent += ` Puntuación total: ${score}`;
-
-
+    document.getElementById('puntuacionNivel1').textContent = `Puntuación total: ${score * multiplicador}`;
 }
-
 
     });
 });
@@ -122,7 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Verificar si el jugador existe en el almacenamiento
         if (jugadores[playerName]) {
-            let puntosJugador = jugadores[playerName].puntos;
+            //let puntosJugador = jugadores[playerName].puntos;
+            let puntosJugador =score;
             document.getElementById("puntos").textContent = puntosJugador; // Actualiza el HTML con la puntuación
         } else {
             document.getElementById("puntos").textContent = "0"; // Si no existe, muestra 0
