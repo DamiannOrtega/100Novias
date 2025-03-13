@@ -207,7 +207,7 @@ class GameScene extends Phaser.Scene {
             fontSize: '32px',
             fontFamily: 'Aclonica , sans-serif',
             color: '#FFFFFF',
-            fill: '#000'
+            fill: '#ffff'
         });
 
 
@@ -237,7 +237,7 @@ class GameScene extends Phaser.Scene {
 
         this.rentaroTimerText = this.add.text(16, 160, 'Tiempo: 0', {
             fontSize: '32px',
-            fill: '#000',
+            fill: '#ffff',
             fontFamily: 'Aclonica , sans-serif',
             color: '#FFFFFF',
         });
@@ -245,7 +245,7 @@ class GameScene extends Phaser.Scene {
 
         this.rentaroTimerText2 = this.add.text(16, 190, 'Tiempo: 0', {
             fontSize: '32px',
-            fill: '#000',
+            fill: '#ffff',
             fontFamily: 'Aclonica , sans-serif',
             color: '#FFFFFF',
         });
@@ -419,7 +419,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Aclonica , sans-serif',
             fontSize: '32px',
             color: '#FFFFFF',
-            fill: '#000',
+            fill: '#ffff',
         });
 
         // Obtener la fecha actual
