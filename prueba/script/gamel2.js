@@ -2,7 +2,7 @@ class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: "GameScene" });
 
-        // Propiedades de la clase (antes variables globales)
+        // Propiedades de la clase 
         this.player = null;          // Jugador
         this.playerPosition = { x: 0, y: 0 };
         this.magia = null;           // Grupo de bombas
@@ -53,6 +53,13 @@ class GameScene extends Phaser.Scene {
         this.lastBossAttackTime = 0;
         this.bossHasStartedMoving = false;
         this.bossIsMoving = false; // Inicialmente, el jefe no se está moviendo
+        this.timeLeft = 60; // Tiempo inicial en segundos
+        this.scoreMultiplier = 15; // Multiplicador de puntuación
+        this.timerText = null; // Texto para mostrar el tiempo
+        this.scoreMultiplierText = null; // Texto para mostrar el multiplicador
+        this.gameOverTriggered = false; // Indica si el Game Over ya ha sido activado        
+        this.phaseText = null; // Texto para mostrar la fase del jefe
+
     }
 
     init() {
@@ -253,7 +260,10 @@ class GameScene extends Phaser.Scene {
             this.boss.setVelocity(0);
             this.boss.invulnerable = true; // Hacer que el jefe sea inmune
             this.time.delayedCall(5000, () => {
-                // this.boss.body.allowGravity = true;
+                this.phaseText.setText('Fase 1'); // Mostrar texto de fase 2
+                this.time.delayedCall(2000, () => {
+                    this.phaseText.setText(''); // Limpiar el texto después de 2 segundos
+                });
                 this.boss.invulnerable = false; // El jefe ya no es inmune después de 5 segundos
                 this.bossIcon = this.add.image(1200, 70, 'IconoBoss').setScale(0.7);
                 for (let i = 0; i < this.bosslives; i++) {
@@ -436,6 +446,37 @@ class GameScene extends Phaser.Scene {
             this.setVolume(0.5); // Valor por defecto
         }
 
+
+        this.timerText = this.add.text(760, 50, `${this.timeLeft}`, {
+            fontSize: '32px',
+            fontFamily: 'Aclonica , sans-serif',
+            color: '#FFFFFF',
+            fill: '#ffffff'
+        });
+        
+        this.scoreMultiplierText = this.add.text(16, 250, `Multiplicador: x${this.scoreMultiplier}`, {
+            fontSize: '32px',
+            fontFamily: 'Aclonica , sans-serif',
+            color: '#FFFFFF',
+            fill: '#ffffff'
+        });
+        
+        // Iniciar el temporizador
+        this.time.addEvent({
+            delay: 1000, // Cada segundo
+            callback: this.updateTimer,
+            callbackScope: this,
+            loop: true
+            
+        });
+
+        this.phaseText = this.add.text(780, 100, '', {
+            fontSize: '32px',
+            fontFamily: 'Aclonica, sans-serif',
+            color: '#FFFFFF',
+            fill: '#ffffff'
+        }).setOrigin(0.5, 0.5); // Centrar el texto
+
         // Configura las teclas del cursor para mover al jugador
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -485,20 +526,21 @@ class GameScene extends Phaser.Scene {
     }
 
     setVolume(volume) {
-        // Asegúrate de que this.musicafondo no sea null
         if (this.musicafondo) {
             this.musicafondo.setVolume(volume);
         } else {
             console.error("La música de fondo no está inicializada.");
         }
-
-        // Aplicar el volumen a otros sonidos si es necesario
+        if (this.sonidoBoss) {
+            this.sonidoBoss.setVolume(volume);
+        } else {
+            console.error("La música de fondo no está inicializada.");
+        }
         this.SonidosQuietas.forEach(sonido => {
             if (sonido) {
                 sonido.setVolume(volume);
             }
         });
-
         if (this.SonidoMuerte) {
             this.SonidoMuerte.setVolume(volume);
         }
@@ -548,7 +590,7 @@ class GameScene extends Phaser.Scene {
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(160);
             this.player.anims.play('walk_right', true);
-            this.idleTimer = 0; // Resetear el temporizador de inactividad
+            this.idleTimer = 0; // Resetea el temporizador de inactividad
             this.lastUpdateTime = 0;
             this.SonidosQuietas.forEach((sonido) => sonido.stop());
 
@@ -670,6 +712,8 @@ class GameScene extends Phaser.Scene {
         // Agregar la clase de difuminado al canvas del juego
         const canvas = document.querySelector('canvas');
         canvas.classList.add('blur');
+        this.timerText.setVisible(false); // Ocultar el texto del temporizador
+        this.scoreMultiplierText.setVisible(false); // Ocultar el texto del multiplicador
 
         // Mostrar el canvas de Game Over
         const gameOverCanvas = document.getElementById('gameOverCanvas');
@@ -727,6 +771,8 @@ class GameScene extends Phaser.Scene {
         // Iniciar la animación
         animateText();
     }
+
+
     togglePause() {
         this.isPaused = !this.isPaused; // Cambiar el estado de pausa
         const canvas = document.querySelector('canvas');
@@ -840,6 +886,8 @@ class GameScene extends Phaser.Scene {
     destroyAttack(ataque) {
         ataque.destroy();
     }
+
+
     hitEnemy(enemy, attack) {
         // Resta una vida al jefe
         if (!this.bossIsMoving) {
@@ -849,18 +897,18 @@ class GameScene extends Phaser.Scene {
         }
         this.bosslives--;
         console.log("Vidas del jefe restantes: ", this.bosslives);
-
+    
         // Cambiar el color del jefe a rojo
         enemy.setTint(0xff0000);
         console.log("El jefe ha sido golpeado y su color ha cambiado a rojo.");
-
+    
         // Eliminar la última imagen de vida del jefe
         if (this.ImagenVidaBoss.length > 0) {
             const vidaImage = this.ImagenVidaBoss.pop(); // Eliminar la última imagen de vida
             vidaImage.destroy(); // Destruir la imagen de vida
             console.log("Se ha eliminado una imagen de vida del jefe.");
         }
-
+    
         // Verificar si el jefe ha perdido todas sus vidas
         if (this.bosslives <= 0) {
             // Lógica para cuando el jefe es derrotado
@@ -873,19 +921,31 @@ class GameScene extends Phaser.Scene {
         } else {
             // Ajustar velocidad y tiempo de ataque según las vidas restantes
             if (this.bosslives % 5 === 0) { // Cada 5 vidas perdidas
+                if (this.bosslives === 10) {
+                    this.phaseText.setText('Fase 2'); // Mostrar texto de fase 2
+                    this.time.delayedCall(2000, () => {
+                        this.phaseText.setText(''); // Limpiar el texto después de 2 segundos
+                    });
+                } else if (this.bosslives === 5) {
+                    this.phaseText.setText('Fase 3'); // Mostrar texto de fase 3
+                    this.time.delayedCall(2000, () => {
+                        this.phaseText.setText(''); // Limpiar el texto después de 2 segundos
+                    });
+                }
+    
                 this.bossMoveSpeed += 150; // Aumentar la velocidad de movimiento
                 this.bossAttackSpeed -= 600; // Disminuir el tiempo entre ataques
                 this.bossAttackEvent.delay = this.bossAttackSpeed; // Actualizar el evento de ataque
                 console.log("El jefe se mueve más rápido y ataca más rápido.");
             }
-
+    
             // Si el jefe aún tiene vidas, puedes agregar un efecto visual o sonido
             this.time.delayedCall(500, () => {
                 enemy.clearTint(); // Limpiar el tinte del jefe después de un tiempo
                 console.log("El tinte del jefe ha sido limpiado.");
             });
         }
-
+    
         // Destruir el ataque después de un tiempo
         attack.destroy(); // Destruir el ataque
         console.log("El ataque ha sido destruido.");
@@ -1129,6 +1189,44 @@ class GameScene extends Phaser.Scene {
                 trail.destroy();
             });
         }
+    }
+
+
+    updateTimer() {
+        if (!this.isPaused) { // Solo actualizar si no está en pausa
+
+            this.timeLeft--; // Decrementar el tiempo
+            
+            // Actualizar el texto del temporizador
+            this.timerText.setText(`${this.timeLeft}`);
+            
+            // Actualizar el multiplicador de puntuación
+            if (this.timeLeft === 50) {
+                this.scoreMultiplier = 10;
+            } else if (this.timeLeft === 40) {
+            this.scoreMultiplier = 6;
+        } else if (this.timeLeft === 20) {
+            this.scoreMultiplier = 41;
+        } else if (this.timeLeft === 10) {
+            this.scoreMultiplier = 1.5;
+        }
+        
+        // Actualizar el texto del multiplicador
+            this.scoreMultiplierText.setText(`Multiplicador: x${this.scoreMultiplier}`);
+        // Verificar si el tiempo ha llegado a 0
+            if (this.timeLeft <= 0 && !this.gameOverTriggered) {
+                this.timeLeft = 0; // Asegurarse de que no sea negativo
+                this.gameOverTriggered = true; // Marcar que el Game Over ha sido activado
+                this.showGameOver(); // Mostrar Game Over
+            }
+        }
+    }
+
+
+
+    updateScore(points) {
+        this.jugador.puntos += points * this.scoreMultiplier; // Multiplicar por el multiplicador
+        this.scoreText.setText('Score: ' + this.jugador.puntos); // Actualizar el texto de la puntuación
     }
 
 
