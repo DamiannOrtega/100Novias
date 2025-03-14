@@ -612,9 +612,7 @@ class GameScene extends Phaser.Scene {
         // Aumentar los puntos del jugador
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
-        const isMuted = document.getElementById('muteButton');
-        isMuted.style.display= 'none'; // Estado de muteo
-        
+
         // Actualizar los puntos del jugador
         this.jugador.puntos = this.score;
         this.jugador.guardar();
