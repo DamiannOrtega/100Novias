@@ -503,6 +503,10 @@ class GameScene extends Phaser.Scene {
             this.SonidoObjeto.setVolume(volume)
         }
 
+        if (this.sonidoSO){
+            this.sonidoSO.setVolume(volume)
+        }
+        
 
     }
 
